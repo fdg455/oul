@@ -18,8 +18,8 @@
 ![](/pic/6.png) (图六)
 
 ![](/pic/7.png) (图七)
-![](/pic/8.png) (图八)
-![](/pic/9.png) (图九)
+![](/pic/8.gif) (图八)
+![](/pic/9.gif) (图九)
 
 ## 三、用到的开源库 ##
 * [Quick-News API来自此项目，特此感谢](https://github.com/tigerguixh/QuickNews)
