@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    android:id="@+id/home_item_root_view"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="4dp"
+    android:layout_marginLeft="2dp"
+    android:layout_marginRight="2dp"
+    app:cardCornerRadius="2dp"
+    app:cardElevation="0dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/itemBackground"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/iv_photo_summary"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:layout_marginTop="2dp"
+            android:scaleType="centerCrop"
+            android:transitionName="photos"
+            tools:src="@drawable/ic_header"/>
+
+        <TextView
+            android:id="@+id/tv_photo_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="8dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            android:textColor="?android:attr/textColorSecondary"
+            tools:text="近日，在网上爆红的少女组合Sunshine通过官方微博发布一组唯美风格写真。"/>
+
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>

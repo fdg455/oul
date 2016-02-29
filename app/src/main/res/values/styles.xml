@@ -1,0 +1,164 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!--日间主题-->
+    <style name="BaseAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <!--这是App深色调的基本颜色，主要用于通知栏背景-->
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <!--这是App的主要颜色，用于工具栏背景-->
+        <item name="colorPrimary">@color/primary</item>
+        <!--这是文本的主要颜色，用于工具栏标题-->
+        <item name="android:textColorPrimary">@color/primary_text</item>
+        <!--这是次文本的主要颜色，用于工具栏次标题-->
+        <item name="android:textColorSecondary">@color/secondary_text</item>
+        <!--分割线颜色-->
+        <item name="android:divider">@color/divider</item>
+        <!--强调色-->
+        <item name="colorAccent">@color/accent</item>
+        <!--toolbar searchview hint 颜色-->
+        <item name="android:textColorHint">@color/secondary_text</item>
+
+        <item name="colorControlHighlight">@android:color/transparent</item> 
+
+        <item name="windowActionModeOverlay">true</item>
+
+        <item name="android:windowBackground">@color/background_color</item>
+
+        <item name="android:itemBackground">@color/item_color</item>
+
+        <!--下面是自定义的属性-->
+        <item name="backgroundColor">@color/background_color</item>
+
+        <item name="fabColor">@color/fab_color</item>
+
+        <item name="pacIconColor">@color/icons</item>
+
+        <item name="navColor">@color/selector_nav</item>
+
+        <item name="checkTextViewColorStateList">@color/selector_nav</item>
+
+        <item name="toolbarTheme">@style/ToolbarTheme</item>
+
+        <item name="itemChannelBackground">@drawable/selector_news_channel</item>
+
+        <item name="navHeaderBackground">@drawable/ic_navigation_header_bg</item>
+
+        <item name="pointColor">@color/primary</item>
+
+    </style>
+
+
+    <style name="BaseAppTheme.AppTheme">
+        <item name="android:windowAnimationStyle">@style/noAnimation</item>
+    </style>
+
+    <style name="BaseAppTheme.SlidrTheme">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
+    <!--夜间主题-->
+
+    <style name="BaseAppThemeNight" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <!--这是App深色调的基本颜色，主要用于通知栏背景-->
+        <item name="colorPrimaryDark">@color/primary_dark_night</item>
+        <!--这是App的主要颜色，用于工具栏背景-->
+        <item name="colorPrimary">@color/primary_night</item>
+        <!--这是文本的主要颜色，用于工具栏标题-->
+        <item name="android:textColorPrimary">@color/primary_text_night</item>
+        <!--这是次文本的主要颜色，用于工具栏次标题-->
+        <item name="android:textColorSecondary">@color/secondary_text_night</item>
+        <!--分割线颜色-->
+        <item name="android:divider">@color/divider_night</item>
+        <!--强调色-->
+        <item name="colorAccent">@color/accent_night</item>
+        <!--toolbar searchview hint 颜色-->
+        <item name="android:textColorHint">@color/secondary_text_night</item>
+
+        <item name="colorControlHighlight">@android:color/transparent</item> 
+
+        <item name="windowActionModeOverlay">true</item>
+
+        <item name="android:windowBackground">@color/background_color_night</item>
+
+        <item name="android:itemBackground">@color/item_color_night</item>
+
+        <item name="backgroundColor">@color/background_color_night</item>
+
+        <item name="fabColor">@color/fab_color_night</item>
+
+        <item name="pacIconColor">@color/icons_night</item>
+
+        <item name="navColor">@color/selector_nav_night</item>
+
+        <item name="checkTextViewColorStateList">@color/selector_nav_night</item>
+
+        <item name="toolbarTheme">@style/ToolbarThemeNight</item>
+
+        <item name="itemChannelBackground">@drawable/selector_news_channel_night</item>
+
+        <item name="navHeaderBackground">@drawable/ic_navigation_header_bg_night</item>
+
+        <item name="pointColor">@color/material_white</item>
+
+    </style>
+
+    <style name="BaseAppThemeNight.AppTheme">
+        <item name="android:windowAnimationStyle">@style/noAnimation</item>
+    </style>
+
+    <style name="BaseAppThemeNight.SlidrTheme">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+
+    <!-- ToolBar主题，menu的item字体为白色 -->
+    <style name="ToolBarStyle" parent="@style/Widget.AppCompat.ActionBar">
+        <item name="android:textColorPrimary">@color/material_white</item>
+        <item name="android:textColorSecondary">@color/material_white</item>
+        <item name="actionMenuTextColor">@color/material_white</item>
+    </style>
+
+    <!-- ToolBar菜单样式 -->
+    <style name="ToolbarTheme" parent="@style/Widget.AppCompat.Light.ActionBar">
+        <item name="actionMenuTextColor">@color/material_white</item>
+        <item name="android:textColorPrimary">@color/material_white</item>
+        <item name="android:textColorSecondary">@color/material_white</item>
+        <item name="actionOverflowButtonStyle">@style/ActionButton.Overflow</item>
+    </style>
+
+    <style name="ToolbarThemeNight" parent="@style/Widget.AppCompat.Light.ActionBar">
+        <item name="actionMenuTextColor">@color/material_white</item>
+        <item name="android:textColor">@color/material_white</item>
+        <item name="android:textColorPrimary">@color/material_white</item>
+        <item name="android:textColorSecondary">@color/material_white</item>
+        <item name="actionOverflowButtonStyle">@style/ActionButton.Overflow</item>
+    </style>
+
+    <!--菜单收起来时的三个小点的样式-->
+    <style name="ActionButton.Overflow" parent="android:style/Widget.Holo.Light.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_menu_over_flow</item>
+    </style>
+
+    <!--去掉所有跳转动画-->
+    <style name="noAnimation">
+        <item name="android:activityOpenEnterAnimation">@null</item>
+        <item name="android:activityOpenExitAnimation">@null</item>
+        <item name="android:activityCloseEnterAnimation">@null</item>
+        <item name="android:activityCloseExitAnimation">@null</item>
+        <item name="android:taskOpenEnterAnimation">@null</item>
+        <item name="android:taskOpenExitAnimation">@null</item>
+        <item name="android:taskCloseEnterAnimation">@null</item>
+        <item name="android:taskCloseExitAnimation">@null</item>
+        <item name="android:taskToFrontEnterAnimation">@null</item>
+        <item name="android:taskToFrontExitAnimation">@null</item>
+        <item name="android:taskToBackEnterAnimation">@null</item>
+        <item name="android:taskToBackExitAnimation">@null</item>
+    </style>
+
+</resources>

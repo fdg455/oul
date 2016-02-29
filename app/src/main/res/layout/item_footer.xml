@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.oushangfeng.ounews.widget.refresh.PacManRefreshHead
+    android:id="@+id/pac_man"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:pacIconColor="?attr/pacIconColor"
+    android:layout_gravity="center_vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+</com.oushangfeng.ounews.widget.refresh.PacManRefreshHead>

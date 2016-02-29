@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.NavigationView
+    android:id="@+id/navigation_view"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_gravity="start"
+    android:background="?android:attr/itemBackground"
+    app:headerLayout="@layout/navigation_header"
+    app:itemTextColor="?attr/navColor"
+    app:itemIconTint="?attr/navColor"
+    app:menu="@menu/menu_navigation"/>
+    <!--app:theme="?attr/nav_theme""-->
+    <!--23.2.0版本的NavigationView选中颜色使用的是accent，个人还是喜欢之前的使用primary，这里定制了下主题-->

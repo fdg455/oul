@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--日间主题NavigationView菜单的颜色配置-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/secondary_text" android:state_checked="false"/>
+    <item android:color="@color/accent" android:state_checked="true"/>
+</selector>

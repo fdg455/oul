@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout
+    android:id="@+id/drawer_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primary"
+    android:fitsSystemWindows="true"
+    android:tag="skin:primary:background"
+    tools:context=".module.settings.ui.SettingsActivity">
+    <!--根布局设置颜色是为了让4.4沉浸式并配合v19\styles.xml做出透明状态栏，侧滑view在导航栏之上不被遮挡的效果，所以其自布局需要设置背景色-->
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/primary"
+        android:fitsSystemWindows="true"
+        android:tag="skin:primary:background">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/primary"
+            android:tag="skin:primary:background"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:theme="@style/ToolbarTheme"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/toolbar"
+            android:background="@color/item_color"
+            android:orientation="vertical"
+            android:tag="skin:item_color:background">
+
+            <CheckedTextView
+                android:id="@+id/ctv_night_mode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+                android:checked="false"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:padding="16dp"
+                android:tag="skin:secondary_text:textColor"
+                android:text="开启夜间模式"
+                android:textAppearance="@style/TextAppearance.AppCompat.Inverse"
+                android:textColor="@color/secondary_text"
+                android:textSize="14sp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:background="@color/divider"
+                android:tag="skin:divider:background"/>
+
+            <CheckedTextView
+                android:id="@+id/ctv_slide_mode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+                android:checked="false"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:padding="16dp"
+                android:tag="skin:secondary_text:textColor"
+                android:text="开启侧滑"
+                android:textAppearance="@style/TextAppearance.AppCompat.Inverse"
+                android:textColor="@color/secondary_text"
+                android:textSize="14sp"/>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:background="@color/divider"
+                android:tag="skin:divider:background"/>
+
+            <TextView
+                android:id="@+id/tv_about"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center_vertical"
+                android:padding="16dp"
+                android:tag="skin:secondary_text:textColor"
+                android:text="关于项目"
+                android:textAppearance="@style/TextAppearance.AppCompat.Inverse"
+                android:textColor="@color/secondary_text"
+                android:textSize="14sp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:background="@color/divider"
+                android:tag="skin:divider:background"/>
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+    <include layout="@layout/include_navigation_view_settings"/>
+
+</android.support.v4.widget.DrawerLayout>
+
+

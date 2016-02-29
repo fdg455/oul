@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:attr/itemBackground"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".module.news.ui.NewsDetailActivity"
+    tools:showIn="@layout/activity_news_detail">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin">
+
+        <TextView
+            android:id="@+id/tv_news_detail_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="8dp"
+            android:textColor="?android:textColorPrimary"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            tools:text="云南投毒案女子首照全家福"/>
+
+        <TextView
+            android:id="@+id/tv_news_detail_from"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_news_detail_title"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:textColor="?android:textColorPrimary"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            tools:text="@string/from"/>
+
+        <zhou.widget.RichText
+            android:id="@+id/tv_news_detail_body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_news_detail_from"
+            android:layout_marginTop="8dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textSize="16sp"
+            android:textColor="?android:textColorPrimary"
+            tools:text="@string/large_text"/>
+
+
+    </RelativeLayout>
+
+</android.support.v4.widget.NestedScrollView>
