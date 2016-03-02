@@ -59,7 +59,7 @@ Android实现RecyclerView侧滑删除和长按拖拽-ItemTouchHelper<br>http://b
 
 ## 六、关于作者 ##
 
-微博：weibo.com/palfansinheart
+微博：http://weibo.com/palfansinheart
 
 CSDN博客：http://blog.csdn.net/oushangfeng123?viewmode=contents
 
