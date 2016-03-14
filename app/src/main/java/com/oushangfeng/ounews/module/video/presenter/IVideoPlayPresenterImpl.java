@@ -16,7 +16,7 @@ public class IVideoPlayPresenterImpl extends BasePresenterImpl<IVideoPlayView, V
 
     public IVideoPlayPresenterImpl(IVideoPlayView view, String path) {
         super(view);
-        // 把后面的activity黑色布局打开
+        mView.registerScreenBroadCastReceiver();
         mView.playVideo(path);
         mView.showProgress();
     }

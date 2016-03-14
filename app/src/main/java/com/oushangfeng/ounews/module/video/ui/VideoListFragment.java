@@ -6,6 +6,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -175,7 +176,7 @@ public class VideoListFragment extends BaseFragment<IVideoListPresenter> impleme
                         .format(DecodeFormat.PREFER_ARGB_8888)
                         .diskCacheStrategy(DiskCacheStrategy.ALL).into(imageView);
 
-                holder.getTextView(R.id.tv_video_summary).setText(item.title);
+                holder.getTextView(R.id.tv_video_summary).setText(Html.fromHtml(item.title));
             }
         };
 

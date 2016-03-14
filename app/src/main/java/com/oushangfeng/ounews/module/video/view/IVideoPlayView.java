@@ -14,4 +14,6 @@ public interface IVideoPlayView extends BaseView{
 
     void playVideo(String path);
 
+    void registerScreenBroadCastReceiver();
+
 }

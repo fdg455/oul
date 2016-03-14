@@ -22,6 +22,7 @@ import com.oushangfeng.ounews.widget.HackyViewPager;
 import com.oushangfeng.ounews.widget.ThreePointLoadingView;
 import com.socks.library.KLog;
 
+import io.vov.vitamio.utils.StringUtils;
 import zhou.widget.RichText;
 
 /**
@@ -161,7 +162,7 @@ public class PhotoDetailActivity extends BaseActivity<IPhotoDetailPresenter>
                 .measureText(mContentTv.getText().toString()) < mContentTvWidth)) {
             mContentTv.setGravity(Gravity.CENTER);
             // 设为中心对齐，去掉前面两个空格
-            mContentTv.setText(mContentTv.getText().toString().trim());
+            mContentTv.setRichText(StringUtils.replaceBlank(mContentTv.getText().toString()));
             KLog.e("设为中心对齐，去掉前面两个空格");
         } else {
             mContentTv.setGravity(Gravity.TOP | Gravity.START);

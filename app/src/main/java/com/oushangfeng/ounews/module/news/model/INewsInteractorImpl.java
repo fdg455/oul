@@ -37,18 +37,16 @@ public class INewsInteractorImpl implements INewsInteractor<List<NewsChannelTabl
             @Override
             public void call(Subscriber<? super List<NewsChannelTable>> subscriber) {
 
-                final NewsChannelTableDao dao = ((App) App.getContext())
-                        .getDaoSession().getNewsChannelTableDao();
-
+                final NewsChannelTableDao dao = ((App) App.getContext()).getDaoSession()
+                        .getNewsChannelTableDao();
+                KLog.e("初始化了数据库了吗？ " + SpUtil.readBoolean("initDb"));
                 if (!SpUtil.readBoolean("initDb")) {
 
-                    List<String> channelName = Arrays
-                            .asList(App.getContext().getResources()
-                                    .getStringArray(R.array.news_channel));
+                    List<String> channelName = Arrays.asList(App.getContext().getResources()
+                            .getStringArray(R.array.news_channel));
 
-                    List<String> channelId = Arrays
-                            .asList(App.getContext().getResources()
-                                    .getStringArray(R.array.news_channel_id));
+                    List<String> channelId = Arrays.asList(App.getContext().getResources()
+                            .getStringArray(R.array.news_channel_id));
 
                     for (int i = 0; i < channelName.size(); i++) {
                         NewsChannelTable table = new NewsChannelTable(channelName.get(i),
@@ -58,6 +56,7 @@ public class INewsInteractorImpl implements INewsInteractor<List<NewsChannelTabl
                         dao.insert(table);
                     }
                     SpUtil.writeBoolean("initDb", true);
+                    KLog.e("数据库初始化完毕！");
                 }
 
                 final Query<NewsChannelTable> build = dao.queryBuilder()

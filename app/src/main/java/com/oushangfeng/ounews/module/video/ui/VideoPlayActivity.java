@@ -1,5 +1,9 @@
 package com.oushangfeng.ounews.module.video.ui;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.view.MenuItem;
@@ -15,7 +19,6 @@ import com.oushangfeng.ounews.module.video.view.IVideoPlayView;
 import com.oushangfeng.ounews.utils.VideoPlayController;
 import com.oushangfeng.ounews.utils.ViewUtil;
 import com.oushangfeng.ounews.widget.ThreePointLoadingView;
-import com.socks.library.KLog;
 
 import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.Vitamio;
@@ -38,6 +41,7 @@ public class VideoPlayActivity extends BaseActivity<IVideoPlayPresenter> impleme
     private View mBgView;
 
     private VideoPlayController mPlayController;
+    private BroadcastReceiver mBatInfoReceiver;
 
     @Override
     protected void onDestroy() {
@@ -45,7 +49,7 @@ public class VideoPlayActivity extends BaseActivity<IVideoPlayPresenter> impleme
         if (mPlayController != null) {
             mPlayController.onDestroy();
         }
-
+        unregisterReceiver(mBatInfoReceiver);
     }
 
     @Override
@@ -53,6 +57,7 @@ public class VideoPlayActivity extends BaseActivity<IVideoPlayPresenter> impleme
 
         //   主题设置了<item name="android:windowIsTranslucent">true</item>不能自动旋转屏幕了，这里强制开启就可以了 -_-
         //this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
+        ViewUtil.setFullScreen(this);
 
         String videoUrl = getIntent().getStringExtra("videoUrl");
 
@@ -89,19 +94,6 @@ public class VideoPlayActivity extends BaseActivity<IVideoPlayPresenter> impleme
                     return true;
                 }
             });
-
-            mVideoView.setOnTimedTextListener(new MediaPlayer.OnTimedTextListener() {
-                @Override
-                public void onTimedText(String text) {
-                    KLog.e(text);
-                }
-
-                @Override
-                public void onTimedTextUpdate(byte[] pixels, int width, int height) {
-
-                }
-            });
-
             mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mediaPlayer) {
@@ -120,6 +112,31 @@ public class VideoPlayActivity extends BaseActivity<IVideoPlayPresenter> impleme
         } else {
             toast("播放器还没初始化完哎，等等咯╮(╯Д╰)╭ ");
         }
+    }
+
+    // 注册监听屏幕亮闭屏
+    @Override
+    public void registerScreenBroadCastReceiver() {
+        final IntentFilter filter = new IntentFilter();
+        // 屏幕灭屏广播
+        filter.addAction(Intent.ACTION_SCREEN_OFF);
+        filter.addAction(Intent.ACTION_SCREEN_ON);
+        mBatInfoReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(final Context context, final Intent intent) {
+                if (mVideoView != null && mPlayController != null && mVideoView
+                        .isPlaying() && intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
+                    // 屏幕关闭并且视频正在播放的时候，暂停播放
+                    mVideoView.pause();
+                    mPlayController.hide();
+                } else if (mVideoView != null && mPlayController != null && intent.getAction()
+                        .equals(Intent.ACTION_SCREEN_ON)) {
+                    // 亮屏的时候，显示控制器
+                    mPlayController.show();
+                }
+            }
+        };
+        registerReceiver(mBatInfoReceiver, filter);
     }
 
     @Override
@@ -162,9 +179,9 @@ public class VideoPlayActivity extends BaseActivity<IVideoPlayPresenter> impleme
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        ViewUtil.setFullScreen(this, newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE);
         // 保持屏幕比例正确
         mVideoView.setVideoLayout(VideoView.VIDEO_LAYOUT_SCALE, 0);
         mPlayController.hide();
     }
+
 }

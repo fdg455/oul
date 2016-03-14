@@ -17,10 +17,22 @@ package io.vov.vitamio.utils;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class StringUtils {
 	public static String join(Object[] elements, CharSequence separator) {
 		return join(Arrays.asList(elements), separator);
+	}
+
+	public static String replaceBlank(String str) {
+		String dest = "";
+		if (str!=null) {
+			Pattern p = Pattern.compile("\\s*|\t|\r|\n|&#160;");
+			Matcher m = p.matcher(str);
+			dest = m.replaceAll("");
+		}
+		return dest;
 	}
 
 	public static String join(Iterable<? extends Object> elements, CharSequence separator) {

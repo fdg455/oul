@@ -5,6 +5,7 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.os.Handler;
 import android.os.Message;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -178,14 +179,6 @@ public class VideoPlayController {
 
         final View bottomView = mContentView.findViewById(R.id.rl_bottom);
 
-        // 整个布局设置点击时间，点击了就关闭它
-        /*mContentView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //                KLog.e("整个布局被点击了，隐藏噜");
-                hide();
-            }
-        });*/
         mContentView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -199,60 +192,25 @@ public class VideoPlayController {
                 return false;
             }
         });
+        mContentView.setFocusableInTouchMode(true);
+        // 监听返回键并且关闭弹窗
+        mContentView.setOnKeyListener(new View.OnKeyListener() {
+
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK && event
+                        .getRepeatCount() == 0 && isShowing()) {
+                    hide();
+                }
+                return true;
+            }
+        });
 
         mCurrentTimeTv = (TextView) mContentView.findViewById(R.id.tv_time_current);
         mTotalTimeTv = (TextView) mContentView.findViewById(R.id.tv_time_total);
 
         mSeekBar = (SeekBar) mContentView.findViewById(R.id.iv_seek_bar);
-        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                // 若不是用户拖动的话，即视频播放控制进度的时候，直接返回不处理
-                if (!fromUser) {
-                    KLog.e("若不是用户拖动的话，即视频播放控制进度的时候，直接返回不处理");
-                    return;
-                }
-
-                // 计算新的位置
-                long newPosition = (mTotalTime * progress) / 1000;
-                String time = StringUtils.generateTime(newPosition);
-
-                KLog.e("调到 " + time + "  播放");
-
-                mVideoView.seekTo(newPosition);
-                if (mCurrentTimeTv != null) mCurrentTimeTv.setText(time);
-
-                mHandler.removeMessages(FADE_OUT);
-
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                // 开始触碰到seekbar
-                mIsDraging = true;
-                show();
-                mHandler.removeMessages(SHOW_PROGRESS);
-                mAM.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER,
-                        AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                // 停止拖动
-                KLog.e("调到 " + StringUtils
-                        .generateTime((mTotalTime * mSeekBar.getProgress()) / 1000) + "  播放");
-                mVideoView.seekTo((mTotalTime * mSeekBar.getProgress()) / 1000);
-                show();
-                mHandler.removeMessages(SHOW_PROGRESS);
-                mAM.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE,
-                        AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
-                mIsDraging = false;
-                mHandler.sendEmptyMessageDelayed(SHOW_PROGRESS, 1000);
-
-                mHandler.sendMessageDelayed(mHandler.obtainMessage(FADE_OUT), sDefaultTimeout);
-
-            }
-        });
+        mSeekBar.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 
         mPlayButton = (ImageView) mContentView.findViewById(R.id.iv_play);
         mPlayButton.setOnClickListener(new View.OnClickListener() {
@@ -299,7 +257,6 @@ public class VideoPlayController {
         mPopupWindow = new PopupWindow(mContentView, ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT, true);
 
-
         mPopupWindow.setFocusable(true);
         mPopupWindow.setOutsideTouchable(true);
         mPopupWindow.setBackgroundDrawable(null);
@@ -320,6 +277,9 @@ public class VideoPlayController {
                 -mAnchorView.getMeasuredHeight());
         mShowing = true;
 
+        // 开启弹窗的时候，根据视频是否正在播放设置播放按钮的状态
+        mPlayButton.setSelected(!mVideoView.isPlaying());
+
         // 设置进度条
         mHandler.sendEmptyMessage(SHOW_PROGRESS);
         // 三秒后关闭布局
@@ -327,5 +287,59 @@ public class VideoPlayController {
         mHandler.sendMessageDelayed(mHandler.obtainMessage(FADE_OUT), sDefaultTimeout);
 
     }
+
+    private SeekBar.OnSeekBarChangeListener mOnSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            // 若不是用户拖动的话，即视频播放控制进度的时候，直接返回不处理
+            if (!fromUser) {
+                // KLog.e("若不是用户拖动的话，即视频播放控制进度的时候，直接返回不处理");
+                return;
+            }
+
+            // 计算新的位置
+            long newPosition = (mTotalTime * progress) / 1000;
+            String time = StringUtils.generateTime(newPosition);
+
+            KLog.e("调到 " + time + "  播放");
+
+            mPlayButton.setSelected(false);
+
+            mVideoView.seekTo(newPosition);
+            if (mCurrentTimeTv != null) {
+                mCurrentTimeTv.setText(time);
+            }
+
+            mHandler.removeMessages(FADE_OUT);
+
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+            // 开始触碰到seekbar
+            mIsDraging = true;
+            show();
+            mHandler.removeMessages(SHOW_PROGRESS);
+            mAM.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER,
+                    AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+            // 停止拖动
+            KLog.e("调到 " + StringUtils
+                    .generateTime((mTotalTime * mSeekBar.getProgress()) / 1000) + "  播放");
+            mVideoView.seekTo((mTotalTime * mSeekBar.getProgress()) / 1000);
+            show();
+            mHandler.removeMessages(SHOW_PROGRESS);
+            mAM.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE,
+                    AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
+            mIsDraging = false;
+            mHandler.sendEmptyMessageDelayed(SHOW_PROGRESS, 1000);
+
+            mHandler.sendMessageDelayed(mHandler.obtainMessage(FADE_OUT), sDefaultTimeout);
+
+        }
+    };
 
 }
