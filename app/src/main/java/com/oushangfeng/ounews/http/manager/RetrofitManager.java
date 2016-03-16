@@ -67,7 +67,7 @@ public class RetrofitManager {
      * @param hostType host类型
      * @return 实例
      */
-    public static RetrofitManager builder(HostType hostType) {
+    public static RetrofitManager newInstance(HostType hostType) {
         return new RetrofitManager(hostType);
     }
 

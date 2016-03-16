@@ -26,7 +26,7 @@ public class INewsDetailInteractorImpl implements INewsDetailInteractor<NeteastN
 
     @Override
     public Subscription requestNewsDetail(final RequestCallback<NeteastNewsDetail> callback, final String id) {
-        return RetrofitManager.builder(HostType.NETEASE_NEWS_VIDEO).getNewsDetailObservable(id)
+        return RetrofitManager.newInstance(HostType.NETEASE_NEWS_VIDEO).getNewsDetailObservable(id)
                 .doOnSubscribe(new Action0() {
                     @Override
                     public void call() {

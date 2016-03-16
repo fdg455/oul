@@ -21,7 +21,7 @@ import rx.functions.Action0;
 public class IPhotoDetailInteractorImpl implements IPhotoDetailInteractor<SinaPhotoDetail> {
     @Override
     public Subscription requestPhotoDetail(final RequestCallback<SinaPhotoDetail> callback, String id) {
-        return RetrofitManager.builder(HostType.SINANEWS_PHOTO).getSinaPhotoDetailObservable(id)
+        return RetrofitManager.newInstance(HostType.SINANEWS_PHOTO).getSinaPhotoDetailObservable(id)
                 .doOnSubscribe(new Action0() {
                     @Override
                     public void call() {

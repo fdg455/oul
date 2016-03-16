@@ -29,7 +29,7 @@ public class IPhotoListInteractorImpl
         implements IPhotoListInteractor<List<SinaPhotoList.DataEntity.PhotoListEntity>> {
     @Override
     public Subscription requestPhotoList(final RequestCallback<List<SinaPhotoList.DataEntity.PhotoListEntity>> callback, String id, int startPage) {
-        return RetrofitManager.builder(HostType.SINANEWS_PHOTO)
+        return RetrofitManager.newInstance(HostType.SINANEWS_PHOTO)
                 .getSinaPhotoListObservable(id, startPage).doOnSubscribe(new Action0() {
                     @Override
                     public void call() {
@@ -51,7 +51,8 @@ public class IPhotoListInteractorImpl
                         new Func2<SinaPhotoList.DataEntity.PhotoListEntity, SinaPhotoList.DataEntity.PhotoListEntity, Integer>() {
                             @Override
                             public Integer call(SinaPhotoList.DataEntity.PhotoListEntity photoListEntity, SinaPhotoList.DataEntity.PhotoListEntity photoListEntity2) {
-                                return photoListEntity.pubDate > photoListEntity2.pubDate ? 1 : photoListEntity.pubDate == photoListEntity2.pubDate ? 0 : -1;
+                                // return photoListEntity.pubDate > photoListEntity2.pubDate ? 1 : photoListEntity.pubDate == photoListEntity2.pubDate ? 0 : -1;
+                                return photoListEntity2.pubDate > photoListEntity.pubDate ? 1 : photoListEntity.pubDate == photoListEntity2.pubDate ? 0 : -1;
                             }
                         })
                 .subscribe(new Subscriber<List<SinaPhotoList.DataEntity.PhotoListEntity>>() {

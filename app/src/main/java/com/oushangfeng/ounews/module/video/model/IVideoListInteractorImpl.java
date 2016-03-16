@@ -29,7 +29,7 @@ public class IVideoListInteractorImpl implements IVideoListInteractor<List<Netea
 
     @Override
     public Subscription requestVideoList(final RequestCallback<List<NeteastVideoSummary>> callback, final String id, int startPage) {
-        return RetrofitManager.builder(HostType.NETEASE_NEWS_VIDEO)
+        return RetrofitManager.newInstance(HostType.NETEASE_NEWS_VIDEO)
                 .getVideoListObservable(id, startPage).doOnSubscribe(new Action0() {
                     @Override
                     public void call() {
@@ -47,7 +47,8 @@ public class IVideoListInteractorImpl implements IVideoListInteractor<List<Netea
                     @Override
                     public Integer call(NeteastVideoSummary neteastVideoSummary, NeteastVideoSummary neteastVideoSummary2) {
                         // 时间排序
-                        return neteastVideoSummary.ptime.compareTo(neteastVideoSummary2.ptime);
+                        //return neteastVideoSummary.ptime.compareTo(neteastVideoSummary2.ptime);
+                        return neteastVideoSummary2.ptime.compareTo(neteastVideoSummary.ptime);
                     }
                 }).subscribe(new Subscriber<List<NeteastVideoSummary>>() {
                     @Override
