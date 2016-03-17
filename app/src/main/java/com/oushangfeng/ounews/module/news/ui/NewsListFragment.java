@@ -17,11 +17,11 @@ import com.oushangfeng.ounews.annotation.ActivityFragmentInject;
 import com.oushangfeng.ounews.base.BaseFragment;
 import com.oushangfeng.ounews.base.BaseRecyclerAdapter;
 import com.oushangfeng.ounews.base.BaseRecyclerViewHolder;
+import com.oushangfeng.ounews.base.BaseSpacesItemDecoration;
 import com.oushangfeng.ounews.bean.NeteastNewsSummary;
 import com.oushangfeng.ounews.bean.SinaPhotoDetail;
 import com.oushangfeng.ounews.callback.OnItemClickAdapter;
 import com.oushangfeng.ounews.common.DataLoadType;
-import com.oushangfeng.ounews.base.BaseSpacesItemDecoration;
 import com.oushangfeng.ounews.module.news.presenter.INewsListPresenter;
 import com.oushangfeng.ounews.module.news.presenter.INewsListPresenterImpl;
 import com.oushangfeng.ounews.module.news.view.INewsListView;
@@ -31,7 +31,6 @@ import com.oushangfeng.ounews.widget.AutoLoadMoreRecyclerView;
 import com.oushangfeng.ounews.widget.ThreePointLoadingView;
 import com.oushangfeng.ounews.widget.refresh.RefreshLayout;
 import com.socks.library.KLog;
-import com.zhy.changeskin.SkinManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -158,9 +157,6 @@ public class NewsListFragment extends BaseFragment<INewsListPresenter> implement
 
             @Override
             public void bindData(BaseRecyclerViewHolder holder, int position, NeteastNewsSummary item) {
-
-                SkinManager.getInstance().injectSkin(holder.itemView);
-
                 Glide.with(NewsListFragment.this.getActivity()).load(item.imgsrc).crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .placeholder(R.drawable.ic_loading_small_bg).error(R.drawable.ic_fail)

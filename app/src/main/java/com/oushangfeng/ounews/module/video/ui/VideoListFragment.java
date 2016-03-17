@@ -7,6 +7,7 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.Html;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -183,8 +184,13 @@ public class VideoListFragment extends BaseFragment<IVideoListPresenter> impleme
         mAdapter.setOnItemClickListener(new OnItemClickAdapter() {
             @Override
             public void onItemClick(View view, int position) {
+                final String mp4Url = mAdapter.getData().get(position).mp4Url;
+                if (TextUtils.isEmpty(mp4Url)){
+                    toast("此视频无播放网址哎╮(╯Д╰)╭");
+                    return;
+                }
                 Intent intent = new Intent(getActivity(), VideoPlayActivity.class);
-                intent.putExtra("videoUrl", mAdapter.getData().get(position).mp4Url);
+                intent.putExtra("videoUrl", mp4Url);
                 ActivityOptionsCompat options = ActivityOptionsCompat
                         .makeScaleUpAnimation(view, view.getWidth() / 2, view.getHeight() / 2, 0,
                                 0);
