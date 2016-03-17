@@ -76,10 +76,14 @@ public class RetrofitManager {
      * @return 实例
      */
     public static RetrofitManager getInstance(int hostType) {
-        if (mInstanceManager.get(hostType) == null) {
-            mInstanceManager.put(hostType, new RetrofitManager(hostType));
+        RetrofitManager instance = mInstanceManager.get(hostType);
+        if (instance == null) {
+            instance = new RetrofitManager(hostType);
+            mInstanceManager.put(hostType, instance);
+            return instance;
+        } else {
+            return instance;
         }
-        return mInstanceManager.get(hostType);
     }
 
     private RetrofitManager(@HostType.HostTypeChecker int hostType) {
