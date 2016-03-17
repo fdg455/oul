@@ -39,7 +39,7 @@ public class Daogenerator {
          */
         note.addIntProperty("newsChannelIndex").notNull();
         /**
-         * 频道是否固定的
+         * 频道是否是固定的
          */
         note.addBooleanProperty("newsChannelFixed");
     }

@@ -2,6 +2,7 @@ package com.oushangfeng.ounews.http.manager;
 
 
 import android.support.annotation.NonNull;
+import android.util.SparseArray;
 
 import com.oushangfeng.ounews.app.App;
 import com.oushangfeng.ounews.bean.NeteastNewsDetail;
@@ -58,20 +59,30 @@ public class RetrofitManager {
     //查询网络的Cache-Control设置，头部Cache-Control设为max-age=0时则不会使用缓存而请求服务器
     private static final String CACHE_CONTROL_NETWORK = "max-age=0";
 
-    private final NewsService mNewsService;
+    private NewsService mNewsService;
     private static volatile OkHttpClient mOkHttpClient;
 
+    // 管理不同HostType的单例
+    private static SparseArray<RetrofitManager> mInstanceManager = new SparseArray<>(
+            HostType.TYPE_COUNT);
+
+    private RetrofitManager() {
+    }
+
     /**
-     * 创建实例
+     * 获取单例
      *
      * @param hostType host类型
      * @return 实例
      */
-    public static RetrofitManager newInstance(HostType hostType) {
-        return new RetrofitManager(hostType);
+    public static RetrofitManager getInstance(int hostType) {
+        if (mInstanceManager.get(hostType) == null) {
+            mInstanceManager.put(hostType, new RetrofitManager(hostType));
+        }
+        return mInstanceManager.get(hostType);
     }
 
-    private RetrofitManager(HostType hostType) {
+    private RetrofitManager(@HostType.HostTypeChecker int hostType) {
 
         initOkHttpClient();
 
@@ -85,13 +96,9 @@ public class RetrofitManager {
     // 配置OkHttpClient
     private void initOkHttpClient() {
         if (mOkHttpClient == null) {
-
             synchronized (RetrofitManager.class) {
-
                 if (mOkHttpClient == null) {
-                    KLog.e("初始化mOkHttpClient");
-                    // 因为BaseUrl不同所以这里Retrofit不为静态，但是OkHttpClient配置是一样的,静态创建一次即可
-
+                    // OkHttpClient配置是一样的,静态创建一次即可
                     // 指定缓存路径,缓存大小100Mb
                     Cache cache = new Cache(new File(App.getContext().getCacheDir(), "HttpCache"),
                             1024 * 1024 * 100);
@@ -174,13 +181,13 @@ public class RetrofitManager {
      * @param hostType host类型
      * @return host
      */
-    private String getHost(HostType hostType) {
+    private String getHost(int hostType) {
         switch (hostType) {
-            case NETEASE_NEWS_VIDEO:
+            case HostType.NETEASE_NEWS_VIDEO:
                 return Api.NETEAST_HOST;
-            case SINANEWS_PHOTO:
+            case HostType.SINA_NEWS_PHOTO:
                 return Api.SINA_PHOTO_HOST;
-            case WEATHER_INFO:
+            case HostType.WEATHER_INFO:
                 return Api.WEATHER_HOST;
         }
         return "";

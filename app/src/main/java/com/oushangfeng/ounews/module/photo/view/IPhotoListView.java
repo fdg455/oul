@@ -16,6 +16,6 @@ import java.util.List;
  */
 public interface IPhotoListView extends BaseView {
 
-    void updatePhotoList(List<SinaPhotoList.DataEntity.PhotoListEntity> data,DataLoadType type);
+    void updatePhotoList(List<SinaPhotoList.DataEntity.PhotoListEntity> data, @DataLoadType.DataLoadTypeChecker int type);
 
 }

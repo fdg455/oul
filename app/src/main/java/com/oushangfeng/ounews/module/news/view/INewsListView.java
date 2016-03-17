@@ -16,6 +16,6 @@ import java.util.List;
  */
 public interface INewsListView extends BaseView {
 
-    void updateNewsList(List<NeteastNewsSummary> data, DataLoadType type);
+    void updateNewsList(List<NeteastNewsSummary> data,@DataLoadType.DataLoadTypeChecker int type);
 
 }

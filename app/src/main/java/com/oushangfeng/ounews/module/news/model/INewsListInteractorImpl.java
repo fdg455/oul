@@ -32,7 +32,7 @@ public class INewsListInteractorImpl implements INewsListInteractor<List<Neteast
     @Override
     public Subscription requestNewsList(final RequestCallback<List<NeteastNewsSummary>> callback,String type, final String id, int startPage) {
         KLog.e("新闻列表：" + type + ";" + id);
-        return RetrofitManager.newInstance(HostType.NETEASE_NEWS_VIDEO)
+        return RetrofitManager.getInstance(HostType.NETEASE_NEWS_VIDEO)
                 .getNewsListObservable(type, id, startPage)
                 .doOnSubscribe(new Action0() {
                     @Override

@@ -113,9 +113,9 @@ public class NewsListFragment extends BaseFragment<INewsListPresenter> implement
     }
 
     @Override
-    public void updateNewsList(final List<NeteastNewsSummary> data, DataLoadType type) {
+    public void updateNewsList(final List<NeteastNewsSummary> data, @DataLoadType.DataLoadTypeChecker int type) {
         switch (type) {
-            case TYPE_REFRESH_SUCCESS:
+            case DataLoadType.TYPE_REFRESH_SUCCESS:
                 mRefreshLayout.refreshFinish();
                 if (mAdapter == null) {
                     initNewsList(data);
@@ -127,10 +127,10 @@ public class NewsListFragment extends BaseFragment<INewsListPresenter> implement
                     mRecyclerView.notifyMoreLoaded();
                 }
                 break;
-            case TYPE_REFRESH_FAIL:
+            case DataLoadType.TYPE_REFRESH_FAIL:
                 mRefreshLayout.refreshFinish();
                 break;
-            case TYPE_LOAD_MORE_SUCCESS:
+            case DataLoadType.TYPE_LOAD_MORE_SUCCESS:
                 // 隐藏尾部加载
                 mAdapter.hideFooter();
                 if (data == null || data.size() == 0) {
@@ -141,7 +141,7 @@ public class NewsListFragment extends BaseFragment<INewsListPresenter> implement
                     mRecyclerView.notifyMoreLoaded();
                 }
                 break;
-            case TYPE_LOAD_MORE_FAIL:
+            case DataLoadType.TYPE_LOAD_MORE_FAIL:
                 mAdapter.hideFooter();
                 mRecyclerView.notifyMoreLoaded();
                 break;

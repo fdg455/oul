@@ -29,7 +29,7 @@ public class IVideoListInteractorImpl implements IVideoListInteractor<List<Netea
 
     @Override
     public Subscription requestVideoList(final RequestCallback<List<NeteastVideoSummary>> callback, final String id, int startPage) {
-        return RetrofitManager.newInstance(HostType.NETEASE_NEWS_VIDEO)
+        return RetrofitManager.getInstance(HostType.NETEASE_NEWS_VIDEO)
                 .getVideoListObservable(id, startPage).doOnSubscribe(new Action0() {
                     @Override
                     public void call() {

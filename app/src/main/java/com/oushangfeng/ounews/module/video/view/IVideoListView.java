@@ -16,6 +16,6 @@ import java.util.List;
  */
 public interface IVideoListView extends BaseView {
 
-    void updateVideoList(List<NeteastVideoSummary> data, DataLoadType type);
+    void updateVideoList(List<NeteastVideoSummary> data, @DataLoadType.DataLoadTypeChecker int type);
 
 }
