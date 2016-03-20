@@ -156,19 +156,19 @@ public class NewsDetailActivity extends BaseActivity<INewsDetailPresenter>
 
                 if (data.img.get(0).src.contains(".gif")) {
                     Glide.with(this).load(data.img.get(0).src).asGif()
-                            .placeholder(R.drawable.ic_loading_small_bg).error(R.drawable.ic_fail)
+                            .placeholder(R.drawable.ic_loading).error(R.drawable.ic_fail)
                             .diskCacheStrategy(DiskCacheStrategy.ALL).override(w, h)
                             .into(mNewsImageView);
                 } else {
                     Glide.with(this).load(data.img.get(0).src).asBitmap()
-                            .placeholder(R.drawable.ic_loading_small_bg)
+                            .placeholder(R.drawable.ic_loading)
                             .format(DecodeFormat.PREFER_ARGB_8888).error(R.drawable.ic_fail)
                             .diskCacheStrategy(DiskCacheStrategy.ALL).override(w, h)
                             .into(mNewsImageView);
                 }
             } else {
                 Glide.with(this).load(data.img.get(0).src).asBitmap()
-                        .placeholder(R.drawable.ic_loading_small_bg)
+                        .placeholder(R.drawable.ic_loading)
                         .format(DecodeFormat.PREFER_ARGB_8888)
                         .diskCacheStrategy(DiskCacheStrategy.ALL).error(R.drawable.ic_fail)
                         .into(mNewsImageView);
@@ -196,7 +196,7 @@ public class NewsDetailActivity extends BaseActivity<INewsDetailPresenter>
             // 图片详情列表没有数据的时候，取图片列表页面传送过来的图片显示
             mNewsImageView.setTag(R.id.img_tag, false);
             Glide.with(this).load(mNewsListSrc).asBitmap()
-                    .placeholder(R.drawable.ic_loading_small_bg)
+                    .placeholder(R.drawable.ic_loading)
                     .diskCacheStrategy(DiskCacheStrategy.ALL).format(DecodeFormat.PREFER_ARGB_8888)
                     .error(R.drawable.ic_fail).into(mNewsImageView);
         }

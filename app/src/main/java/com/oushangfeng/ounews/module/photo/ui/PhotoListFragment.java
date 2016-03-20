@@ -173,7 +173,7 @@ public class PhotoListFragment extends BaseFragment<IPhotoListPresenter> impleme
                 imageView.setLayoutParams(params);
 
                 Glide.with(getActivity()).load(item.kpic).asBitmap()
-                        .placeholder(R.drawable.ic_loading_small_bg).error(R.drawable.ic_fail)
+                        .placeholder(R.drawable.ic_loading).error(R.drawable.ic_fail)
                         .format(DecodeFormat.PREFER_ARGB_8888)
                         .diskCacheStrategy(DiskCacheStrategy.ALL).into(imageView);
 

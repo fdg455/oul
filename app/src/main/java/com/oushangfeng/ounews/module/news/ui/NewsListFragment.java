@@ -159,7 +159,7 @@ public class NewsListFragment extends BaseFragment<INewsListPresenter> implement
             public void bindData(BaseRecyclerViewHolder holder, int position, NeteastNewsSummary item) {
                 Glide.with(NewsListFragment.this.getActivity()).load(item.imgsrc).crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .placeholder(R.drawable.ic_loading_small_bg).error(R.drawable.ic_fail)
+                        .placeholder(R.drawable.ic_loading).error(R.drawable.ic_fail)
                         .into(holder.getImageView(R.id.iv_news_summary_photo));
                 holder.getTextView(R.id.tv_news_summary_title).setText(item.title);
                 holder.getTextView(R.id.tv_news_summary_digest).setText(item.digest);

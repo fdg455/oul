@@ -54,12 +54,12 @@ public class PhotoAdapter extends PagerAdapter {
 
         final String kpic = mPics.get(position).kpic;
         if (kpic.contains("gif")) {
-            Glide.with(mContext).load(kpic).asGif().placeholder(R.drawable.ic_loading_small_bg)
+            Glide.with(mContext).load(kpic).asGif().placeholder(R.drawable.ic_loading)
                     .error(R.drawable.ic_fail).diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(photoView);
             photoView.setZoomable(false);
         } else {
-            Glide.with(mContext).load(kpic).asBitmap().placeholder(R.drawable.ic_loading_small_bg)
+            Glide.with(mContext).load(kpic).asBitmap().placeholder(R.drawable.ic_loading)
                     .error(R.drawable.ic_fail).format(DecodeFormat.PREFER_ARGB_8888)
                     .diskCacheStrategy(DiskCacheStrategy.ALL).into(photoView);
             photoView.setZoomable(true);

@@ -34,7 +34,8 @@ import io.vov.vitamio.widget.VideoView;
  */
 @ActivityFragmentInject(contentViewId = R.layout.activity_video_play,
         enableSlidr = true)
-public class VideoPlayActivity extends BaseActivity<IVideoPlayPresenter> implements IVideoPlayView {
+public class VideoPlayActivity extends BaseActivity<IVideoPlayPresenter>
+        implements IVideoPlayView, View.OnTouchListener {
 
     private ThreePointLoadingView mLoadingView;
     private VideoView mVideoView;
@@ -62,7 +63,7 @@ public class VideoPlayActivity extends BaseActivity<IVideoPlayPresenter> impleme
         String videoUrl = getIntent().getStringExtra("videoUrl");
 
         mBgView = findViewById(R.id.rl_bg);
-        mBgView.setOnClickListener(this);
+        mBgView.setOnTouchListener(this);
 
         mLoadingView = (ThreePointLoadingView) findViewById(R.id.tpl_view);
         mLoadingView.setOnClickListener(this);
@@ -84,16 +85,8 @@ public class VideoPlayActivity extends BaseActivity<IVideoPlayPresenter> impleme
             mPlayController = new VideoPlayController(this, mVideoView, mBgView);
 
             mVideoView.requestFocus();
-            mVideoView.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    if (event.getAction() == MotionEvent.ACTION_UP) {
-                        // 解决与背景点击事件的冲突
-                        mBgView.performClick();
-                    }
-                    return true;
-                }
-            });
+            mVideoView.setOnTouchListener(this);
+
             mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mediaPlayer) {
@@ -106,7 +99,7 @@ public class VideoPlayActivity extends BaseActivity<IVideoPlayPresenter> impleme
                 public boolean onError(MediaPlayer mp, int what, int extra) {
                     hideProgress();
                     toast("视频播放出错了╮(╯Д╰)╭");
-                    return false;
+                    return true;
                 }
             });
         } else {
@@ -182,6 +175,37 @@ public class VideoPlayActivity extends BaseActivity<IVideoPlayPresenter> impleme
         // 保持屏幕比例正确
         mVideoView.setVideoLayout(VideoView.VIDEO_LAYOUT_SCALE, 0);
         mPlayController.hide();
+    }
+
+    float downX, downY;
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                downX = event.getX();
+                downY = event.getY();
+                break;
+            case MotionEvent.ACTION_MOVE:
+                if (Math.abs(downX - event.getX()) > 50 || Math.abs(downY - event.getY()) > 50) {
+                    // 移动超过一定距离，ACTION_UP取消这次事件
+                    downX = Integer.MAX_VALUE;
+                    downY = Integer.MAX_VALUE;
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                if (mPlayController != null && Math.abs(downX - event.getX()) <= 50 && Math
+                        .abs(downY - event.getY()) <= 50) {
+                    // 解决与背景点击事件的冲突
+                    if (mPlayController.isShowing()) {
+                        mPlayController.hide();
+                    } else {
+                        mPlayController.show();
+                    }
+                }
+                break;
+        }
+        return true;
     }
 
 }
