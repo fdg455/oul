@@ -92,17 +92,6 @@ public class NewsActivity extends BaseActivity<INewsPresenter> implements INewsV
                 BaseFragmentAdapter adapter = new BaseFragmentAdapter(getSupportFragmentManager(),
                         fragments, title);
                 viewPager.setAdapter(adapter);
-
-                // 23.2.0 TabLayout的一个Bug：对Tab做删减，二次调用setupWithViewPager报 Tab belongs to a different TabLayout，还有持有的sTabPool内存泄露
-                // 解决方法：https://code.google.com/p/android/issues/detail?id=201827
-                // sTabPool的size只有16，现在直接创建16个无用的tab存到sTabPool，因为sTabPool在TabLayout.removeAllTabs()调用release方法貌似是清空不了它持有的数据，
-                // 于是后面在tabLayout.setupWithViewPager时不会再被它重用导致 Tab belongs to a different TabLayout问题了
-                // 23.2.1 已经修复此bug
-                /*TabLayout.Tab uselessTab;
-                for (int j = 0; j < 16; j++) {
-                    uselessTab = tabLayout.newTab();
-                }*/
-
             } else {
                 final BaseFragmentAdapter adapter = (BaseFragmentAdapter) viewPager.getAdapter();
                 adapter.updateFragments(fragments, title);

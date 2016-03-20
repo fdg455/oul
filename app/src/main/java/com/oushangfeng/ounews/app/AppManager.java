@@ -21,7 +21,7 @@ public class AppManager {
     /**
      * 记录Activity的名称，我的思路是Activity用RxBus实现退出，这里用String记录Activity栈的情况而已
      */
-    private static SparseArray<String> mNavActivityOrder;
+    private SparseArray<String> mNavActivityOrder;
 
     private AppManager() {
     }
@@ -65,7 +65,6 @@ public class AppManager {
         }
         return Class.forName(mNavActivityOrder.get(mNavActivityOrder.size() - 1));
     }
-
 
     /**
      * 排序导航Activity，有跳转和返回键两种情况

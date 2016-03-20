@@ -5,10 +5,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?android:attr/itemBackground"
+
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".module.news.ui.NewsDetailActivity"
     tools:showIn="@layout/activity_news_detail">
+    <!--android:background="?android:attr/itemBackground"-->
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -50,7 +51,7 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textSize="16sp"
             android:textColor="?android:textColorPrimary"
-            tools:text="@string/large_text"/>
+            tools:text="@string/weather"/>
 
 
     </RelativeLayout>

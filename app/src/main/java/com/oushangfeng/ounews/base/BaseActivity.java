@@ -5,33 +5,37 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
 import com.oushangfeng.ounews.BuildConfig;
 import com.oushangfeng.ounews.R;
 import com.oushangfeng.ounews.annotation.ActivityFragmentInject;
 import com.oushangfeng.ounews.app.AppManager;
+import com.oushangfeng.ounews.callback.DrawerListenerAdapter;
 import com.oushangfeng.ounews.module.news.ui.NewsActivity;
 import com.oushangfeng.ounews.module.photo.ui.PhotoActivity;
 import com.oushangfeng.ounews.module.settings.ui.SettingsActivity;
 import com.oushangfeng.ounews.module.video.ui.VideoActivity;
 import com.oushangfeng.ounews.utils.GlideCircleTransform;
+import com.oushangfeng.ounews.utils.MeasureUtil;
 import com.oushangfeng.ounews.utils.RxBus;
 import com.oushangfeng.ounews.utils.SlidrUtil;
 import com.oushangfeng.ounews.utils.SpUtil;
+import com.oushangfeng.ounews.utils.ThemeUtil;
 import com.oushangfeng.ounews.utils.ViewUtil;
 import com.oushangfeng.ounews.utils.slidr.model.SlidrInterface;
 import com.socks.library.KLog;
@@ -202,10 +206,20 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
     }
 
     private void initToolbar() {
+
+        // 针对父布局非DrawerLayout的状态栏处理方式
+        // 设置toolbar上面的View实现类状态栏效果，这里是因为状态栏设置为透明的了，而默认背景是白色的，不设的话状态栏处就是白色
+        final View statusView = findViewById(R.id.status_view);
+        if (statusView != null) {
+            statusView.getLayoutParams().height = MeasureUtil.getStatusBarHeight(this);
+        }
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            }
             if (mToolbarTitle != -1) setToolbarTitle(mToolbarTitle);
             if (mToolbarIndicator != -1) {
                 setToolbarIndicator(mToolbarIndicator);
@@ -247,19 +261,47 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            // 为4.4透明状态栏布局延伸到状态栏做适配
-            mDrawerLayout.setFitsSystemWindows(false);
-            final CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(
-                    R.id.coordinator_layout);
-            if (coordinatorLayout != null) {
-                // CoordinatorLayout设为true才能把布局延伸到状态栏
-                coordinatorLayout.setFitsSystemWindows(true);
+        // 针对4.4和SettingsActivity(因为要做换肤，而状态栏在5.0是设置为透明的，若不这样处理换肤时状态栏颜色不会变化)
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT || this instanceof SettingsActivity) {
+
+            // 生成一个状态栏大小的矩形
+            View statusBarView = ViewUtil
+                    .createStatusView(this, ThemeUtil.getColor(this, R.attr.colorPrimary));
+            // 添加 statusBarView 到布局中
+            ViewGroup contentLayout = (ViewGroup) mDrawerLayout.getChildAt(0);
+            contentLayout.addView(statusBarView, 0);
+            // 内容布局不是 LinearLayout 时,设置margin或者padding top
+            final View view = contentLayout.getChildAt(1);
+            if (!(contentLayout instanceof LinearLayout) && view != null) {
+                if (view.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+                    ((ViewGroup.MarginLayoutParams) view.getLayoutParams()).topMargin += MeasureUtil
+                            .getStatusBarHeight(this);
+                } else {
+                    view.setPadding(0, MeasureUtil.getStatusBarHeight(this), 0, 0);
+                }
             }
+            // 设置属性
+            ViewGroup drawer = (ViewGroup) mDrawerLayout.getChildAt(1);
+            mDrawerLayout.setFitsSystemWindows(false);
+            contentLayout.setFitsSystemWindows(false);
+            contentLayout.setClipToPadding(true);
+            drawer.setFitsSystemWindows(false);
+
+            if (this instanceof SettingsActivity) {
+                // 因为要SettingsActivity做换肤，所以statusBarView也要设置
+                statusBarView.setTag("skin:primary:background");
+            }
+
+        } else if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+            // 5.0以上跟4.4统一，状态栏颜色和Toolbar的一致
+            mDrawerLayout
+                    .setStatusBarBackgroundColor(ThemeUtil.getColor(this, R.attr.colorPrimary));
         }
 
         mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
-        if (mMenuDefaultCheckedItem != -1) mNavigationView.setCheckedItem(mMenuDefaultCheckedItem);
+        if (mMenuDefaultCheckedItem != -1 && mNavigationView != null) {
+            mNavigationView.setCheckedItem(mMenuDefaultCheckedItem);
+        }
         mNavigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
@@ -279,7 +321,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
                                 mClass = SettingsActivity.class;
                                 break;
                         }
-                        mDrawerLayout.closeDrawer(Gravity.LEFT);
+                        mDrawerLayout.closeDrawer(GravityCompat.START);
                         return false;
                     }
                 });
@@ -287,21 +329,14 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
             @Override
             public void run() {
                 final ImageView imageView = (ImageView) BaseActivity.this.findViewById(R.id.avatar);
-                Glide.with(mNavigationView.getContext()).load(R.drawable.ic_header).crossFade()
-                        .transform(new GlideCircleTransform(mNavigationView.getContext()))
-                        .into(imageView);
+                if (imageView != null) {
+                    Glide.with(mNavigationView.getContext()).load(R.drawable.ic_header).crossFade()
+                            .transform(new GlideCircleTransform(mNavigationView.getContext()))
+                            .into(imageView);
+                }
             }
         });
-        mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
-            @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
-
-            }
-
-            @Override
-            public void onDrawerOpened(View drawerView) {
-
-            }
+        mDrawerLayout.addDrawerListener(new DrawerListenerAdapter() {
 
             @Override
             public void onDrawerClosed(View drawerView) {
@@ -309,11 +344,6 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
                     showActivityReorderToFront(BaseActivity.this, mClass, false);
                     mClass = null;
                 }
-            }
-
-            @Override
-            public void onDrawerStateChanged(int newState) {
-
             }
         });
 
@@ -332,7 +362,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
                             .equals(BaseActivity.this.getClass().getName())) {
                         //  切换皮肤的做法是设置页面通过鸿洋大大的不重启换肤，其他后台导航页面的统统干掉，跳转回去的时候，
                         //  因为用了FLAG_ACTIVITY_REORDER_TO_FRONT，发现栈中无之前的activity存在了，就重启设置了主题，
-                        // 这样一来就不会所有都做无重启去刷新控件造成的卡顿现象
+                        // 这样一来就不会所有Activity都做无重启刷新控件更该主题造成的卡顿现象
                         finish();
                     } else if (!themeChange) {
                         // 这个是入口新闻页面退出时发起的通知所有导航页面退出的事件
@@ -382,7 +412,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mDrawerLayout != null && item.getItemId() == android.R.id.home) {
-            mDrawerLayout.openDrawer(Gravity.LEFT);
+            mDrawerLayout.openDrawer(GravityCompat.START);
         } else if (item.getItemId() == android.R.id.home && mToolbarIndicator == -1) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 finishAfterTransition();
@@ -396,9 +426,9 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-            if (mDrawerLayout != null && mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
+            if (mDrawerLayout != null && mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
                 // 返回键时未关闭侧栏时关闭侧栏
-                mDrawerLayout.closeDrawer(Gravity.LEFT);
+                mDrawerLayout.closeDrawer(GravityCompat.START);
                 return true;
             } else if (!(this instanceof NewsActivity) && mHasNavigationView) {
                 try {
@@ -426,7 +456,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
     /**
      * 继承BaseView抽出显示信息通用行为
      *
-     * @param msg
+     * @param msg 信息
      */
     @Override
     public void toast(String msg) {

@@ -2,13 +2,13 @@
 <android.support.v4.widget.DrawerLayout
     android:id="@+id/drawer_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorPrimary"
+
     android:fitsSystemWindows="true"
     tools:context=".module.photo.ui.PhotoActivity">
+    <!--android:background="?attr/colorPrimary"-->
     <!--根布局设置颜色是为了让4.4沉浸式并配合v19\styles.xml做出透明状态栏，侧滑view在导航栏之上不被遮挡的效果，所以其自布局需要设置背景色-->
 
     <android.support.design.widget.CoordinatorLayout
@@ -24,27 +24,6 @@
             <include layout="@layout/include_toolbar"/>
 
             <include layout="@layout/include_tablayout"/>
-
-            <!--<android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
-                app:layout_scrollFlags="scroll|enterAlways"
-                app:popupTheme="@style/AppTheme.PopupOverlay"
-                app:theme="@style/ToolbarTheme"/>
-
-            <android.support.design.widget.TabLayout
-                android:id="@+id/tabs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/colorPrimary"
-                app:tabGravity="fill"
-                app:tabIndicatorColor="@color/material_white"
-                app:tabMode="fixed"
-                app:tabSelectedTextColor="@color/material_white"
-                app:tabTextColor="@color/material_grey_300"
-                tools:ignore="PrivateResource"/>-->
 
         </android.support.design.widget.AppBarLayout>
 

@@ -5,16 +5,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorPrimary"
-    android:fitsSystemWindows="true"
-    tools:context=".module.news.ui.NewsChannelActivity">
+    android:background="?attr/backgroundColor"
+    tools:context=".module.news.ui.NewsChannelActivity"><!--必须绘制背景了，因为侧滑的主题背景都是透明的-->
+    <!--android:background="?attr/colorPrimary"
+    android:fitsSystemWindows="true"-->
+
+    <include layout="@layout/include_status_view"/>
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
+        android:layout_below="@+id/status_view"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
-        android:fitsSystemWindows="true"
+        android:fitsSystemWindows="false"
         app:popupTheme="@style/AppTheme.PopupOverlay"
         app:theme="@style/ToolbarTheme"/>
 
@@ -23,21 +27,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/toolbar"
-        android:background="?attr/backgroundColor"
+
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:paddingTop="8dp"
         android:text="我的频道  点击增删频道，长按拖拽进行排序"
         android:textColor="?android:attr/textColorSecondary"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+    <!--android:background="?attr/backgroundColor"-->
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tv_my_channel"
-        android:background="?attr/backgroundColor"
+
         android:overScrollMode="never"/>
+    <!--android:background="?attr/backgroundColor"-->
 
     <TextView
         android:id="@+id/tv_more_channel"
@@ -46,19 +52,21 @@
         android:layout_below="@+id/recycler_view"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:background="?attr/backgroundColor"
+
         android:textColor="?android:attr/textColorSecondary"
         android:paddingTop="4dp"
         android:text="更多频道"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+    <!--android:background="?attr/backgroundColor"-->
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/tv_more_channel"
-        android:background="?attr/backgroundColor"
+
         android:overScrollMode="never"/>
+    <!--android:background="?attr/backgroundColor"-->
     <!--android:overScrollMode="never"把阴影干掉-->
 
 </RelativeLayout>

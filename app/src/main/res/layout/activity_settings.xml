@@ -6,18 +6,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/primary"
+
     android:fitsSystemWindows="true"
-    android:tag="skin:primary:background"
+
     tools:context=".module.settings.ui.SettingsActivity">
+    <!--android:background="@color/primary"android:tag="skin:primary:background"-->
     <!--根布局设置颜色是为了让4.4沉浸式并配合v19\styles.xml做出透明状态栏，侧滑view在导航栏之上不被遮挡的效果，所以其自布局需要设置背景色-->
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/primary"
-        android:fitsSystemWindows="true"
-        android:tag="skin:primary:background">
+
+        android:fitsSystemWindows="true">
+        <!--android:background="@color/primary"android:tag="skin:primary:background"-->
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"

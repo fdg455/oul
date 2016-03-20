@@ -1,7 +1,6 @@
 package com.oushangfeng.ounews.module.settings.ui;
 
 import android.content.res.ColorStateList;
-import android.content.res.TypedArray;
 import android.os.Build;
 import android.view.View;
 import android.widget.CheckedTextView;
@@ -16,6 +15,7 @@ import com.oushangfeng.ounews.module.settings.view.ISettingsView;
 import com.oushangfeng.ounews.utils.ClickUtils;
 import com.oushangfeng.ounews.utils.RxBus;
 import com.oushangfeng.ounews.utils.SpUtil;
+import com.oushangfeng.ounews.utils.ThemeUtil;
 import com.oushangfeng.ounews.utils.ViewUtil;
 import com.zhy.changeskin.SkinManager;
 
@@ -120,10 +120,8 @@ public class SettingsActivity extends BaseActivity<ISettingsPresenter> implement
     // 因为这里是通过鸿洋大神的换肤做的，而CheckedTextView着色不兼容5.0以下，
     // 所以切换皮肤的时候动态加载当前主题自定义的ColorStateList，对CheckMarkDrawable进行着色
     private void applyTint(CheckedTextView checkedTextView) {
-        int[] attrs = {R.attr.checkTextViewColorStateList};
-        TypedArray ta = getTheme().obtainStyledAttributes(attrs);
-        ColorStateList indicator = ta.getColorStateList(0);
-        ta.recycle();
+        ColorStateList indicator = ThemeUtil
+                .getColorStateList(this, R.attr.checkTextViewColorStateList);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             checkedTextView.setCheckMarkTintList(indicator);
         } else {

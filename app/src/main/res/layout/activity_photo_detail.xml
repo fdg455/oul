@@ -5,20 +5,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorPrimary"
-    android:fitsSystemWindows="true"
+
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.oushangfeng.ounews.module.photo.ui.PhotoDetailActivity">
+    <!--android:fitsSystemWindows="true" android:background="?attr/colorPrimary"-->
+
+    <include layout="@layout/include_status_view"/>
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        android:layout_below="@+id/status_view"
         android:background="?attr/colorPrimary"
-        android:fitsSystemWindows="true"
+        android:fitsSystemWindows="false"
         app:popupTheme="@style/AppTheme.PopupOverlay"
         app:theme="@style/ToolbarTheme"/>
 
