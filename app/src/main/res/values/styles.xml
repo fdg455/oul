@@ -49,7 +49,7 @@
 
 
     <style name="BaseAppTheme.AppTheme">
-        <item name="android:windowAnimationStyle">@style/noAnimation</item>
+       <!-- <item name="android:windowAnimationStyle">@style/noAnimation</item>-->
     </style>
 
     <style name="BaseAppTheme.SlidrTheme">
@@ -105,7 +105,7 @@
     </style>
 
     <style name="BaseAppThemeNight.AppTheme">
-        <item name="android:windowAnimationStyle">@style/noAnimation</item>
+        <!--<item name="android:windowAnimationStyle">@style/noAnimation</item>-->
     </style>
 
     <style name="BaseAppThemeNight.SlidrTheme">
@@ -147,13 +147,13 @@
 
     <!--去掉所有跳转动画-->
     <style name="noAnimation">
-        <item name="android:activityOpenEnterAnimation">@null</item>
-        <item name="android:activityOpenExitAnimation">@null</item>
-        <item name="android:activityCloseEnterAnimation">@null</item>
-        <item name="android:activityCloseExitAnimation">@null</item>
-        <item name="android:taskOpenEnterAnimation">@null</item>
-        <item name="android:taskOpenExitAnimation">@null</item>
-        <item name="android:taskCloseEnterAnimation">@null</item>
+        <item name="android:activityOpenEnterAnimation">@null</item><!--当启动一个新的界面时，启动的界面使用的动画（进入屏幕）-->
+        <item name="android:activityOpenExitAnimation">@null</item><!--当启动一个新的界面时，之前的界面使用的动画（退出屏幕）-->
+        <item name="android:activityCloseEnterAnimation">@null</item><!--当关闭当前的界面时,进来的界面使用的动画（进入屏幕）-->
+        <item name="android:activityCloseExitAnimation">@null</item><!--当关闭当前的界面时,当前关闭的界面使用的动画（退出屏幕）-->
+        <item name="android:taskOpenEnterAnimation">@null</item><!--当在新的栈启动界面，新的栈启动的界面使用的动画（进入屏幕）-->
+        <item name="android:taskOpenExitAnimation">@null</item><!--当在新的栈启动界面，旧的栈的界面使用的动画（退出屏幕）-->
+        <item name="android:taskCloseEnterAnimation">@null</item><!---->
         <item name="android:taskCloseExitAnimation">@null</item>
         <item name="android:taskToFrontEnterAnimation">@null</item>
         <item name="android:taskToFrontExitAnimation">@null</item>

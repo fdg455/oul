@@ -44,6 +44,9 @@ public class VideoPlayActivity extends BaseActivity<IVideoPlayPresenter>
     private VideoPlayController mPlayController;
     private BroadcastReceiver mBatInfoReceiver;
 
+    private float mDownX;
+    private float mDownY;
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -177,25 +180,23 @@ public class VideoPlayActivity extends BaseActivity<IVideoPlayPresenter>
         mPlayController.hide();
     }
 
-    float downX, downY;
-
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                downX = event.getX();
-                downY = event.getY();
+                mDownX = event.getX();
+                mDownY = event.getY();
                 break;
             case MotionEvent.ACTION_MOVE:
-                if (Math.abs(downX - event.getX()) > 50 || Math.abs(downY - event.getY()) > 50) {
+                if (Math.abs(mDownX - event.getX()) > 50 || Math.abs(mDownY - event.getY()) > 50) {
                     // 移动超过一定距离，ACTION_UP取消这次事件
-                    downX = Integer.MAX_VALUE;
-                    downY = Integer.MAX_VALUE;
+                    mDownX = Integer.MAX_VALUE;
+                    mDownY = Integer.MAX_VALUE;
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                if (mPlayController != null && Math.abs(downX - event.getX()) <= 50 && Math
-                        .abs(downY - event.getY()) <= 50) {
+                if (mPlayController != null && Math.abs(mDownX - event.getX()) <= 50 && Math
+                        .abs(mDownY - event.getY()) <= 50) {
                     // 解决与背景点击事件的冲突
                     if (mPlayController.isShowing()) {
                         mPlayController.hide();

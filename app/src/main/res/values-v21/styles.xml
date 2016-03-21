@@ -2,7 +2,7 @@
 
     <style name="BaseAppTheme.AppTheme">
 
-        <item name="android:windowAnimationStyle">@style/noAnimation</item>
+        <!--<item name="android:windowAnimationStyle">@style/noAnimation</item>-->
 
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -38,7 +38,7 @@
 
     <style name="BaseAppThemeNight.AppTheme">
 
-        <item name="android:windowAnimationStyle">@style/noAnimation</item>
+        <!--<item name="android:windowAnimationStyle">@style/noAnimation</item>-->
 
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

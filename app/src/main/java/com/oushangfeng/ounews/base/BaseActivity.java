@@ -178,6 +178,10 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
+        if (mHasNavigationView) {
+            KLog.e("FLAG_ACTIVITY_REORDER_TO_FRONT标志位的重新排序去除动画");
+            overridePendingTransition(0, 0);
+        }
     }
 
     @Override

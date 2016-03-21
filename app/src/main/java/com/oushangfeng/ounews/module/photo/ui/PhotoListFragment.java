@@ -18,10 +18,10 @@ import com.oushangfeng.ounews.annotation.ActivityFragmentInject;
 import com.oushangfeng.ounews.base.BaseFragment;
 import com.oushangfeng.ounews.base.BaseRecyclerAdapter;
 import com.oushangfeng.ounews.base.BaseRecyclerViewHolder;
+import com.oushangfeng.ounews.base.BaseSpacesItemDecoration;
 import com.oushangfeng.ounews.bean.SinaPhotoList;
 import com.oushangfeng.ounews.callback.OnItemClickAdapter;
 import com.oushangfeng.ounews.common.DataLoadType;
-import com.oushangfeng.ounews.base.BaseSpacesItemDecoration;
 import com.oushangfeng.ounews.module.photo.presenter.IPhotoListPresenter;
 import com.oushangfeng.ounews.module.photo.presenter.IPhotoListPresenterImpl;
 import com.oushangfeng.ounews.module.photo.view.IPhotoListView;
@@ -187,6 +187,7 @@ public class PhotoListFragment extends BaseFragment<IPhotoListPresenter> impleme
                 KLog.e(mAdapter.getData().get(position).title + ";" + mAdapter.getData()
                         .get(position).id);
 
+                view = view.findViewById(R.id.iv_photo_summary);
                 Intent intent = new Intent(getActivity(), PhotoDetailActivity.class);
                 intent.putExtra("photoId", mAdapter.getData().get(position).id);
                 //让新的Activity从一个小的范围扩大到全屏

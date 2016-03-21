@@ -7,6 +7,7 @@ package com.oushangfeng.ounews.utils.slidr.widget;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewGroupCompat;
 import android.support.v4.widget.ViewDragHelper;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.oushangfeng.ounews.utils.slidr.model.SlidrConfig;
+import com.socks.library.KLog;
 
 
 /**
@@ -223,6 +225,23 @@ public class SliderPanel extends FrameLayout {
         return true;
     }
 
+    @Override
+    protected void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        swapHeightAndWidth();
+        KLog.e("屏幕翻转了，重新设置宽高:" + mScreenWidth + ";" + mScreenHeight);
+    }
+
+    /**
+     * 交换两个值
+     */
+    private void swapHeightAndWidth() {
+        if (mScreenHeight != mScreenWidth) {
+            mScreenWidth ^= mScreenHeight;
+            mScreenHeight ^= mScreenWidth;
+            mScreenWidth ^= mScreenHeight;
+        }
+    }
 
     @Override
     public void computeScroll() {
