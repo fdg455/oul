@@ -27,7 +27,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme">
+            android:theme="@style/BaseAppTheme.LauncherAppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

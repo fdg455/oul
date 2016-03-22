@@ -52,6 +52,11 @@
        <!-- <item name="android:windowAnimationStyle">@style/noAnimation</item>-->
     </style>
 
+    <style name="BaseAppTheme.LauncherAppTheme">
+        <!--<item name="android:windowAnimationStyle">@style/noAnimation</item>-->
+        <item name="android:windowBackground">@drawable/ic_launcher_bg</item>
+    </style>
+
     <style name="BaseAppTheme.SlidrTheme">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
@@ -106,6 +111,11 @@
 
     <style name="BaseAppThemeNight.AppTheme">
         <!--<item name="android:windowAnimationStyle">@style/noAnimation</item>-->
+    </style>
+
+    <style name="BaseAppThemeNight.LauncherAppTheme">
+        <!--<item name="android:windowAnimationStyle">@style/noAnimation</item>-->
+        <item name="android:windowBackground">@drawable/ic_launcher_bg</item>
     </style>
 
     <style name="BaseAppThemeNight.SlidrTheme">

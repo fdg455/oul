@@ -147,7 +147,10 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
             SkinManager.getInstance().register(this);
         }
 
-        if (!mEnableSlidr && mHasNavigationView) {
+        if (this instanceof NewsActivity) {
+            setTheme(SpUtil.readBoolean(
+                    "enableNightMode") ? R.style.BaseAppThemeNight_LauncherAppTheme : R.style.BaseAppTheme_LauncherAppTheme);
+        } else if (!mEnableSlidr && mHasNavigationView) {
             setTheme(SpUtil.readBoolean(
                     "enableNightMode") ? R.style.BaseAppThemeNight_AppTheme : R.style.BaseAppTheme_AppTheme);
         } else {

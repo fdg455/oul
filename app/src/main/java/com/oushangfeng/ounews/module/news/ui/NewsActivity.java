@@ -51,6 +51,9 @@ public class NewsActivity extends BaseActivity<INewsPresenter> implements INewsV
     @Override
     protected void initView() {
 
+        // 设了默认的windowBackground使得冷启动没那么突兀，这里再设置为空减少过度绘制
+        getWindow().setBackgroundDrawable(null);
+
         AppManager.getAppManager().orderNavActivity(getClass().getName(), false);
 
         mPresenter = new INewsPresenterImpl(this);
