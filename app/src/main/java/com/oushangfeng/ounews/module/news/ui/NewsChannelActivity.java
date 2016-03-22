@@ -11,14 +11,15 @@ import android.widget.TextView;
 import com.oushangfeng.ounews.R;
 import com.oushangfeng.ounews.annotation.ActivityFragmentInject;
 import com.oushangfeng.ounews.base.BaseActivity;
+import com.oushangfeng.ounews.base.BaseSpacesItemDecoration;
 import com.oushangfeng.ounews.callback.OnItemClickAdapter;
 import com.oushangfeng.ounews.callback.SimpleItemTouchHelperCallback;
-import com.oushangfeng.ounews.base.BaseSpacesItemDecoration;
 import com.oushangfeng.ounews.greendao.NewsChannelTable;
 import com.oushangfeng.ounews.module.news.presenter.INewsChannelPresenter;
 import com.oushangfeng.ounews.module.news.presenter.INewsChannelPresenterImpl;
 import com.oushangfeng.ounews.module.news.ui.adapter.NewsChannelAdapter;
 import com.oushangfeng.ounews.module.news.view.INewsChannelView;
+import com.oushangfeng.ounews.utils.ClickUtils;
 import com.oushangfeng.ounews.utils.MeasureUtil;
 import com.oushangfeng.ounews.utils.TextViewUtil;
 
@@ -110,6 +111,11 @@ public class NewsChannelActivity extends BaseActivity<INewsChannelPresenter>
         mRecyclerAdapter1.setOnItemClickListener(new OnItemClickAdapter() {
             @Override
             public void onItemClick(View view, int position) {
+
+                if (ClickUtils.isFastDoubleClick()){
+                    return;
+                }
+
                 if (!mRecyclerAdapter1.getData().get(position).getNewsChannelFixed()) {
                     // 点击我的频道，不是固定的就删除，更多频道添加
 
@@ -129,6 +135,11 @@ public class NewsChannelActivity extends BaseActivity<INewsChannelPresenter>
         mRecyclerAdapter2.setOnItemClickListener(new OnItemClickAdapter() {
             @Override
             public void onItemClick(View view, int position) {
+
+                if (ClickUtils.isFastDoubleClick()){
+                    return;
+                }
+
                 // 点击更多频道，更多频道删除，我的频道添加
 
                 // 通知代理把频道添加到数据库

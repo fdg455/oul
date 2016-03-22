@@ -26,6 +26,7 @@ import com.oushangfeng.ounews.module.news.presenter.INewsListPresenter;
 import com.oushangfeng.ounews.module.news.presenter.INewsListPresenterImpl;
 import com.oushangfeng.ounews.module.news.view.INewsListView;
 import com.oushangfeng.ounews.module.photo.ui.PhotoDetailActivity;
+import com.oushangfeng.ounews.utils.ClickUtils;
 import com.oushangfeng.ounews.utils.MeasureUtil;
 import com.oushangfeng.ounews.widget.AutoLoadMoreRecyclerView;
 import com.oushangfeng.ounews.widget.ThreePointLoadingView;
@@ -157,9 +158,9 @@ public class NewsListFragment extends BaseFragment<INewsListPresenter> implement
 
             @Override
             public void bindData(BaseRecyclerViewHolder holder, int position, NeteastNewsSummary item) {
-                Glide.with(NewsListFragment.this.getActivity()).load(item.imgsrc).crossFade()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .placeholder(R.drawable.ic_loading).error(R.drawable.ic_fail)
+                Glide.with(getActivity()).load(item.imgsrc).asBitmap().animate(R.anim.image_load)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.ic_loading)
+                        .error(R.drawable.ic_fail)
                         .into(holder.getImageView(R.id.iv_news_summary_photo));
                 holder.getTextView(R.id.tv_news_summary_title).setText(item.title);
                 holder.getTextView(R.id.tv_news_summary_digest).setText(item.digest);
@@ -170,6 +171,11 @@ public class NewsListFragment extends BaseFragment<INewsListPresenter> implement
         mAdapter.setOnItemClickListener(new OnItemClickAdapter() {
             @Override
             public void onItemClick(View view, int position) {
+
+                if (ClickUtils.isFastDoubleClick()){
+                    return;
+                }
+
                 // imgextra不为空的话，无新闻内容，直接打开图片浏览
                 KLog.e(mAdapter.getData().get(position).title + ";" + mAdapter.getData()
                         .get(position).postid);

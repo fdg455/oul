@@ -20,13 +20,14 @@ import com.oushangfeng.ounews.annotation.ActivityFragmentInject;
 import com.oushangfeng.ounews.base.BaseFragment;
 import com.oushangfeng.ounews.base.BaseRecyclerAdapter;
 import com.oushangfeng.ounews.base.BaseRecyclerViewHolder;
+import com.oushangfeng.ounews.base.BaseSpacesItemDecoration;
 import com.oushangfeng.ounews.bean.NeteastVideoSummary;
 import com.oushangfeng.ounews.callback.OnItemClickAdapter;
 import com.oushangfeng.ounews.common.DataLoadType;
-import com.oushangfeng.ounews.base.BaseSpacesItemDecoration;
 import com.oushangfeng.ounews.module.video.presenter.IVideoListPresenter;
 import com.oushangfeng.ounews.module.video.presenter.IVideoListPresenterImpl;
 import com.oushangfeng.ounews.module.video.view.IVideoListView;
+import com.oushangfeng.ounews.utils.ClickUtils;
 import com.oushangfeng.ounews.utils.MeasureUtil;
 import com.oushangfeng.ounews.widget.AutoLoadMoreRecyclerView;
 import com.oushangfeng.ounews.widget.ThreePointLoadingView;
@@ -184,6 +185,11 @@ public class VideoListFragment extends BaseFragment<IVideoListPresenter> impleme
         mAdapter.setOnItemClickListener(new OnItemClickAdapter() {
             @Override
             public void onItemClick(View view, int position) {
+
+                if (ClickUtils.isFastDoubleClick()){
+                    return;
+                }
+
                 final String mp4Url = mAdapter.getData().get(position).mp4Url;
                 if (TextUtils.isEmpty(mp4Url)){
                     toast("此视频无播放网址哎╮(╯Д╰)╭");

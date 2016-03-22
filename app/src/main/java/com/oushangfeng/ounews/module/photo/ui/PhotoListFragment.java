@@ -25,6 +25,7 @@ import com.oushangfeng.ounews.common.DataLoadType;
 import com.oushangfeng.ounews.module.photo.presenter.IPhotoListPresenter;
 import com.oushangfeng.ounews.module.photo.presenter.IPhotoListPresenterImpl;
 import com.oushangfeng.ounews.module.photo.view.IPhotoListView;
+import com.oushangfeng.ounews.utils.ClickUtils;
 import com.oushangfeng.ounews.utils.MeasureUtil;
 import com.oushangfeng.ounews.widget.AutoLoadMoreRecyclerView;
 import com.oushangfeng.ounews.widget.ThreePointLoadingView;
@@ -184,6 +185,11 @@ public class PhotoListFragment extends BaseFragment<IPhotoListPresenter> impleme
         mAdapter.setOnItemClickListener(new OnItemClickAdapter() {
             @Override
             public void onItemClick(View view, int position) {
+
+                if (ClickUtils.isFastDoubleClick()){
+                    return;
+                }
+
                 KLog.e(mAdapter.getData().get(position).title + ";" + mAdapter.getData()
                         .get(position).id);
 

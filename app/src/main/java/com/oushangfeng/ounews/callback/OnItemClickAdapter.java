@@ -2,6 +2,8 @@ package com.oushangfeng.ounews.callback;
 
 import android.view.View;
 
+import com.oushangfeng.ounews.utils.ClickUtils;
+
 /**
  * ClassName: OnItemClickAdapter<p>
  * Author:oubowu<p>
