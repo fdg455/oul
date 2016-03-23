@@ -54,6 +54,7 @@
 
     <style name="BaseAppTheme.LauncherAppTheme">
         <!--<item name="android:windowAnimationStyle">@style/noAnimation</item>-->
+        <item name="android:windowFullscreen">true</item>
         <item name="android:windowBackground">@drawable/ic_launcher_bg</item>
     </style>
 
@@ -115,6 +116,7 @@
 
     <style name="BaseAppThemeNight.LauncherAppTheme">
         <!--<item name="android:windowAnimationStyle">@style/noAnimation</item>-->
+        <item name="android:windowFullscreen">true</item>
         <item name="android:windowBackground">@drawable/ic_launcher_bg</item>
     </style>
 
