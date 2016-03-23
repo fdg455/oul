@@ -17,6 +17,8 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     private final OnMoveAndSwipeListener mAdapter;
 
+    private boolean mIsLongPressDragEnabled = true;
+
     public interface OnMoveAndSwipeListener {
         boolean onItemMove(int fromPosition, int toPosition);
 
@@ -61,8 +63,6 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
         }
 
     }
-
-    private boolean mIsLongPressDragEnabled = true;
 
     public void setLongPressDragEnabled(boolean enable) {
         mIsLongPressDragEnabled = enable;
@@ -132,13 +132,13 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
      */
     @Override
     public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+        super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
         if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
             //根据侧滑的位移来修改item的透明度
             final float alpha = 1 - Math.abs(dX) / (float) viewHolder.itemView.getWidth();
             viewHolder.itemView.setAlpha(alpha);
             viewHolder.itemView.setTranslationX(dX);
         }
-        super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
     }
 
 }

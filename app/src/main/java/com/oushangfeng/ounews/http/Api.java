@@ -33,18 +33,6 @@ public class Api {
 
     public static final String OTHER_TYPE = "list";
 
-    public static String getType(String id) {
-        switch (id) {
-            case HEADLINE_ID:
-                return HEADLINE_TYPE;
-            case HOUSE_ID:
-                return HOUSE_TYPE;
-            default:
-                break;
-        }
-        return OTHER_TYPE;
-    }
-
     // 足球
     public static final String FOOTBALL_ID = "T1399700447917";
     // 娱乐
@@ -140,5 +128,40 @@ public class Api {
 
     // 图片详情
     public static final String SINA_PHOTO_DETAIL_ID = "hdpic_hdpic_toutiao_4";
+
+    /**
+     * 新闻类别获取类型
+     * @param id
+     * @return
+     */
+    public static String getType(String id) {
+        switch (id) {
+            case HEADLINE_ID:
+                return HEADLINE_TYPE;
+            case HOUSE_ID:
+                return HOUSE_TYPE;
+            default:
+                break;
+        }
+        return OTHER_TYPE;
+    }
+
+    /**
+     * 获取对应的host
+     *
+     * @param hostType host类型
+     * @return host
+     */
+    public static String getHost(int hostType) {
+        switch (hostType) {
+            case HostType.NETEASE_NEWS_VIDEO:
+                return Api.NETEAST_HOST;
+            case HostType.SINA_NEWS_PHOTO:
+                return Api.SINA_PHOTO_HOST;
+            case HostType.WEATHER_INFO:
+                return Api.WEATHER_HOST;
+        }
+        return "";
+    }
 
 }

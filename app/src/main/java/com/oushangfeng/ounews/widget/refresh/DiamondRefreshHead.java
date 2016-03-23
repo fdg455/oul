@@ -62,7 +62,6 @@ public class DiamondRefreshHead extends RefreshHead {
         init();
     }
 
-
     /**
      * 初始化
      */
@@ -131,7 +130,6 @@ public class DiamondRefreshHead extends RefreshHead {
     protected void onDraw(Canvas canvas) {
 
         // KLog.e("alpha: " + mAlpha);
-
 
         // 绘制第一组方块矩阵
         mPaint.setColor(ContextCompat.getColor(getContext(), R.color.material_green_a700));
@@ -240,13 +238,7 @@ public class DiamondRefreshHead extends RefreshHead {
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         // 销毁时移除动画
-        if (mLoadingAnimator != null && mLoadingAnimator.isRunning()) {
-            mLoadingAnimator.removeAllUpdateListeners();
-            mLoadingAnimator.removeAllListeners();
-            mLoadingAnimator.cancel();
-        }
-        mLoadingOffset = 0;
-        mAlpha = 255;
+        stopAnimator();
     }
 
     @Override
@@ -263,13 +255,7 @@ public class DiamondRefreshHead extends RefreshHead {
 
     @Override
     public void performLoaded() {
-        if (mLoadingAnimator != null && mLoadingAnimator.isRunning()) {
-            mLoadingAnimator.removeAllUpdateListeners();
-            mLoadingAnimator.removeAllListeners();
-            mLoadingAnimator.cancel();
-        }
-        mLoadingOffset = 0;
-        mAlpha = 255;
+        stopAnimator();
         postInvalidate();
     }
 
@@ -281,17 +267,31 @@ public class DiamondRefreshHead extends RefreshHead {
         mLoadingAnimator = new ValueAnimator();
         mLoadingAnimator.setIntValues(0, mCubeSize * 2);
         mLoadingAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator animation) {
-                        mLoadingOffset = (int) animation.getAnimatedValue();
-                        mAlpha = (int) (255 * (1 - animation.getAnimatedFraction() / 1.5));
-                        postInvalidate();
-                    }
-                });
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                mLoadingOffset = (int) animation.getAnimatedValue();
+                mAlpha = (int) (255 * (1 - animation.getAnimatedFraction() / 1.5));
+                postInvalidate();
+            }
+        });
         mLoadingAnimator.setDuration(300);
         mLoadingAnimator.setRepeatCount(ValueAnimator.INFINITE);
         mLoadingAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
         mLoadingAnimator.setRepeatMode(ValueAnimator.REVERSE);
         mLoadingAnimator.start();
     }
+
+    /**
+     * 停止动画
+     */
+    private void stopAnimator() {
+        if (mLoadingAnimator != null && mLoadingAnimator.isRunning()) {
+            mLoadingAnimator.removeAllUpdateListeners();
+            mLoadingAnimator.removeAllListeners();
+            mLoadingAnimator.cancel();
+        }
+        mLoadingOffset = 0;
+        mAlpha = 255;
+    }
+
 }

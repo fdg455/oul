@@ -12,5 +12,4 @@ import com.oushangfeng.ounews.base.BasePresenter;
  */
 public interface INewsDetailPresenter extends BasePresenter {
 
-
 }

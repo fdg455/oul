@@ -48,9 +48,9 @@ public class ViewUtil {
 
     /**
      * Drawable 着色的后向兼容方案
-     * @param drawable
-     * @param colors
-     * @return
+     * @param drawable Drawable
+     * @param colors 颜色状态列表
+     * @return Drawable
      */
     public static Drawable tintDrawable(Drawable drawable, ColorStateList colors) {
         final Drawable wrappedDrawable = DrawableCompat.wrap(drawable);
@@ -87,11 +87,11 @@ public class ViewUtil {
     }
 
     /**
-     * 动态修改tab的模式
+     * 根据Tab合起来的长度动态修改tab的模式
      *
-     * @param tabLayout
+     * @param tabLayout TabLayout
      */
-    public static void dynamicSetTablayoutMode(TabLayout tabLayout) {
+    public static void dynamicSetTabLayoutMode(TabLayout tabLayout) {
         int tabTotalWidth = 0;
         for (int i = 0; i < tabLayout.getChildCount(); i++) {
             final View view = tabLayout.getChildAt(i);
@@ -110,7 +110,7 @@ public class ViewUtil {
     /**
      * 解决InputMethodManager内存泄露现象
      *
-     * @param destContext
+     * @param destContext 上下文
      */
     public static void fixInputMethodManagerLeak(Context destContext) {
         if (destContext == null) {

@@ -16,7 +16,7 @@ import com.socks.library.KLog;
  */
 public class AppManager {
 
-    private static volatile AppManager mInstance;
+    private static volatile AppManager sInstance;
 
     /**
      * 记录Activity的名称，我的思路是Activity用RxBus实现退出，这里用String记录Activity栈的情况而已
@@ -30,14 +30,14 @@ public class AppManager {
      * 单一实例
      */
     public static AppManager getAppManager() {
-        if (mInstance == null) {
+        if (sInstance == null) {
             synchronized (AppManager.class) {
-                if (mInstance == null) {
-                    mInstance = new AppManager();
+                if (sInstance == null) {
+                    sInstance = new AppManager();
                 }
             }
         }
-        return mInstance;
+        return sInstance;
     }
 
     /**

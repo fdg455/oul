@@ -30,10 +30,11 @@ import uk.co.senab.photoview.PhotoViewAttacher;
  */
 public class PhotoAdapter extends PagerAdapter {
 
-    private final int mWidth;
-
-    private List<SinaPhotoDetail.SinaPhotoDetailPicsEntity> mPics;
     private Context mContext;
+    private final int mWidth;
+    private List<SinaPhotoDetail.SinaPhotoDetailPicsEntity> mPics;
+
+    private OnPhotoExpandListener mOnPhotoExpandListener;
 
     public PhotoAdapter(Context context, List<SinaPhotoDetail.SinaPhotoDetailPicsEntity> pics) {
         mPics = pics == null ? new ArrayList<SinaPhotoDetail.SinaPhotoDetailPicsEntity>() : pics;
@@ -100,8 +101,6 @@ public class PhotoAdapter extends PagerAdapter {
     public void setOnPhotoExpandListener(OnPhotoExpandListener onPhotoExpandListener) {
         mOnPhotoExpandListener = onPhotoExpandListener;
     }
-
-    private OnPhotoExpandListener mOnPhotoExpandListener;
 
     /**
      * 图片被拉伸的监听接口

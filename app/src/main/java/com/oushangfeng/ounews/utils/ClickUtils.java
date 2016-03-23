@@ -3,6 +3,8 @@ package com.oushangfeng.ounews.utils;
 import android.os.SystemClock;
 import android.util.Log;
 
+import com.oushangfeng.ounews.BuildConfig;
+
 /**
  * ClassName: ClickUtils<p>
  * Author:oubowu<p>
@@ -14,9 +16,10 @@ import android.util.Log;
 public class ClickUtils {
 
     private static final String TAG = ClickUtils.class.getSimpleName();
-    private static long lastClickTime = 0L;
-    private static final boolean isDebug = true;
     private static final String BLANK_LOG = "\t";
+    private static boolean sIsDebug = BuildConfig.DEBUG;
+    private static long sLastClickTime = 0L;
+
     /**
      * 用于处理频繁点击问题, 如果两次点击小于500毫秒则不予以响应
      *
@@ -25,23 +28,23 @@ public class ClickUtils {
     public static boolean isFastDoubleClick() {
         long nowTime = SystemClock.elapsedRealtime();//从开机到现在的毫秒数（手机睡眠(sleep)的时间也包括在内）
 
-        if (isDebug){
+        if (sIsDebug){
             Log.d(TAG,"nowTime:" + nowTime);
-            Log.d(TAG, "lastClickTime:" + lastClickTime);
-            Log.d(TAG,"时间间隔:"+(nowTime - lastClickTime));
+            Log.d(TAG, "lastClickTime:" + sLastClickTime);
+            Log.d(TAG,"时间间隔:"+(nowTime - sLastClickTime));
         }
-        if ((nowTime - lastClickTime) < 250) {
+        if ((nowTime - sLastClickTime) < 250) {
 
-            if (isDebug){
+            if (sIsDebug){
                 Log.d(TAG,"快速点击");
                 Log.d(TAG, BLANK_LOG);
             }
             return true;
         } else {
-            lastClickTime = nowTime;
+            sLastClickTime = nowTime;
 
-            if (isDebug){
-                Log.d(TAG,"lastClickTime:" + lastClickTime);
+            if (sIsDebug){
+                Log.d(TAG,"lastClickTime:" + sLastClickTime);
                 Log.d(TAG,"不是快速点击");
                 Log.d(TAG,BLANK_LOG);
             }

@@ -28,6 +28,8 @@ public class NewsChannelAdapter extends BaseRecyclerAdapter<NewsChannelTable>
 
     private SimpleItemTouchHelperCallback mItemTouchHelperCallback;
 
+    private OnItemMoveListener mItemMoveListener;
+
     public NewsChannelAdapter(Context context, List<NewsChannelTable> data, boolean useAnimation) {
         super(context, data, useAnimation);
     }
@@ -137,13 +139,11 @@ public class NewsChannelAdapter extends BaseRecyclerAdapter<NewsChannelTable>
 
     /**
      * 设置item拖拽移动的监听
-     * @param itemMoveListener
+     * @param itemMoveListener item移动时的监听
      */
     public void setItemMoveListener(OnItemMoveListener itemMoveListener) {
         mItemMoveListener = itemMoveListener;
     }
-
-    private OnItemMoveListener mItemMoveListener;
 
     public interface OnItemMoveListener {
         void onItemMove(int fromPosition, int toPosition);

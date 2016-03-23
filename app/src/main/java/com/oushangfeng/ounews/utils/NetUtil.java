@@ -13,6 +13,7 @@ import android.net.NetworkInfo;
  * @author zhy
  */
 public class NetUtil {
+    
     private NetUtil() {
         /* cannot be instantiated */
         throw new UnsupportedOperationException("cannot be instantiated");

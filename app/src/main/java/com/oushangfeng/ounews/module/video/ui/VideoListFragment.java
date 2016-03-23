@@ -47,18 +47,15 @@ import java.util.Random;
 @ActivityFragmentInject(contentViewId = R.layout.fragment_video_list)
 public class VideoListFragment extends BaseFragment<IVideoListPresenter> implements IVideoListView {
 
-    protected String mVideoId;
-
     protected static final String VEDIO_ID = "video_id";
-
-    protected int mPosition;
-
     protected static final String POSITION = "position";
+
+    protected String mVideoId;
+    protected int mPosition;
 
     private BaseRecyclerAdapter<NeteastVideoSummary> mAdapter;
     private AutoLoadMoreRecyclerView mRecyclerView;
     private RefreshLayout mRefreshLayout;
-
     private ThreePointLoadingView mLoadingView;
 
     @Override
@@ -98,13 +95,11 @@ public class VideoListFragment extends BaseFragment<IVideoListPresenter> impleme
 
     @Override
     public void showProgress() {
-        //        RxBus.get().post("showVideoProgress", mPosition);
         mLoadingView.play();
     }
 
     @Override
     public void hideProgress() {
-        //        RxBus.get().post("hideVideoProgress", mPosition);
         mLoadingView.stop();
     }
 

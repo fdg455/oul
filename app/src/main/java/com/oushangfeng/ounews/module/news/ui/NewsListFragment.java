@@ -47,17 +47,13 @@ import java.util.List;
 @ActivityFragmentInject(contentViewId = R.layout.fragment_news_list)
 public class NewsListFragment extends BaseFragment<INewsListPresenter> implements INewsListView {
 
-    protected String mNewsId;
-
     protected static final String NEWS_ID = "news_id";
-
-    protected String mNewsType;
-
     protected static final String NEWS_TYPE = "news_type";
-
-    protected int mPosition;
-
     protected static final String POSITION = "position";
+
+    protected String mNewsId;
+    protected String mNewsType;
+    protected int mPosition;
 
     private BaseRecyclerAdapter<NeteastNewsSummary> mAdapter;
     private AutoLoadMoreRecyclerView mRecyclerView;

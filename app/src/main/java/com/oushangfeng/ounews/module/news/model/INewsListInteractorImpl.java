@@ -30,11 +30,10 @@ import rx.functions.Func2;
 public class INewsListInteractorImpl implements INewsListInteractor<List<NeteastNewsSummary>> {
 
     @Override
-    public Subscription requestNewsList(final RequestCallback<List<NeteastNewsSummary>> callback,String type, final String id, int startPage) {
+    public Subscription requestNewsList(final RequestCallback<List<NeteastNewsSummary>> callback, String type, final String id, int startPage) {
         KLog.e("新闻列表：" + type + ";" + id);
         return RetrofitManager.getInstance(HostType.NETEASE_NEWS_VIDEO)
-                .getNewsListObservable(type, id, startPage)
-                .doOnSubscribe(new Action0() {
+                .getNewsListObservable(type, id, startPage).doOnSubscribe(new Action0() {
                     @Override
                     public void call() {
                         // 订阅之前回调回去显示加载动画
@@ -62,7 +61,6 @@ public class INewsListInteractorImpl implements INewsListInteractor<List<Neteast
                     // 按时间先后排序
                     @Override
                     public Integer call(NeteastNewsSummary neteastNewsSummary, NeteastNewsSummary neteastNewsSummary2) {
-                        //return neteastNewsSummary.ptime.compareTo(neteastNewsSummary2.ptime);
                         return neteastNewsSummary2.ptime.compareTo(neteastNewsSummary.ptime);
                     }
                 }).subscribe(new Subscriber<List<NeteastNewsSummary>>() {

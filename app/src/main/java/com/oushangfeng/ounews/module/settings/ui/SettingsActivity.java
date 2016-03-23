@@ -106,15 +106,18 @@ public class SettingsActivity extends BaseActivity<ISettingsPresenter> implement
 
     @Override
     public void initItemState() {
+
         applyTint(mNightModeCheckedTextView);
         applyTint(mSlideModeCheckedTextView);
 
         mNightModeCheckedTextView.setChecked(SpUtil.readBoolean("enableNightMode"));
         mNightModeCheckedTextView
                 .setText(SpUtil.readBoolean("enableNightMode") ? "关闭夜间模式" : "开启夜间模式");
+
         mSlideModeCheckedTextView.setChecked(!SpUtil.readBoolean("disableSlide"));
         mSlideModeCheckedTextView
                 .setText(!SpUtil.readBoolean("disableSlide") ? "关闭侧滑返回" : "开启侧滑返回");
+
     }
 
     // 因为这里是通过鸿洋大神的换肤做的，而CheckedTextView着色不兼容5.0以下，

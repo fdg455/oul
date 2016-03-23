@@ -46,13 +46,11 @@ import java.util.Random;
 @ActivityFragmentInject(contentViewId = R.layout.fragment_photo_list)
 public class PhotoListFragment extends BaseFragment<IPhotoListPresenter> implements IPhotoListView {
 
-    protected String mPhotoId;
-
     protected static final String PHOTO_ID = "photo_id";
-
-    protected int mPosition;
-
     protected static final String POSITION = "position";
+
+    protected String mPhotoId;
+    protected int mPosition;
 
     private BaseRecyclerAdapter<SinaPhotoList.DataEntity.PhotoListEntity> mAdapter;
     private AutoLoadMoreRecyclerView mRecyclerView;
@@ -95,18 +93,13 @@ public class PhotoListFragment extends BaseFragment<IPhotoListPresenter> impleme
 
     @Override
     public void showProgress() {
-        KLog.e("发送事件加载");
-        //        RxBus.get().post("showPhotoProgress", mPosition);
         mLoadingView.play();
     }
 
     @Override
     public void hideProgress() {
-        KLog.e("发送关闭加载");
-        //        RxBus.get().post("hidePhotoProgress", mPosition);
         mLoadingView.stop();
     }
-
 
     @Override
     public void updatePhotoList(final List<SinaPhotoList.DataEntity.PhotoListEntity> data, @DataLoadType.DataLoadTypeChecker int type) {

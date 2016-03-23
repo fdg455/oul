@@ -57,67 +57,16 @@ public class RetrofitManager {
     //查询缓存的Cache-Control设置，为if-only-cache时只查询缓存而不会请求服务器，max-stale可以配合设置缓存失效时间
     private static final String CACHE_CONTROL_CACHE = "only-if-cached, max-stale=" + CACHE_STALE_SEC;
     //查询网络的Cache-Control设置，头部Cache-Control设为max-age=0
-	//(假如请求了服务器并在a时刻返回响应结果，则在max-age规定的秒数内，浏览器将不会发送对应的请求到服务器，数据由缓存直接返回)时则不会使用缓存而请求服务器
+    //(假如请求了服务器并在a时刻返回响应结果，则在max-age规定的秒数内，浏览器将不会发送对应的请求到服务器，数据由缓存直接返回)时则不会使用缓存而请求服务器
     private static final String CACHE_CONTROL_NETWORK = "max-age=0";
 
+    private static volatile OkHttpClient sOkHttpClient;
+
     private NewsService mNewsService;
-    private static volatile OkHttpClient mOkHttpClient;
 
     // 管理不同HostType的单例
-    private static SparseArray<RetrofitManager> mInstanceManager = new SparseArray<>(
+    private static SparseArray<RetrofitManager> sInstanceManager = new SparseArray<>(
             HostType.TYPE_COUNT);
-
-    private RetrofitManager() {
-    }
-
-    /**
-     * 获取单例
-     *
-     * @param hostType host类型
-     * @return 实例
-     */
-    public static RetrofitManager getInstance(int hostType) {
-        RetrofitManager instance = mInstanceManager.get(hostType);
-        if (instance == null) {
-            instance = new RetrofitManager(hostType);
-            mInstanceManager.put(hostType, instance);
-            return instance;
-        } else {
-            return instance;
-        }
-    }
-
-    private RetrofitManager(@HostType.HostTypeChecker int hostType) {
-
-        initOkHttpClient();
-
-        Retrofit retrofit = new Retrofit.Builder().baseUrl(getHost(hostType)).client(mOkHttpClient)
-                .addConverterFactory(JacksonConverterFactory.create())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create()).build();
-
-        mNewsService = retrofit.create(NewsService.class);
-    }
-
-    // 配置OkHttpClient
-    private void initOkHttpClient() {
-        if (mOkHttpClient == null) {
-            synchronized (RetrofitManager.class) {
-                if (mOkHttpClient == null) {
-                    // OkHttpClient配置是一样的,静态创建一次即可
-                    // 指定缓存路径,缓存大小100Mb
-                    Cache cache = new Cache(new File(App.getContext().getCacheDir(), "HttpCache"),
-                            1024 * 1024 * 100);
-
-                    mOkHttpClient = new OkHttpClient.Builder().cache(cache)
-                            .addNetworkInterceptor(mRewriteCacheControlInterceptor)
-                            .addInterceptor(mRewriteCacheControlInterceptor)
-                            .addInterceptor(mLoggingInterceptor).retryOnConnectionFailure(true)
-                            .connectTimeout(30, TimeUnit.SECONDS).build();
-
-                }
-            }
-        }
-    }
 
     // 云端响应头拦截器，用来配置缓存策略
     private Interceptor mRewriteCacheControlInterceptor = new Interceptor() {
@@ -180,22 +129,55 @@ public class RetrofitManager {
         }
     };
 
+    private RetrofitManager() {
+    }
+
     /**
-     * 获取对应的host
+     * 获取单例
      *
      * @param hostType host类型
-     * @return host
+     * @return 实例
      */
-    private String getHost(int hostType) {
-        switch (hostType) {
-            case HostType.NETEASE_NEWS_VIDEO:
-                return Api.NETEAST_HOST;
-            case HostType.SINA_NEWS_PHOTO:
-                return Api.SINA_PHOTO_HOST;
-            case HostType.WEATHER_INFO:
-                return Api.WEATHER_HOST;
+    public static RetrofitManager getInstance(int hostType) {
+        RetrofitManager instance = sInstanceManager.get(hostType);
+        if (instance == null) {
+            instance = new RetrofitManager(hostType);
+            sInstanceManager.put(hostType, instance);
+            return instance;
+        } else {
+            return instance;
         }
-        return "";
+    }
+
+    private RetrofitManager(@HostType.HostTypeChecker int hostType) {
+
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(Api.getHost(hostType))
+                .client(getOkHttpClient()).addConverterFactory(JacksonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create()).build();
+
+        mNewsService = retrofit.create(NewsService.class);
+    }
+
+    // 配置OkHttpClient
+    private OkHttpClient getOkHttpClient() {
+        if (sOkHttpClient == null) {
+            synchronized (RetrofitManager.class) {
+                if (sOkHttpClient == null) {
+                    // OkHttpClient配置是一样的,静态创建一次即可
+                    // 指定缓存路径,缓存大小100Mb
+                    Cache cache = new Cache(new File(App.getContext().getCacheDir(), "HttpCache"),
+                            1024 * 1024 * 100);
+
+                    sOkHttpClient = new OkHttpClient.Builder().cache(cache)
+                            .addNetworkInterceptor(mRewriteCacheControlInterceptor)
+                            .addInterceptor(mRewriteCacheControlInterceptor)
+                            .addInterceptor(mLoggingInterceptor).retryOnConnectionFailure(true)
+                            .connectTimeout(30, TimeUnit.SECONDS).build();
+
+                }
+            }
+        }
+        return sOkHttpClient;
     }
 
     /**

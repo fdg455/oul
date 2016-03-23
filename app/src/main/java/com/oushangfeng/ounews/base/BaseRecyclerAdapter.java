@@ -26,18 +26,20 @@ import java.util.List;
  */
 public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRecyclerViewHolder> {
 
-    protected List<T> mData;
-    protected Context mContext;
-    protected boolean mUseAnimation;
-    private RecyclerView.LayoutManager mLayoutManager;
-    protected LayoutInflater mInflater;
-    protected OnItemClickListener mClickListener;
-
     public static final int TYPE_HEADER = 1;
     public static final int TYPE_ITEM = 2;
     public static final int TYPE_FOOTER = 3;
 
+    protected List<T> mData;
+    protected Context mContext;
+    protected boolean mUseAnimation;
+    protected LayoutInflater mInflater;
+    protected OnItemClickListener mClickListener;
     protected boolean mShowFooter;
+
+    private RecyclerView.LayoutManager mLayoutManager;
+
+    private int mLastPosition = -1;
 
     public BaseRecyclerAdapter(Context context, List<T> data) {
         this(context, data, true);
@@ -103,14 +105,12 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
         }
     }
 
-    private int lastPosition = -1;
-
     protected void setAnimation(View viewToAnimate, int position) {
-        if (position > lastPosition) {
+        if (position > mLastPosition) {
             Animation animation = AnimationUtils
                     .loadAnimation(viewToAnimate.getContext(), R.anim.item_bottom_in);
             viewToAnimate.startAnimation(animation);
-            lastPosition = position;
+            mLastPosition = position;
         }
     }
 

@@ -29,7 +29,7 @@ public class App extends Application {
 
     private DaoSession mDaoSession;
 
-    private static Context mApplicationContext;
+    private static Context sApplicationContext;
 
     @Override
     public void onCreate() {
@@ -38,7 +38,7 @@ public class App extends Application {
         // 如果检测到某个 activity 有内存泄露，LeakCanary 就是自动地显示一个通知
         mRefWatcher = LeakCanary.install(this);
         setupDatabase();
-        mApplicationContext = this;
+        sApplicationContext = this;
         KLog.init(BuildConfig.DEBUG);
     }
 
@@ -85,6 +85,6 @@ public class App extends Application {
 
     // 获取ApplicationContext
     public static Context getContext() {
-        return mApplicationContext;
+        return sApplicationContext;
     }
 }

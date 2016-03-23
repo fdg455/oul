@@ -34,7 +34,14 @@ import io.vov.vitamio.widget.VideoView;
  */
 public class VideoPlayController {
 
-    private final AudioManager mAM;
+    // 默认停留的时间
+    private static final int DEFAULT_TIMEOUT = 5000;
+    // 退出
+    private static final int FADE_OUT = 1;
+    // 显示
+    private static final int SHOW_PROGRESS = 2;
+
+    private final AudioManager mAudioManager;
     private PopupWindow mPopupWindow;
     private Activity mContext;
     private View mAnchorView;
@@ -58,23 +65,12 @@ public class VideoPlayController {
     // 当前的播放时间
     private long mCurrentTime;
 
-    // 默认停留的时间
-    private static final int sDefaultTimeout = 5000;
-    // 退出
-    private static final int FADE_OUT = 1;
-    // 显示
-    private static final int SHOW_PROGRESS = 2;
-
     // 进度条是否正在被拖拽
     private boolean mIsDraging;
     // 当前布局是否正在显示
     private boolean mShowing;
 
     private VideoHandler mHandler;
-
-    public boolean isShowing() {
-        return mShowing;
-    }
 
     private static class VideoHandler extends Handler {
 
@@ -112,7 +108,7 @@ public class VideoPlayController {
         mAnchorView = anchorView;
         mVideoView = videoView;
 
-        mAM = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
+        mAudioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
 
         mHandler = new VideoHandler(this);
     }
@@ -134,8 +130,6 @@ public class VideoPlayController {
      */
     private long setProgress() {
         if (mVideoView == null || mIsDraging) return 0;
-
-        //        KLog.e("设置进度和时间");
 
         long position = mVideoView.getCurrentPosition();
         long duration = mVideoView.getDuration();
@@ -284,7 +278,7 @@ public class VideoPlayController {
         mHandler.sendEmptyMessage(SHOW_PROGRESS);
         // 三秒后关闭布局
         mHandler.removeMessages(FADE_OUT);
-        mHandler.sendMessageDelayed(mHandler.obtainMessage(FADE_OUT), sDefaultTimeout);
+        mHandler.sendMessageDelayed(mHandler.obtainMessage(FADE_OUT), DEFAULT_TIMEOUT);
 
     }
 
@@ -320,7 +314,7 @@ public class VideoPlayController {
             mIsDraging = true;
             show();
             mHandler.removeMessages(SHOW_PROGRESS);
-            mAM.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER,
+            mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER,
                     AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
         }
 
@@ -332,14 +326,18 @@ public class VideoPlayController {
             mVideoView.seekTo((mTotalTime * mSeekBar.getProgress()) / 1000);
             show();
             mHandler.removeMessages(SHOW_PROGRESS);
-            mAM.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE,
+            mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE,
                     AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
             mIsDraging = false;
             mHandler.sendEmptyMessageDelayed(SHOW_PROGRESS, 1000);
 
-            mHandler.sendMessageDelayed(mHandler.obtainMessage(FADE_OUT), sDefaultTimeout);
+            mHandler.sendMessageDelayed(mHandler.obtainMessage(FADE_OUT), DEFAULT_TIMEOUT);
 
         }
     };
+
+    public boolean isShowing() {
+        return mShowing;
+    }
 
 }

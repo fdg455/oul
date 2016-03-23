@@ -19,27 +19,14 @@ import com.socks.library.KLog;
  */
 public class AutoLoadMoreRecyclerView extends RecyclerView {
 
-    private int[] mVisiblePositions;
-
     // 所处的状态
     public static final int STATE_MORE_LOADING = 1;
     public static final int STATE_MORE_LOADED = 2;
     public static final int STATE_ALL_LOADED = 3;
 
+    private int[] mVisiblePositions;
+
     private int mCurrentState = STATE_MORE_LOADED;
-
-    /**
-     * 是否正在加载底部
-     *
-     * @return
-     */
-    public boolean isMoreLoading() {
-        return mCurrentState == STATE_MORE_LOADING;
-    }
-
-    public boolean isAllLoaded() {
-        return mCurrentState == STATE_ALL_LOADED;
-    }
 
     public AutoLoadMoreRecyclerView(Context context) {
         super(context);
@@ -72,6 +59,24 @@ public class AutoLoadMoreRecyclerView extends RecyclerView {
 
             }
         });
+    }
+
+    /**
+     * 是否正在加载底部
+     *
+     * @return true为正在加载
+     */
+    public boolean isMoreLoading() {
+        return mCurrentState == STATE_MORE_LOADING;
+    }
+
+    /**
+     * 是否全部加载完毕
+     *
+     * @return true为全部数据加载完毕
+     */
+    public boolean isAllLoaded() {
+        return mCurrentState == STATE_ALL_LOADED;
     }
 
     /**

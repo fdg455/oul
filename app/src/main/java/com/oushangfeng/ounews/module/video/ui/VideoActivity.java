@@ -62,7 +62,7 @@ public class VideoActivity extends BaseActivity<IVideoPresenter> implements IVid
 
         tabLayout.setupWithViewPager(viewPager);
 
-        ViewUtil.dynamicSetTablayoutMode(tabLayout);
+        ViewUtil.dynamicSetTabLayoutMode(tabLayout);
 
     }
 

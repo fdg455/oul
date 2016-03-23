@@ -79,12 +79,11 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
      * 滑动布局
      */
     protected DrawerLayout mDrawerLayout;
+
     /**
      * 侧滑导航布局
      */
     protected NavigationView mNavigationView;
-
-    private Class mClass;
 
     /**
      * 菜单的id
@@ -115,6 +114,11 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
      * 结束Activity的可观测对象
      */
     private Observable<Boolean> mFinishObservable;
+
+    /**
+     * 跳转的类
+     */
+    private Class mClass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,16 +151,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
             SkinManager.getInstance().register(this);
         }
 
-        if (this instanceof NewsActivity) {
-            setTheme(SpUtil.readBoolean(
-                    "enableNightMode") ? R.style.BaseAppThemeNight_LauncherAppTheme : R.style.BaseAppTheme_LauncherAppTheme);
-        } else if (!mEnableSlidr && mHasNavigationView) {
-            setTheme(SpUtil.readBoolean(
-                    "enableNightMode") ? R.style.BaseAppThemeNight_AppTheme : R.style.BaseAppTheme_AppTheme);
-        } else {
-            setTheme(SpUtil.readBoolean(
-                    "enableNightMode") ? R.style.BaseAppThemeNight_SlidrTheme : R.style.BaseAppTheme_SlidrTheme);
-        }
+        initTheme();
 
         setContentView(mContentViewId);
 
@@ -166,31 +161,23 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
                     .initSlidrDefaultConfig(this, SpUtil.readBoolean("enableSlideEdge"));
         }
 
-        initToolbar();
-
         if (mHasNavigationView) {
             initNavigationView();
             initFinishRxBus();
         }
+
+        initToolbar();
 
         initView();
 
     }
 
     @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        setIntent(intent);
-        if (mHasNavigationView) {
-            KLog.e("FLAG_ACTIVITY_REORDER_TO_FRONT标志位的重新排序去除动画");
-            overridePendingTransition(0, 0);
-        }
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
-        if (mPresenter != null) mPresenter.onResume();
+        if (mPresenter != null) {
+            mPresenter.onResume();
+        }
     }
 
     @Override
@@ -212,6 +199,32 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
         ViewUtil.fixInputMethodManagerLeak(this);
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        if (mHasNavigationView) {
+            KLog.e("FLAG_ACTIVITY_REORDER_TO_FRONT标志位的重新排序去除跳转动画");
+            overridePendingTransition(0, 0);
+        }
+    }
+
+    /**
+     * 初始化主题
+     */
+    private void initTheme() {
+        if (this instanceof NewsActivity) {
+            setTheme(SpUtil.readBoolean(
+                    "enableNightMode") ? R.style.BaseAppThemeNight_LauncherAppTheme : R.style.BaseAppTheme_LauncherAppTheme);
+        } else if (!mEnableSlidr && mHasNavigationView) {
+            setTheme(SpUtil.readBoolean(
+                    "enableNightMode") ? R.style.BaseAppThemeNight_AppTheme : R.style.BaseAppTheme_AppTheme);
+        } else {
+            setTheme(SpUtil.readBoolean(
+                    "enableNightMode") ? R.style.BaseAppThemeNight_SlidrTheme : R.style.BaseAppTheme_SlidrTheme);
+        }
+    }
+
     private void initToolbar() {
 
         // 针对父布局非DrawerLayout的状态栏处理方式
@@ -227,7 +240,9 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
             if (getSupportActionBar() != null) {
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             }
-            if (mToolbarTitle != -1) setToolbarTitle(mToolbarTitle);
+            if (mToolbarTitle != -1) {
+                setToolbarTitle(mToolbarTitle);
+            }
             if (mToolbarIndicator != -1) {
                 setToolbarIndicator(mToolbarIndicator);
             } else {

@@ -60,7 +60,7 @@ public class PhotoActivity extends BaseActivity<IPhotoPresenter> implements IPho
         viewPager.setAdapter(adapter);
 
         tabLayout.setupWithViewPager(viewPager);
-        ViewUtil.dynamicSetTablayoutMode(tabLayout);
+        ViewUtil.dynamicSetTabLayoutMode(tabLayout);
 
     }
 

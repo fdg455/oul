@@ -47,7 +47,6 @@ public class IVideoListInteractorImpl implements IVideoListInteractor<List<Netea
                     @Override
                     public Integer call(NeteastVideoSummary neteastVideoSummary, NeteastVideoSummary neteastVideoSummary2) {
                         // 时间排序
-                        //return neteastVideoSummary.ptime.compareTo(neteastVideoSummary2.ptime);
                         return neteastVideoSummary2.ptime.compareTo(neteastVideoSummary.ptime);
                     }
                 }).subscribe(new Subscriber<List<NeteastVideoSummary>>() {

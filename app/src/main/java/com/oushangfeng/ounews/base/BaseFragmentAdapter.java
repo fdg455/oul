@@ -6,8 +6,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 
-import com.oushangfeng.ounews.base.BaseFragment;
-
 import java.util.List;
 
 /**
@@ -21,6 +19,8 @@ import java.util.List;
 public class BaseFragmentAdapter extends FragmentPagerAdapter {
 
     private FragmentManager mFragmentManager;
+    private List<BaseFragment> mFragments;
+    private List<String> mTitles;
 
     /**
      * 更新频道，前面固定的不更新，后面一律更新
@@ -47,9 +47,6 @@ public class BaseFragmentAdapter extends FragmentPagerAdapter {
         this.mTitles = titles;
         notifyDataSetChanged();
     }
-
-    private List<BaseFragment> mFragments;
-    private List<String> mTitles;
 
     public BaseFragmentAdapter(FragmentManager fm, List<BaseFragment> fragments, List<String> titles) {
         super(fm);

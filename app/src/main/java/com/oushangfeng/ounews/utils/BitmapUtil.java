@@ -20,8 +20,8 @@ public class BitmapUtil {
     /**
      * 可将当前view保存为图片的工具
      *
-     * @param v
-     * @return
+     * @param v 视图
+     * @return 位图
      */
     public static Bitmap createViewBitmap(View v) {
         Bitmap bitmap = Bitmap.createBitmap(v.getWidth(), v.getHeight(),
@@ -33,8 +33,8 @@ public class BitmapUtil {
     /**
      * 可将当前view保存为图片的工具
      *
-     * @param view
-     * @return
+     * @param view 视图
+     * @return 位图
      */
     public static Bitmap convertViewToBitmap(View view){
         view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));

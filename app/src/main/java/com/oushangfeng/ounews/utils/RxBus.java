@@ -23,24 +23,24 @@ import rx.subjects.Subject;
  */
 public class RxBus {
 
-    private volatile static RxBus instance;
+    private volatile static RxBus sInstance;
 
     private RxBus() {
     }
 
     public static RxBus get() {
-        if (instance == null) {
+        if (sInstance == null) {
             synchronized (RxBus.class) {
-                if (instance == null) instance = new RxBus();
+                if (sInstance == null) sInstance = new RxBus();
             }
         }
-        return instance;
+        return sInstance;
     }
 
     /**
      * 存储某个标签的Subject集合
      */
-    private ConcurrentMap<Object, List<Subject>> subjectMapper = new ConcurrentHashMap<>();
+    private ConcurrentMap<Object, List<Subject>> mSubjectMapper = new ConcurrentHashMap<>();
 
     /**
      * 注册事件
@@ -51,15 +51,15 @@ public class RxBus {
      * @return 被观察者
      */
     public <T> Observable<T> register(@NonNull Object tag, @NonNull Class<T> clazz) {
-        List<Subject> subjectList = subjectMapper.get(tag);
+        List<Subject> subjectList = mSubjectMapper.get(tag);
         if (null == subjectList) {
             subjectList = new ArrayList<>();
-            subjectMapper.put(tag, subjectList);
+            mSubjectMapper.put(tag, subjectList);
         }
 
         Subject<T, T> subject;
         subjectList.add(subject = PublishSubject.create());
-        KLog.e("{register}subjectMapper: " + subjectMapper);
+        KLog.e("{register}subjectMapper: " + mSubjectMapper);
         return subject;
     }
 
@@ -70,15 +70,15 @@ public class RxBus {
      * @param observable 被观察者
      */
     public void unregister(@NonNull Object tag, @NonNull Observable observable) {
-        final List<Subject> subjectList = subjectMapper.get(tag);
+        final List<Subject> subjectList = mSubjectMapper.get(tag);
         if (null != subjectList) {
             subjectList.remove(observable);
             if (subjectList.isEmpty()) {
                 // 集合数据为0的时候移map除掉tag
-                subjectMapper.remove(tag);
+                mSubjectMapper.remove(tag);
             }
         }
-        KLog.e("{unregister}subjectMapper: " + subjectMapper);
+        KLog.e("{unregister}subjectMapper: " + mSubjectMapper);
     }
 
     /**
@@ -89,7 +89,7 @@ public class RxBus {
      */
     @SuppressWarnings("unchecked")
     public void post(@NonNull Object tag, @NonNull Object content) {
-        final List<Subject> subjectList = subjectMapper.get(tag);
+        final List<Subject> subjectList = mSubjectMapper.get(tag);
         if (null != subjectList && !subjectList.isEmpty()) {
             for (Subject subject : subjectList) {
                 subject.onNext(content);

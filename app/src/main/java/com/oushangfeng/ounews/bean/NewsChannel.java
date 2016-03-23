@@ -14,16 +14,43 @@ public class NewsChannel {
      * 频道名称
      */
     private String mName;
+
     /**
      * 频道是否固定频道
      */
     private boolean mFixed;
 
+    /**
+     * 新闻的id
+     */
     private String mId;
 
+    /**
+     * 新闻类型
+     */
     private String mType;
 
+    /**
+     * 位置
+     */
     private int mIndex;
+
+    public NewsChannel(String name) {
+        mName = name;
+    }
+
+    public NewsChannel(String name, boolean fixed) {
+        mName = name;
+        mFixed = fixed;
+    }
+
+    public NewsChannel(String name, boolean fixed, String id, String type, int index) {
+        mName = name;
+        mFixed = fixed;
+        mId = id;
+        mType = type;
+        mIndex = index;
+    }
 
     public String getId() {
         return mId;
@@ -47,23 +74,6 @@ public class NewsChannel {
 
     public void setIndex(int index) {
         mIndex = index;
-    }
-
-    public NewsChannel(String name, boolean fixed) {
-        mName = name;
-        mFixed = fixed;
-    }
-
-    public NewsChannel(String name, boolean fixed, String id, String type, int index) {
-        mName = name;
-        mFixed = fixed;
-        mId = id;
-        mType = type;
-        mIndex = index;
-    }
-
-    public NewsChannel(String name) {
-        mName = name;
     }
 
     public boolean isFixed() {

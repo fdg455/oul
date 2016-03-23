@@ -47,16 +47,22 @@ public class PacManRefreshHead extends RefreshHead {
     private ValueAnimator mLoadingAnimator4;
     private AnimatorSet mLoadAnimatorSet;
 
-    private int mPacManXoffset;
+    private int mPacManXOffset;
 
+    /**
+     * 闭嘴的角度
+     */
     private float mEatAngle;
-
-    private boolean mStartEat;
 
     private RectF mRectF = new RectF();
     private int mStep;
     private int mRotateSweep = -1;
     private int mBeanRadius;
+
+    /**
+     * 被吃掉的豆豆的位置
+     */
+    private int[] mEatBeanPos;
 
     public PacManRefreshHead(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -70,8 +76,6 @@ public class PacManRefreshHead extends RefreshHead {
 
     private void init(Context context, AttributeSet attrs) {
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
-
-        //        mPaint.setColor(ContextCompat.getColor(context, R.color.material_black55));
 
         if (attrs != null) {
 
@@ -89,6 +93,7 @@ public class PacManRefreshHead extends RefreshHead {
         WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
         wm.getDefaultDisplay().getSize(mScreenSize);
 
+        // 五颗豆豆，未被吃时值对应-1
         mEatBeanPos = new int[]{-1, -1, -1, -1, -1};
 
     }
@@ -145,15 +150,15 @@ public class PacManRefreshHead extends RefreshHead {
     @Override
     protected void onDraw(Canvas canvas) {
 
-        if (mStep % 2 != 0 && mPacManXoffset <= mPacManRadius * 11) {
+        if (mStep % 2 != 0 && mPacManXOffset <= mPacManRadius * 11) {
             // 开始闭嘴吃豆豆
-            mEatAngle = (mPacManXoffset - mPacManRadius * mStep) * (45.0f / mPacManRadius * 1.5f);
+            mEatAngle = (mPacManXOffset - mPacManRadius * mStep) * (45.0f / mPacManRadius * 1.5f);
         } else {
             mEatAngle = 0;
         }
 
-        mRectF.set((mWidth - mTotalLength) / 2 + mPacManXoffset, mPacManRadius + getPaddingTop(),
-                (mWidth - mTotalLength) / 2 + mPacManRadius * 2 + mPacManXoffset,
+        mRectF.set((mWidth - mTotalLength) / 2 + mPacManXOffset, mPacManRadius + getPaddingTop(),
+                (mWidth - mTotalLength) / 2 + mPacManRadius * 2 + mPacManXOffset,
                 mPacManRadius * 3 + getPaddingTop());
         canvas.drawArc(mRectF, 45 - mEatAngle - mRotateSweep, 360 - (45 - mEatAngle) * 2, true,
                 mPaint);
@@ -165,14 +170,11 @@ public class PacManRefreshHead extends RefreshHead {
                 mEatBeanPos[i] = i;
                 continue;
             }
-            canvas.drawCircle(mRectF.right - mPacManXoffset + mPacManRadius * (1 + 2 * i),
+            canvas.drawCircle(mRectF.right - mPacManXOffset + mPacManRadius * (1 + 2 * i),
                     mRectF.top + mPacManRadius, mBeanRadius, mPaint);
         }
 
     }
-
-    private int[] mEatBeanPos;
-
 
     @Override
     public boolean isLoading() {
@@ -186,36 +188,8 @@ public class PacManRefreshHead extends RefreshHead {
 
     @Override
     public void performLoaded() {
-        if (mLoadAnimatorSet != null && mLoadAnimatorSet.isRunning()) {
-
-            mLoadingAnimator1.removeAllListeners();
-            mLoadingAnimator1.removeAllUpdateListeners();
-            mLoadingAnimator1.cancel();
-
-            mLoadingAnimator2.removeAllListeners();
-            mLoadingAnimator2.removeAllUpdateListeners();
-            mLoadingAnimator2.cancel();
-
-            mLoadingAnimator3.removeAllListeners();
-            mLoadingAnimator3.removeAllUpdateListeners();
-            mLoadingAnimator3.cancel();
-
-            mLoadingAnimator4.removeAllListeners();
-            mLoadingAnimator4.removeAllUpdateListeners();
-            mLoadingAnimator4.cancel();
-
-            mLoadAnimatorSet.removeAllListeners();
-            mLoadAnimatorSet.cancel();
-
-            mStep = 0;
-            mEatAngle = 0;
-            mRotateSweep = 0;
-            mPacManXoffset = 0;
-            for (int i = 0; i < mEatBeanPos.length; i++) {
-                mEatBeanPos[i] = -1;
-            }
-            postInvalidate();
-        }
+        stopAnimator();
+        postInvalidate();
     }
 
     @Override
@@ -237,7 +211,7 @@ public class PacManRefreshHead extends RefreshHead {
                         if ((int) animation.getAnimatedValue() != 0) {
                             mStep = (int) animation.getAnimatedValue() / mPacManRadius;
                         }
-                        mPacManXoffset = (int) animation.getAnimatedValue();
+                        mPacManXOffset = (int) animation.getAnimatedValue();
                         postInvalidate();
                     }
                 });
@@ -266,7 +240,7 @@ public class PacManRefreshHead extends RefreshHead {
                         if ((int) animation.getAnimatedValue() != 0) {
                             mStep = (int) animation.getAnimatedValue() / mPacManRadius;
                         }
-                        mPacManXoffset = (int) animation.getAnimatedValue();
+                        mPacManXOffset = (int) animation.getAnimatedValue();
                         postInvalidate();
                     }
                 });
@@ -307,7 +281,20 @@ public class PacManRefreshHead extends RefreshHead {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+        stopAnimator();
+    }
 
+    /**
+     * 下拉的时候，方块矩阵的下降上升效果
+     *
+     * @param ratio 比值
+     */
+    @Override
+    public void performPull(float ratio) {
+
+    }
+
+    private void stopAnimator() {
         if (mLoadAnimatorSet != null && mLoadAnimatorSet.isRunning()) {
 
             mLoadingAnimator1.removeAllListeners();
@@ -332,21 +319,13 @@ public class PacManRefreshHead extends RefreshHead {
             mStep = 0;
             mEatAngle = 0;
             mRotateSweep = 0;
-            mPacManXoffset = 0;
+            mPacManXOffset = 0;
+
             for (int i = 0; i < mEatBeanPos.length; i++) {
                 mEatBeanPos[i] = -1;
             }
+
         }
-    }
-
-    /**
-     * 下拉的时候，方块矩阵的下降上升效果
-     *
-     * @param ratio 比值
-     */
-    @Override
-    public void performPull(float ratio) {
-
     }
 
 }
