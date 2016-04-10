@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
@@ -294,12 +295,13 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
             contentLayout.addView(statusBarView, 0);
             // 内容布局不是 LinearLayout 时,设置margin或者padding top
             final View view = contentLayout.getChildAt(1);
+            final int statusBarHeight = MeasureUtil.getStatusBarHeight(this);
             if (!(contentLayout instanceof LinearLayout) && view != null) {
                 if (view.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
-                    ((ViewGroup.MarginLayoutParams) view.getLayoutParams()).topMargin += MeasureUtil
-                            .getStatusBarHeight(this);
+                    ((ViewGroup.MarginLayoutParams) view
+                            .getLayoutParams()).topMargin += statusBarHeight;
                 } else {
-                    view.setPadding(0, MeasureUtil.getStatusBarHeight(this), 0, 0);
+                    view.setPadding(0, statusBarHeight, 0, 0);
                 }
             }
             // 设置属性
@@ -312,6 +314,20 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
             if (this instanceof SettingsActivity) {
                 // 因为要SettingsActivity做换肤，所以statusBarView也要设置
                 statusBarView.setTag("skin:primary:background");
+            }
+
+            final AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
+            final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            if (appBarLayout != null && toolbar != null) {
+                final int toolbarHeight = MeasureUtil.getToolbarHeight(this);
+                appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+                    @Override
+                    public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                        // appBarLayout偏移量为Toolbar高度，这里为了4.4往上滑的时候由于透明状态栏Toolbar遮不住看起来难看，
+                        // 根据偏移量设置透明度制造出往上滑动逐渐消失的效果
+                        toolbar.setAlpha((toolbarHeight + verticalOffset) * 1.0f / toolbarHeight);
+                    }
+                });
             }
 
         } else if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
