@@ -44,7 +44,8 @@ import java.util.Random;
  * UpdateUser: <p>
  * UpdateDate: <p>
  */
-@ActivityFragmentInject(contentViewId = R.layout.fragment_video_list)
+@ActivityFragmentInject(contentViewId = R.layout.fragment_video_list,
+        handleRefreshLayout = true)
 public class VideoListFragment extends BaseFragment<IVideoListPresenter> implements IVideoListView {
 
     protected static final String VEDIO_ID = "video_id";
@@ -181,12 +182,12 @@ public class VideoListFragment extends BaseFragment<IVideoListPresenter> impleme
             @Override
             public void onItemClick(View view, int position) {
 
-                if (ClickUtils.isFastDoubleClick()){
+                if (ClickUtils.isFastDoubleClick()) {
                     return;
                 }
 
                 final String mp4Url = mAdapter.getData().get(position).mp4Url;
-                if (TextUtils.isEmpty(mp4Url)){
+                if (TextUtils.isEmpty(mp4Url)) {
                     toast("此视频无播放网址哎╮(╯Д╰)╭");
                     return;
                 }

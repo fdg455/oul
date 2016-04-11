@@ -44,7 +44,8 @@ import java.util.List;
  * UpdateUser: <p>
  * UpdateDate: <p>
  */
-@ActivityFragmentInject(contentViewId = R.layout.fragment_news_list)
+@ActivityFragmentInject(contentViewId = R.layout.fragment_news_list,
+        handleRefreshLayout = true)
 public class NewsListFragment extends BaseFragment<INewsListPresenter> implements INewsListView {
 
     protected static final String NEWS_ID = "news_id";
@@ -71,6 +72,7 @@ public class NewsListFragment extends BaseFragment<INewsListPresenter> implement
             mNewsType = getArguments().getString(NEWS_TYPE);
             mPosition = getArguments().getInt(POSITION);
         }
+
     }
 
     public static NewsListFragment newInstance(String newsId, String newsType, int position) {
@@ -168,7 +170,7 @@ public class NewsListFragment extends BaseFragment<INewsListPresenter> implement
             @Override
             public void onItemClick(View view, int position) {
 
-                if (ClickUtils.isFastDoubleClick()){
+                if (ClickUtils.isFastDoubleClick()) {
                     return;
                 }
 

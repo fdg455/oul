@@ -46,6 +46,13 @@ public @interface ActivityFragmentInject {
     boolean hasNavigationView() default false;
 
     /**
+     * 是否处理RefreshLayout，对应父布局为CoordinateLayout加AppbarLayout与RefreshLayout造成的事件冲突
+     *
+     * @return
+     */
+    boolean handleRefreshLayout() default false;
+
+    /**
      * toolbar的标题id
      *
      * @return

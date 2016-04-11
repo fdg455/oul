@@ -284,57 +284,9 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        // 针对4.4和SettingsActivity(因为要做换肤，而状态栏在5.0是设置为透明的，若不这样处理换肤时状态栏颜色不会变化)
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT || this instanceof SettingsActivity) {
+        handleStatusView();
 
-            // 生成一个状态栏大小的矩形
-            View statusBarView = ViewUtil
-                    .createStatusView(this, ThemeUtil.getColor(this, R.attr.colorPrimary));
-            // 添加 statusBarView 到布局中
-            ViewGroup contentLayout = (ViewGroup) mDrawerLayout.getChildAt(0);
-            contentLayout.addView(statusBarView, 0);
-            // 内容布局不是 LinearLayout 时,设置margin或者padding top
-            final View view = contentLayout.getChildAt(1);
-            final int statusBarHeight = MeasureUtil.getStatusBarHeight(this);
-            if (!(contentLayout instanceof LinearLayout) && view != null) {
-                if (view.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
-                    ((ViewGroup.MarginLayoutParams) view
-                            .getLayoutParams()).topMargin += statusBarHeight;
-                } else {
-                    view.setPadding(0, statusBarHeight, 0, 0);
-                }
-            }
-            // 设置属性
-            ViewGroup drawer = (ViewGroup) mDrawerLayout.getChildAt(1);
-            mDrawerLayout.setFitsSystemWindows(false);
-            contentLayout.setFitsSystemWindows(false);
-            contentLayout.setClipToPadding(true);
-            drawer.setFitsSystemWindows(false);
-
-            if (this instanceof SettingsActivity) {
-                // 因为要SettingsActivity做换肤，所以statusBarView也要设置
-                statusBarView.setTag("skin:primary:background");
-            }
-
-            final AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
-            final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-            if (appBarLayout != null && toolbar != null) {
-                final int toolbarHeight = MeasureUtil.getToolbarHeight(this);
-                appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-                    @Override
-                    public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                        // appBarLayout偏移量为Toolbar高度，这里为了4.4往上滑的时候由于透明状态栏Toolbar遮不住看起来难看，
-                        // 根据偏移量设置透明度制造出往上滑动逐渐消失的效果
-                        toolbar.setAlpha((toolbarHeight + verticalOffset) * 1.0f / toolbarHeight);
-                    }
-                });
-            }
-
-        } else if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-            // 5.0以上跟4.4统一，状态栏颜色和Toolbar的一致
-            mDrawerLayout
-                    .setStatusBarBackgroundColor(ThemeUtil.getColor(this, R.attr.colorPrimary));
-        }
+        handleAppBarLayoutOffset();
 
         mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
         if (mMenuDefaultCheckedItem != -1 && mNavigationView != null) {
@@ -385,6 +337,72 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
             }
         });
 
+    }
+
+    /**
+     * 处理与AppBarLayout偏移量相关事件处理
+     */
+    private void handleAppBarLayoutOffset() {
+        final AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (appBarLayout != null && toolbar != null) {
+            final int toolbarHeight = MeasureUtil.getToolbarHeight(this);
+            appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+                @Override
+                public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                    if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT || BaseActivity.this instanceof SettingsActivity) {
+                        // appBarLayout偏移量为Toolbar高度，这里为了4.4往上滑的时候由于透明状态栏Toolbar遮不住看起来难看，
+                        // 根据偏移量设置透明度制造出往上滑动逐渐消失的效果
+                        toolbar.setAlpha((toolbarHeight + verticalOffset) * 1.0f / toolbarHeight);
+                    }
+                    // AppBarLayout没有偏移量时，告诉Fragment刷新控件可用
+                    RxBus.get().post("enableRefreshLayout", verticalOffset == 0);
+                }
+            });
+        }
+    }
+
+    /**
+     * 处理布局延伸到状态栏，对4.4以上系统有效
+     */
+    private void handleStatusView() {
+        // 针对4.4和SettingsActivity(因为要做换肤，而状态栏在5.0是设置为透明的，若不这样处理换肤时状态栏颜色不会变化)
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT || this instanceof SettingsActivity) {
+
+            // 生成一个状态栏大小的矩形
+            View statusBarView = ViewUtil
+                    .createStatusView(this, ThemeUtil.getColor(this, R.attr.colorPrimary));
+            // 添加 statusBarView 到布局中
+            ViewGroup contentLayout = (ViewGroup) mDrawerLayout.getChildAt(0);
+            contentLayout.addView(statusBarView, 0);
+            // 内容布局不是 LinearLayout 时,设置margin或者padding top
+            final View view = contentLayout.getChildAt(1);
+            final int statusBarHeight = MeasureUtil.getStatusBarHeight(this);
+            if (!(contentLayout instanceof LinearLayout) && view != null) {
+                if (view.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+                    ((ViewGroup.MarginLayoutParams) view
+                            .getLayoutParams()).topMargin += statusBarHeight;
+                } else {
+                    view.setPadding(0, statusBarHeight, 0, 0);
+                }
+            }
+            // 设置属性
+            ViewGroup drawer = (ViewGroup) mDrawerLayout.getChildAt(1);
+            mDrawerLayout.setFitsSystemWindows(false);
+            contentLayout.setFitsSystemWindows(false);
+            contentLayout.setClipToPadding(true);
+            drawer.setFitsSystemWindows(false);
+
+            if (this instanceof SettingsActivity) {
+                // 因为要SettingsActivity做换肤，所以statusBarView也要设置
+                statusBarView.setTag("skin:primary:background");
+            }
+
+        } else if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+            // 5.0以上跟4.4统一，状态栏颜色和Toolbar的一致
+            mDrawerLayout
+                    .setStatusBarBackgroundColor(ThemeUtil.getColor(this, R.attr.colorPrimary));
+        }
     }
 
     /**

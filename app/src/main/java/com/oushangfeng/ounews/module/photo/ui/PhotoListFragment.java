@@ -43,7 +43,8 @@ import java.util.Random;
  * UpdateUser: <p>
  * UpdateDate: <p>
  */
-@ActivityFragmentInject(contentViewId = R.layout.fragment_photo_list)
+@ActivityFragmentInject(contentViewId = R.layout.fragment_photo_list,
+        handleRefreshLayout = true)
 public class PhotoListFragment extends BaseFragment<IPhotoListPresenter> implements IPhotoListView {
 
     protected static final String PHOTO_ID = "photo_id";
@@ -179,7 +180,7 @@ public class PhotoListFragment extends BaseFragment<IPhotoListPresenter> impleme
             @Override
             public void onItemClick(View view, int position) {
 
-                if (ClickUtils.isFastDoubleClick()){
+                if (ClickUtils.isFastDoubleClick()) {
                     return;
                 }
 
