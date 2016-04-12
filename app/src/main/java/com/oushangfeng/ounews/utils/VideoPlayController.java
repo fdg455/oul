@@ -229,6 +229,7 @@ public class VideoPlayController {
             @Override
             public void onCompletion(MediaPlayer mp) {
                 mPlayButton.setSelected(true);
+                show();
             }
         });
 

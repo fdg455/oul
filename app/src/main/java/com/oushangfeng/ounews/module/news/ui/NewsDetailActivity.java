@@ -2,7 +2,6 @@ package com.oushangfeng.ounews.module.news.ui;
 
 import android.content.Intent;
 import android.os.Build;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -10,7 +9,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -100,13 +98,14 @@ public class NewsDetailActivity extends BaseActivity<INewsDetailPresenter>
             // 设置全屏
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                     WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
             // 设置Toolbar对顶部的距离
             final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
             final FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) toolbar
                     .getLayoutParams();
-            final int statusBarHeight = layoutParams.topMargin = MeasureUtil
-                    .getStatusBarHeight(this);
-            // 算出伸缩移动的总距离
+            layoutParams.topMargin = MeasureUtil.getStatusBarHeight(this);
+
+            /*// 算出伸缩移动的总距离
             final AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
             final int[] verticalMoveDistance = new int[1];
             toolbarLayout.getViewTreeObserver()
@@ -133,7 +132,7 @@ public class NewsDetailActivity extends BaseActivity<INewsDetailPresenter>
                     }
                     lastVerticalOffset = verticalOffset;
                 }
-            });
+            });*/
         }
     }
 
