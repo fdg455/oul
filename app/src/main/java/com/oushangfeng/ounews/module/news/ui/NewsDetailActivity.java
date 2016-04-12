@@ -2,6 +2,7 @@ package com.oushangfeng.ounews.module.news.ui;
 
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -27,6 +28,7 @@ import com.oushangfeng.ounews.module.news.presenter.INewsDetailPresenterImpl;
 import com.oushangfeng.ounews.module.news.view.INewsDetailView;
 import com.oushangfeng.ounews.module.photo.ui.PhotoDetailActivity;
 import com.oushangfeng.ounews.utils.MeasureUtil;
+import com.oushangfeng.ounews.utils.ViewUtil;
 import com.oushangfeng.ounews.widget.ThreePointLoadingView;
 
 import java.util.ArrayList;
@@ -56,6 +58,19 @@ public class NewsDetailActivity extends BaseActivity<INewsDetailPresenter>
     private String mNewsListSrc;
 
     private SinaPhotoDetail mSinaPhotoDetail;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
+            // 设置全屏，并且不会Activity的布局让出状态栏的空间
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+            ViewUtil.showStatusBar(this);
+        }
+
+        super.onCreate(savedInstanceState);
+    }
 
     @Override
     protected void initView() {
@@ -95,15 +110,14 @@ public class NewsDetailActivity extends BaseActivity<INewsDetailPresenter>
      */
     private void materialCollapsingForKitkat(final CollapsingToolbarLayout toolbarLayout) {
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
-            // 设置全屏
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
             // 设置Toolbar对顶部的距离
             final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
             final FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) toolbar
                     .getLayoutParams();
             layoutParams.topMargin = MeasureUtil.getStatusBarHeight(this);
+
+
 
             /*// 算出伸缩移动的总距离
             final AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
@@ -167,8 +181,7 @@ public class NewsDetailActivity extends BaseActivity<INewsDetailPresenter>
                 }
             } else {
                 Glide.with(this).load(data.img.get(0).src).asBitmap()
-                        .placeholder(R.drawable.ic_loading)
-                        .format(DecodeFormat.PREFER_ARGB_8888)
+                        .placeholder(R.drawable.ic_loading).format(DecodeFormat.PREFER_ARGB_8888)
                         .diskCacheStrategy(DiskCacheStrategy.ALL).error(R.drawable.ic_fail)
                         .into(mNewsImageView);
             }
@@ -194,8 +207,7 @@ public class NewsDetailActivity extends BaseActivity<INewsDetailPresenter>
         } else {
             // 图片详情列表没有数据的时候，取图片列表页面传送过来的图片显示
             mNewsImageView.setTag(R.id.img_tag, false);
-            Glide.with(this).load(mNewsListSrc).asBitmap()
-                    .placeholder(R.drawable.ic_loading)
+            Glide.with(this).load(mNewsListSrc).asBitmap().placeholder(R.drawable.ic_loading)
                     .diskCacheStrategy(DiskCacheStrategy.ALL).format(DecodeFormat.PREFER_ARGB_8888)
                     .error(R.drawable.ic_fail).into(mNewsImageView);
         }
