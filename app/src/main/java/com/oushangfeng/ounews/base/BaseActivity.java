@@ -8,7 +8,9 @@ import android.os.StrictMode;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -356,7 +358,8 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
                         toolbar.setAlpha((toolbarHeight + verticalOffset) * 1.0f / toolbarHeight);
                     }
                     // AppBarLayout没有偏移量时，告诉Fragment刷新控件可用
-                    RxBus.get().post("enableRefreshLayout", verticalOffset == 0);
+                    RxBus.get()
+                            .post("enableRefreshLayoutOrScrollRecyclerView", verticalOffset == 0);
                 }
             });
         }
@@ -528,4 +531,25 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
     public void hideProgress() {
 
     }
+
+    /**
+     * 用户已选择tab的情况再次点击该tab，列表返回顶部，需要在setupWithViewPager后设置比如监听会把覆盖
+     *
+     * @param viewPager
+     * @param tabLayout TabLayout
+     */
+    protected void setOnTabSelectEvent(final ViewPager viewPager, final TabLayout tabLayout) {
+        tabLayout.setOnTabSelectedListener(new OnTabSelectedListenerAdapter() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition(), true);
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                RxBus.get().post("enableRefreshLayoutOrScrollRecyclerView", tab.getPosition());
+            }
+        });
+    }
+
 }

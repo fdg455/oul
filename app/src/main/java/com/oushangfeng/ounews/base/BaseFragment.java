@@ -3,6 +3,7 @@ package com.oushangfeng.ounews.base;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,10 @@ import rx.functions.Action1;
 public abstract class BaseFragment<T extends BasePresenter> extends Fragment
         implements BaseView, View.OnClickListener {
 
+    // 一般作为ViewPager承载的Fragment都会把位置索引传过来，这里放到基类，
+    // 方便下面的initRefreshLayoutOrRecyclerViewEvent()方法处理订阅事件
+    protected int mPosition;
+
     // 将代理类通用行为抽出来
     protected T mPresenter;
 
@@ -37,11 +42,14 @@ public abstract class BaseFragment<T extends BasePresenter> extends Fragment
     /**
      * 监听AppbarLayout偏移量
      */
-    private Observable<Boolean> mAppbarOffsetObservable;
+    private Observable<Object> mAppbarOffsetObservable;
     private RefreshLayout mRefreshLayout;
 
     // 是否处理RefreshLayout与AppbarLayout的冲突
     private boolean mHandleRefreshLayout;
+
+    // 标示当前Fragment所在的Activity是否可见
+    private boolean mIsStop;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -59,7 +67,7 @@ public abstract class BaseFragment<T extends BasePresenter> extends Fragment
             mFragmentRootView = inflater.inflate(mContentViewId, container, false);
 
             if (mHandleRefreshLayout) {
-                initRefreshLayoutEvent();
+                initRefreshLayoutOrRecyclerViewEvent();
             }
 
             initView(mFragmentRootView);
@@ -71,22 +79,41 @@ public abstract class BaseFragment<T extends BasePresenter> extends Fragment
     /**
      * 订阅事件处理RefreshLayout
      */
-    private void initRefreshLayoutEvent() {
+    private void initRefreshLayoutOrRecyclerViewEvent() {
         mRefreshLayout = (RefreshLayout) mFragmentRootView.findViewById(R.id.refresh_layout);
         if (mRefreshLayout != null) {
-            mAppbarOffsetObservable = RxBus.get().register("enableRefreshLayout", Boolean.class);
-            mAppbarOffsetObservable.subscribe(new Action1<Boolean>() {
+
+            final RecyclerView recyclerView = (RecyclerView) mFragmentRootView
+                    .findViewById(R.id.recycler_view);
+
+            mAppbarOffsetObservable = RxBus.get()
+                    .register("enableRefreshLayoutOrScrollRecyclerView", Object.class);
+            mAppbarOffsetObservable.subscribe(new Action1<Object>() {
                 @Override
-                public void call(Boolean enable) {
-                    mRefreshLayout.setRefreshable(enable);
+                public void call(Object obj) {
+                    if (obj instanceof Integer) {
+                        if (!mIsStop && recyclerView != null && (Integer) obj == mPosition) {
+                            // 当前Fragment所在的Activity可见并且是选中的Fragment才处理事件
+                            recyclerView.smoothScrollToPosition(0);
+                        }
+                    } else if (obj instanceof Boolean) {
+                        mRefreshLayout.setRefreshable((Boolean) obj);
+                    }
                 }
             });
         }
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        mIsStop = true;
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
+        mIsStop = false;
         if (mPresenter != null) {
             mPresenter.onResume();
         }

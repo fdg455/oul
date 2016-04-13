@@ -51,7 +51,6 @@ public class PhotoListFragment extends BaseFragment<IPhotoListPresenter> impleme
     protected static final String POSITION = "position";
 
     protected String mPhotoId;
-    protected int mPosition;
 
     private BaseRecyclerAdapter<SinaPhotoList.DataEntity.PhotoListEntity> mAdapter;
     private AutoLoadMoreRecyclerView mRecyclerView;

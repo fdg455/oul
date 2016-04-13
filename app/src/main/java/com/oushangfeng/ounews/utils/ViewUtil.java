@@ -25,6 +25,20 @@ import java.lang.reflect.Field;
  */
 public class ViewUtil {
 
+    // 隐藏状态栏
+    public static void hideStatusBar(Activity activity) {
+        WindowManager.LayoutParams attrs = activity.getWindow().getAttributes();
+        attrs.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
+        activity.getWindow().setAttributes(attrs);
+    }
+
+    // 显示状态栏
+    public static void showStatusBar(Activity activity) {
+        WindowManager.LayoutParams attrs = activity.getWindow().getAttributes();
+        attrs.flags &= ~WindowManager.LayoutParams.FLAG_FULLSCREEN;
+        activity.getWindow().setAttributes(attrs);
+    }
+
     /**
      * 生成一个和状态栏大小相同的矩形条
      *
@@ -34,13 +48,14 @@ public class ViewUtil {
      */
     public static View createStatusView(Activity activity, int color) {
         // 获得状态栏高度
-        int resourceId = activity.getResources().getIdentifier("status_bar_height", "dimen", "android");
+        int resourceId = activity.getResources()
+                .getIdentifier("status_bar_height", "dimen", "android");
         int statusBarHeight = activity.getResources().getDimensionPixelSize(resourceId);
 
         // 绘制一个和状态栏一样高的矩形
         View statusView = new View(activity);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                statusBarHeight);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, statusBarHeight);
         statusView.setLayoutParams(params);
         statusView.setBackgroundColor(color);
         return statusView;
@@ -48,8 +63,9 @@ public class ViewUtil {
 
     /**
      * Drawable 着色的后向兼容方案
+     *
      * @param drawable Drawable
-     * @param colors 颜色状态列表
+     * @param colors   颜色状态列表
      * @return Drawable
      */
     public static Drawable tintDrawable(Drawable drawable, ColorStateList colors) {

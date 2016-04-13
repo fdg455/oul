@@ -54,7 +54,6 @@ public class NewsListFragment extends BaseFragment<INewsListPresenter> implement
 
     protected String mNewsId;
     protected String mNewsType;
-    protected int mPosition;
 
     private BaseRecyclerAdapter<NeteastNewsSummary> mAdapter;
     private AutoLoadMoreRecyclerView mRecyclerView;

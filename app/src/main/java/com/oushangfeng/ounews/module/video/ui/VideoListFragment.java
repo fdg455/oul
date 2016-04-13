@@ -52,7 +52,6 @@ public class VideoListFragment extends BaseFragment<IVideoListPresenter> impleme
     protected static final String POSITION = "position";
 
     protected String mVideoId;
-    protected int mPosition;
 
     private BaseRecyclerAdapter<NeteastVideoSummary> mAdapter;
     private AutoLoadMoreRecyclerView mRecyclerView;

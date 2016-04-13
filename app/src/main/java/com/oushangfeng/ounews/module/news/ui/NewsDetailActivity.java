@@ -117,8 +117,6 @@ public class NewsDetailActivity extends BaseActivity<INewsDetailPresenter>
                     .getLayoutParams();
             layoutParams.topMargin = MeasureUtil.getStatusBarHeight(this);
 
-
-
             /*// 算出伸缩移动的总距离
             final AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
             final int[] verticalMoveDistance = new int[1];

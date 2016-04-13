@@ -105,6 +105,9 @@ public class NewsActivity extends BaseActivity<INewsPresenter> implements INewsV
             tabLayout.setScrollPosition(0, 0, true);
             // 根据Tab的长度动态设置TabLayout的模式
             ViewUtil.dynamicSetTabLayoutMode(tabLayout);
+
+            setOnTabSelectEvent(viewPager,tabLayout);
+
         } else {
             toast("数据异常");
         }
