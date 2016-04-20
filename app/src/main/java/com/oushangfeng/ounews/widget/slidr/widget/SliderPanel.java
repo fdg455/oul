@@ -3,7 +3,7 @@
  * All Rights Reserved.
  */
 
-package com.oushangfeng.ounews.utils.slidr.widget;
+package com.oushangfeng.ounews.widget.slidr.widget;
 
 import android.app.Activity;
 import android.content.Context;
@@ -16,7 +16,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.oushangfeng.ounews.utils.slidr.model.SlidrConfig;
+import com.oushangfeng.ounews.widget.slidr.model.SlidrConfig;
 import com.socks.library.KLog;
 
 

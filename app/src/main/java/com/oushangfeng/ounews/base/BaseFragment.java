@@ -135,7 +135,7 @@ public abstract class BaseFragment<T extends BasePresenter> extends Fragment
             mPresenter.onDestroy();
         }
         if (mHandleRefreshLayout && mRefreshLayout != null && mAppbarOffsetObservable != null) {
-            RxBus.get().unregister("enableRefreshLayout", mAppbarOffsetObservable);
+            RxBus.get().unregister("enableRefreshLayoutOrScrollRecyclerView", mAppbarOffsetObservable);
         }
         // 使用 RefWatcher 监控 Fragment
         RefWatcher refWatcher = App.getRefWatcher(getActivity());

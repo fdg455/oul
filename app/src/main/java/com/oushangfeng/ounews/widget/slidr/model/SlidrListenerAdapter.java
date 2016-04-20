@@ -1,4 +1,4 @@
-package com.oushangfeng.ounews.utils.slidr.model;
+package com.oushangfeng.ounews.widget.slidr.model;
 
 /**
  * Project: Slidr

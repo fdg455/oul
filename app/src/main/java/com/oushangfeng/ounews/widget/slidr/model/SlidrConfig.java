@@ -1,4 +1,4 @@
-package com.oushangfeng.ounews.utils.slidr.model;
+package com.oushangfeng.ounews.widget.slidr.model;
 
 import android.graphics.Color;
 import android.support.annotation.ColorInt;

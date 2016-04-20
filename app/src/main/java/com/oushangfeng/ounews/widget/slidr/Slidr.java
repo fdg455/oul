@@ -1,4 +1,4 @@
-package com.oushangfeng.ounews.utils.slidr;
+package com.oushangfeng.ounews.widget.slidr;
 
 import android.animation.ArgbEvaluator;
 import android.annotation.TargetApi;
@@ -8,9 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.oushangfeng.ounews.R;
-import com.oushangfeng.ounews.utils.slidr.model.SlidrConfig;
-import com.oushangfeng.ounews.utils.slidr.model.SlidrInterface;
-import com.oushangfeng.ounews.utils.slidr.widget.SliderPanel;
+import com.oushangfeng.ounews.widget.slidr.model.SlidrConfig;
+import com.oushangfeng.ounews.widget.slidr.model.SlidrInterface;
+import com.oushangfeng.ounews.widget.slidr.widget.SliderPanel;
 
 /**
  * This attacher class is used to attach the sliding mechanism to any {@link Activity}

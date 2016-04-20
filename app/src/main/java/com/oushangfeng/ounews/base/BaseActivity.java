@@ -40,7 +40,7 @@ import com.oushangfeng.ounews.utils.SlidrUtil;
 import com.oushangfeng.ounews.utils.SpUtil;
 import com.oushangfeng.ounews.utils.ThemeUtil;
 import com.oushangfeng.ounews.utils.ViewUtil;
-import com.oushangfeng.ounews.utils.slidr.model.SlidrInterface;
+import com.oushangfeng.ounews.widget.slidr.model.SlidrInterface;
 import com.socks.library.KLog;
 import com.zhy.changeskin.SkinManager;
 

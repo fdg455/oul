@@ -1,4 +1,4 @@
-package com.oushangfeng.ounews.utils.slidr.model;
+package com.oushangfeng.ounews.widget.slidr.model;
 
 /**
  * This listener interface is for receiving events from the sliding panel such as state changes

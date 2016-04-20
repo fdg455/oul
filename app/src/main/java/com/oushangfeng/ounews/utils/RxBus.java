@@ -31,7 +31,9 @@ public class RxBus {
     public static RxBus get() {
         if (sInstance == null) {
             synchronized (RxBus.class) {
-                if (sInstance == null) sInstance = new RxBus();
+                if (sInstance == null) {
+                    sInstance = new RxBus();
+                }
             }
         }
         return sInstance;
@@ -58,6 +60,7 @@ public class RxBus {
         }
 
         Subject<T, T> subject;
+        // PublishSubject只会把在订阅发生的时间点之后来自原始Observable的数据发射给观察者
         subjectList.add(subject = PublishSubject.create());
         KLog.e("{register}subjectMapper: " + mSubjectMapper);
         return subject;

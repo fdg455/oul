@@ -4,10 +4,10 @@ import android.app.Activity;
 import android.support.v4.content.ContextCompat;
 
 import com.oushangfeng.ounews.R;
-import com.oushangfeng.ounews.utils.slidr.Slidr;
-import com.oushangfeng.ounews.utils.slidr.model.SlidrConfig;
-import com.oushangfeng.ounews.utils.slidr.model.SlidrInterface;
-import com.oushangfeng.ounews.utils.slidr.model.SlidrPosition;
+import com.oushangfeng.ounews.widget.slidr.Slidr;
+import com.oushangfeng.ounews.widget.slidr.model.SlidrConfig;
+import com.oushangfeng.ounews.widget.slidr.model.SlidrInterface;
+import com.oushangfeng.ounews.widget.slidr.model.SlidrPosition;
 
 /**
  * ClassName：SlidrUtil<p>
