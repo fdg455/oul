@@ -382,12 +382,12 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
             final View view = contentLayout.getChildAt(1);
             final int statusBarHeight = MeasureUtil.getStatusBarHeight(this);
             if (!(contentLayout instanceof LinearLayout) && view != null) {
-                if (view.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
-                    ((ViewGroup.MarginLayoutParams) view
-                            .getLayoutParams()).topMargin += statusBarHeight;
-                } else {
-                    view.setPadding(0, statusBarHeight, 0, 0);
-                }
+//                if (view.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+//                    ((ViewGroup.MarginLayoutParams) view
+//                            .getLayoutParams()).topMargin += statusBarHeight;
+//                } else {
+                view.setPadding(0, statusBarHeight, 0, 0);
+//                }
             }
             // 设置属性
             ViewGroup drawer = (ViewGroup) mDrawerLayout.getChildAt(1);
@@ -399,6 +399,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
             if (this instanceof SettingsActivity) {
                 // 因为要SettingsActivity做换肤，所以statusBarView也要设置
                 statusBarView.setTag("skin:primary:background");
+                view.setTag("skin:primary:background");
             }
 
         } else if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {

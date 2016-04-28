@@ -101,23 +101,21 @@ public class PacManRefreshHead extends RefreshHead {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         // 算出宽度
-        if (mWidth == 0) {
-            mWidth = measureSize(widthMeasureSpec,
-                    mScreenSize.x + getPaddingLeft() + getPaddingRight());
-            mPaint.setStrokeWidth(mWidth * 1.0f / 200);
+        mWidth = measureSize(widthMeasureSpec,
+                mScreenSize.x + getPaddingLeft() + getPaddingRight());
+        mPaint.setStrokeWidth(mWidth * 1.0f / 200);
 
-            mPacManRadius = (int) (mWidth * 1.0f / 50);
+        mPacManRadius = (int) (mWidth * 1.0f / 50);
 
-            mTotalLength = mPacManRadius * 12;
+        mTotalLength = mPacManRadius * 12;
 
-            mBeanRadius = mPacManRadius / 3;
+        mBeanRadius = mPacManRadius / 3;
 
-            mHeight = measureSize(heightMeasureSpec,
-                    mPacManRadius * 4 + getPaddingTop() + getPaddingBottom());
+        mHeight = measureSize(heightMeasureSpec,
+                mPacManRadius * 4 + getPaddingTop() + getPaddingBottom());
 
-            if (mPacManRadius * 4 + getPaddingTop() + getPaddingBottom() < 0) {
-                mHeight = 0;
-            }
+        if (mPacManRadius * 4 + getPaddingTop() + getPaddingBottom() < 0) {
+            mHeight = 0;
         }
 
         setMeasuredDimension(mWidth, mHeight);
