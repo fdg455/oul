@@ -40,6 +40,12 @@ public class AppManager {
         return sInstance;
     }
 
+    public void clear() {
+        if (mNavActivityOrder != null && mNavActivityOrder.size() > 0) {
+            mNavActivityOrder.clear();
+        }
+    }
+
     /**
      * 获取上一个导航Activity的类
      *

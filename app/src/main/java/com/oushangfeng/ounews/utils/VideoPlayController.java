@@ -108,6 +108,16 @@ public class VideoPlayController {
         mAnchorView = anchorView;
         mVideoView = videoView;
 
+        mVideoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                if (mPlayButton != null) {
+                    mPlayButton.setSelected(true);
+                }
+                show();
+            }
+        });
+
         mAudioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
 
         mHandler = new VideoHandler(this);
@@ -164,7 +174,7 @@ public class VideoPlayController {
         if (mPopupWindow != null && !isShowing()) {
             showLayout();
             return;
-        } else if (mPopupWindow != null) {
+        } else if (mPopupWindow != null && isShowing() && mContentView != null) {
             return;
         }
 
@@ -222,14 +232,6 @@ public class VideoPlayController {
                     }
                 }
                 v.setSelected(!v.isSelected());
-            }
-        });
-
-        mVideoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                mPlayButton.setSelected(true);
-                show();
             }
         });
 

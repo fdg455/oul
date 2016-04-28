@@ -28,7 +28,6 @@ import com.oushangfeng.ounews.BuildConfig;
 import com.oushangfeng.ounews.R;
 import com.oushangfeng.ounews.annotation.ActivityFragmentInject;
 import com.oushangfeng.ounews.app.AppManager;
-import com.oushangfeng.ounews.callback.DrawerListenerAdapter;
 import com.oushangfeng.ounews.module.news.ui.NewsActivity;
 import com.oushangfeng.ounews.module.photo.ui.PhotoActivity;
 import com.oushangfeng.ounews.module.settings.ui.SettingsActivity;
@@ -328,7 +327,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
                 }
             }
         });
-        mDrawerLayout.addDrawerListener(new DrawerListenerAdapter() {
+        mDrawerLayout.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
 
             @Override
             public void onDrawerClosed(View drawerView) {
@@ -382,12 +381,12 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
             final View view = contentLayout.getChildAt(1);
             final int statusBarHeight = MeasureUtil.getStatusBarHeight(this);
             if (!(contentLayout instanceof LinearLayout) && view != null) {
-//                if (view.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
-//                    ((ViewGroup.MarginLayoutParams) view
-//                            .getLayoutParams()).topMargin += statusBarHeight;
-//                } else {
+                //                if (view.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+                //                    ((ViewGroup.MarginLayoutParams) view
+                //                            .getLayoutParams()).topMargin += statusBarHeight;
+                //                } else {
                 view.setPadding(0, statusBarHeight, 0, 0);
-//                }
+                //                }
             }
             // 设置属性
             ViewGroup drawer = (ViewGroup) mDrawerLayout.getChildAt(1);
@@ -427,6 +426,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
                     } else if (!themeChange) {
                         // 这个是入口新闻页面退出时发起的通知所有导航页面退出的事件
                         finish();
+                        AppManager.getAppManager().clear();
                         KLog.e("结束：" + BaseActivity.this.getClass().getName());
                     }
                 } catch (ClassNotFoundException e) {

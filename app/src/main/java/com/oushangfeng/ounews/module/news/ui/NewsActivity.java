@@ -17,6 +17,7 @@ import com.oushangfeng.ounews.module.news.presenter.INewsPresenterImpl;
 import com.oushangfeng.ounews.module.news.view.INewsView;
 import com.oushangfeng.ounews.utils.RxBus;
 import com.oushangfeng.ounews.utils.ViewUtil;
+import com.socks.library.KLog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +51,8 @@ public class NewsActivity extends BaseActivity<INewsPresenter> implements INewsV
 
     @Override
     protected void initView() {
+
+        KLog.e(this+" --- 初始化布局");
 
         // 设了默认的windowBackground使得冷启动没那么突兀，这里再设置为空减少过度绘制
         getWindow().setBackgroundDrawable(null);

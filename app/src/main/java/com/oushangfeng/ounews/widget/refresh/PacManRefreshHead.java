@@ -200,6 +200,7 @@ public class PacManRefreshHead extends RefreshHead {
                     KLog.e("动画还在运行，不操作");
                     return;
                 }
+
                 KLog.e("开始吃豆豆咯");
                 mLoadingAnimator1 = new ValueAnimator();
                 mLoadingAnimator1.setIntValues(0, mPacManRadius * 12);

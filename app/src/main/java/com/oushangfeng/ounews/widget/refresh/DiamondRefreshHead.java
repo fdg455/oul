@@ -263,7 +263,11 @@ public class DiamondRefreshHead extends RefreshHead {
     public void performLoading() {
         if (mLoadingAnimator != null && mLoadingAnimator.isRunning()) {
             return;
+        } else if (mLoadingAnimator != null) {
+            mLoadingAnimator.start();
+            return;
         }
+
         mLoadingAnimator = new ValueAnimator();
         mLoadingAnimator.setIntValues(0, mCubeSize * 2);
         mLoadingAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {

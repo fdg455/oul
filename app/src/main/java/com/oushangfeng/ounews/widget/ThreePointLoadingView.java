@@ -183,10 +183,13 @@ public class ThreePointLoadingView extends View {
 
     @Override
     protected void onDetachedFromWindow() {
+        stopLoading();
         super.onDetachedFromWindow();
         // 销毁view时取消动画，避免内存泄露
-        stopLoading();
+        // KLog.e("销毁view时取消动画，避免内存泄露"+this+" --- "+getContext()+" ---- "+ ++count);
     }
+
+    private int count = 0;
 
     public void play() {
         setVisibility(VISIBLE);
@@ -201,6 +204,7 @@ public class ThreePointLoadingView extends View {
     public void stop() {
         setVisibility(INVISIBLE);
         stopLoading();
+        postInvalidate();
     }
 
     private void stopLoading() {
@@ -214,7 +218,6 @@ public class ThreePointLoadingView extends View {
             mCBallAlpha = (int) (255 * 0.4);
             mABallazierX = mABallX;
             mABallazierY = mABallY;
-            postInvalidate();
         }
     }
 
@@ -225,7 +228,12 @@ public class ThreePointLoadingView extends View {
     // 开启值动画
     private void startLoading() {
 
-        if (mAnimator != null && mAnimator.isRunning()) return;
+        if (mAnimator != null && mAnimator.isRunning()) {
+            return;
+        } else if (mAnimator != null) {
+            mAnimator.start();
+            return;
+        }
 
         // 范围在0到圆心移动的距离，这个是以B圆到A圆位置为基准的
         mAnimator = ValueAnimator.ofFloat(0, mMoveLength);
@@ -290,7 +298,7 @@ public class ThreePointLoadingView extends View {
         // 时长1秒
         mAnimator.setDuration(1000);
         // 延迟0.5秒执行
-        // mAnimator.setStartDelay(500);
+        mAnimator.setStartDelay(250);
         // 开启动画
         mAnimator.start();
 
