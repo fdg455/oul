@@ -427,7 +427,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
                         // 这个是入口新闻页面退出时发起的通知所有导航页面退出的事件
                         finish();
                         AppManager.getAppManager().clear();
-                        KLog.e("结束：" + BaseActivity.this.getClass().getName());
+                        KLog.e("订阅事件结束：" + BaseActivity.this.getClass().getName());
                     }
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
