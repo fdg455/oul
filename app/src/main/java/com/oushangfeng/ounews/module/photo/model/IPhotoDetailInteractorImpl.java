@@ -1,14 +1,12 @@
 package com.oushangfeng.ounews.module.photo.model;
 
+import com.oushangfeng.ounews.base.BaseSubscriber;
 import com.oushangfeng.ounews.bean.SinaPhotoDetail;
 import com.oushangfeng.ounews.callback.RequestCallback;
 import com.oushangfeng.ounews.http.HostType;
 import com.oushangfeng.ounews.http.manager.RetrofitManager;
 
-import rx.Subscriber;
 import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action0;
 
 /**
  * ClassName: IPhotoDetailInteractorImpl<p>
@@ -22,7 +20,8 @@ public class IPhotoDetailInteractorImpl implements IPhotoDetailInteractor<SinaPh
     @Override
     public Subscription requestPhotoDetail(final RequestCallback<SinaPhotoDetail> callback, String id) {
         return RetrofitManager.getInstance(HostType.SINA_NEWS_PHOTO).getSinaPhotoDetailObservable(id)
-                .doOnSubscribe(new Action0() {
+                .subscribe(new BaseSubscriber<SinaPhotoDetail>(callback));
+                /*.doOnSubscribe(new Action0() {
                     @Override
                     public void call() {
                         callback.beforeRequest();
@@ -43,6 +42,6 @@ public class IPhotoDetailInteractorImpl implements IPhotoDetailInteractor<SinaPh
                     public void onNext(SinaPhotoDetail sinaPhotoDetail) {
                         callback.requestSuccess(sinaPhotoDetail);
                     }
-                });
+                });*/
     }
 }

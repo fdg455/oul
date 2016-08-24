@@ -38,6 +38,7 @@
   **[] $VALUES;
   public *;
 }
+-keepresourcexmlelements manifest/application/meta-data@value=GlideModule
 
 # LeakCanary
 -keep class org.eclipse.mat.** { *; }
@@ -113,9 +114,8 @@
 
 # greendao
 -keep class de.greenrobot.dao.** { *; }
- #保持greenDao的方法不被混淆
+ #保持greenDao的方法不被混淆 # 用来保持生成的表名不被混淆
 -keepclassmembers class * extends de.greenrobot.dao.AbstractDao {
-      # 用来保持生成的表名不被混淆
      public static java.lang.String TABLENAME;
  }
  -keep class **$Properties
@@ -143,6 +143,10 @@
 # AndroidChangeSkin
 -keep class com.zhy.changeskin.** { *; }
 -keep interface com.zhy.changeskin.** { *; }
+
+# PLDroidPlayer
+-keep class com.pili.pldroid.player.** { *; }
+-keep class tv.danmaku.ijk.media.player.** {*;}
 
 #一般官网都是有混淆的，没有的话就google，也没有的话自己按照上面的写法自己写，
 #还不会的话。。。。。只能换个包。。。。。如果你是直接包含的jar包的话，你这样写

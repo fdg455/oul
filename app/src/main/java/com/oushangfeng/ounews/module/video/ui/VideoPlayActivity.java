@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
-import android.graphics.PixelFormat;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -16,13 +15,11 @@ import com.oushangfeng.ounews.base.BaseActivity;
 import com.oushangfeng.ounews.module.video.presenter.IVideoPlayPresenter;
 import com.oushangfeng.ounews.module.video.presenter.IVideoPlayPresenterImpl;
 import com.oushangfeng.ounews.module.video.view.IVideoPlayView;
-import com.oushangfeng.ounews.utils.VideoPlayController;
+import com.oushangfeng.ounews.utils.VideoPlayController1;
 import com.oushangfeng.ounews.utils.ViewUtil;
 import com.oushangfeng.ounews.widget.ThreePointLoadingView;
-
-import io.vov.vitamio.MediaPlayer;
-import io.vov.vitamio.Vitamio;
-import io.vov.vitamio.widget.VideoView;
+import com.pili.pldroid.player.PLMediaPlayer;
+import com.pili.pldroid.player.widget.PLVideoView;
 
 /**
  * ClassName: VideoPlayActivity<p>
@@ -38,21 +35,19 @@ public class VideoPlayActivity extends BaseActivity<IVideoPlayPresenter>
         implements IVideoPlayView, View.OnTouchListener {
 
     private ThreePointLoadingView mLoadingView;
-    private VideoView mVideoView;
     private View mBgView;
 
-    private VideoPlayController mPlayController;
     private BroadcastReceiver mBatInfoReceiver;
 
     private float mDownX;
     private float mDownY;
 
+    private PLVideoView mVideoPlayView;
+    private VideoPlayController1 mMediaController;
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mPlayController != null) {
-            mPlayController.onDestroy();
-        }
         unregisterReceiver(mBatInfoReceiver);
     }
 
@@ -71,9 +66,7 @@ public class VideoPlayActivity extends BaseActivity<IVideoPlayPresenter>
         mLoadingView = (ThreePointLoadingView) findViewById(R.id.tpl_view);
         mLoadingView.setOnClickListener(this);
 
-        mVideoView = (VideoView) findViewById(R.id.video_view);
-        mVideoView.setZOrderOnTop(true);
-        mVideoView.getHolder().setFormat(PixelFormat.TRANSPARENT);
+        mVideoPlayView = (PLVideoView) findViewById(R.id.PLVideoView);
 
         mPresenter = new IVideoPlayPresenterImpl(this, videoUrl);
 
@@ -81,33 +74,28 @@ public class VideoPlayActivity extends BaseActivity<IVideoPlayPresenter>
 
     @Override
     public void playVideo(String path) {
-        if (Vitamio.isInitialized(getApplicationContext())) {
 
-            mVideoView.setVideoPath(path);
+        mMediaController = new VideoPlayController1(this, mVideoPlayView, mBgView);
+        mVideoPlayView.setMediaController(mMediaController);
+        mVideoPlayView.setDisplayAspectRatio(PLVideoView.ASPECT_RATIO_FIT_PARENT);
+        mVideoPlayView.setVideoPath(path);
+        mVideoPlayView.setOnPreparedListener(new PLMediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(PLMediaPlayer plMediaPlayer) {
+                mVideoPlayView.setVisibility(View.VISIBLE);
+                hideProgress();
+            }
+        });
+        mVideoPlayView.setOnTouchListener(this);
+        mVideoPlayView.setOnErrorListener(new PLMediaPlayer.OnErrorListener() {
+            @Override
+            public boolean onError(PLMediaPlayer plMediaPlayer, int i) {
+                hideProgress();
+                toast("视频播放出错了╮(╯Д╰)╭");
+                return true;
+            }
+        });
 
-            mPlayController = new VideoPlayController(this, mVideoView, mBgView);
-
-            mVideoView.requestFocus();
-            mVideoView.setOnTouchListener(this);
-
-            mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mediaPlayer) {
-                    mediaPlayer.setPlaybackSpeed(1.0f);
-                    hideProgress();
-                }
-            });
-            mVideoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {
-                @Override
-                public boolean onError(MediaPlayer mp, int what, int extra) {
-                    hideProgress();
-                    toast("视频播放出错了╮(╯Д╰)╭");
-                    return true;
-                }
-            });
-        } else {
-            toast("播放器还没初始化完哎，等等咯╮(╯Д╰)╭ ");
-        }
     }
 
     // 注册监听屏幕亮闭屏
@@ -120,16 +108,18 @@ public class VideoPlayActivity extends BaseActivity<IVideoPlayPresenter>
         mBatInfoReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(final Context context, final Intent intent) {
-                if (mVideoView != null && mPlayController != null && mVideoView
+                if (mVideoPlayView != null && mMediaController != null && mVideoPlayView
                         .isPlaying() && intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
                     // 屏幕关闭并且视频正在播放的时候，暂停播放
-                    mVideoView.pause();
-                    mPlayController.hide();
-                } else if (mVideoView != null && mPlayController != null && intent.getAction()
+                    mVideoPlayView.pause();
+                    mMediaController.hide();
+                } else if (mVideoPlayView != null && intent.getAction()
                         .equals(Intent.ACTION_SCREEN_ON)) {
                     // 亮屏的时候，显示控制器
-                    mPlayController.show();
+                    mMediaController.show();
+                    mVideoPlayView.start();
                 }
+
             }
         };
         registerReceiver(mBatInfoReceiver, filter);
@@ -146,17 +136,17 @@ public class VideoPlayActivity extends BaseActivity<IVideoPlayPresenter>
 
     @Override
     public void onBackPressed() {
-        mVideoView.setVisibility(View.INVISIBLE);
+        mVideoPlayView.setVisibility(View.INVISIBLE);
         finish();
     }
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.rl_bg && mPlayController != null) {
-            if (mPlayController.isShowing()) {
-                mPlayController.hide();
+        if (v.getId() == R.id.rl_bg && mMediaController != null) {
+            if (mMediaController.isShowing()) {
+                mMediaController.hide();
             } else {
-                mPlayController.show();
+                mMediaController.show();
             }
         }
     }
@@ -176,8 +166,8 @@ public class VideoPlayActivity extends BaseActivity<IVideoPlayPresenter>
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         // 保持屏幕比例正确
-        mVideoView.setVideoLayout(VideoView.VIDEO_LAYOUT_SCALE, 0);
-        mPlayController.hide();
+        mVideoPlayView.setDisplayAspectRatio(PLVideoView.ASPECT_RATIO_FIT_PARENT);
+        mMediaController.hide();
     }
 
     @Override
@@ -195,13 +185,13 @@ public class VideoPlayActivity extends BaseActivity<IVideoPlayPresenter>
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                if (mPlayController != null && Math.abs(mDownX - event.getX()) <= 50 && Math
+                if (mMediaController != null && Math.abs(mDownX - event.getX()) <= 50 && Math
                         .abs(mDownY - event.getY()) <= 50) {
                     // 解决与背景点击事件的冲突
-                    if (mPlayController.isShowing()) {
-                        mPlayController.hide();
+                    if (mMediaController.isShowing()) {
+                        mMediaController.hide();
                     } else {
-                        mPlayController.show();
+                        mMediaController.show();
                     }
                 }
                 break;

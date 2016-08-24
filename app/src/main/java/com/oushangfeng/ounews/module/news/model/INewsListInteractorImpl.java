@@ -1,5 +1,6 @@
 package com.oushangfeng.ounews.module.news.model;
 
+import com.oushangfeng.ounews.base.BaseSubscriber;
 import com.oushangfeng.ounews.bean.NeteastNewsSummary;
 import com.oushangfeng.ounews.callback.RequestCallback;
 import com.oushangfeng.ounews.http.Api;
@@ -11,11 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import rx.Observable;
-import rx.Subscriber;
 import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action0;
-import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.functions.Func2;
 
@@ -33,7 +30,7 @@ public class INewsListInteractorImpl implements INewsListInteractor<List<Neteast
     public Subscription requestNewsList(final RequestCallback<List<NeteastNewsSummary>> callback, String type, final String id, int startPage) {
         KLog.e("新闻列表：" + type + ";" + id);
         return RetrofitManager.getInstance(HostType.NETEASE_NEWS_VIDEO)
-                .getNewsListObservable(type, id, startPage).doOnSubscribe(new Action0() {
+                .getNewsListObservable(type, id, startPage)/*.doOnSubscribe(new Action0() {
                     @Override
                     public void call() {
                         // 订阅之前回调回去显示加载动画
@@ -45,7 +42,7 @@ public class INewsListInteractorImpl implements INewsListInteractor<List<Neteast
                     public void call(Throwable throwable) {
                         KLog.e("错误时处理：" + throwable + " --- " + throwable.getLocalizedMessage());
                     }
-                }).flatMap(
+                })*/.flatMap(
                         new Func1<Map<String, List<NeteastNewsSummary>>, Observable<NeteastNewsSummary>>() {
                             // map得到list转换成item
                             @Override
@@ -63,7 +60,8 @@ public class INewsListInteractorImpl implements INewsListInteractor<List<Neteast
                     public Integer call(NeteastNewsSummary neteastNewsSummary, NeteastNewsSummary neteastNewsSummary2) {
                         return neteastNewsSummary2.ptime.compareTo(neteastNewsSummary.ptime);
                     }
-                }).subscribe(new Subscriber<List<NeteastNewsSummary>>() {
+                }).subscribe(new BaseSubscriber<List<NeteastNewsSummary>>(callback));
+                /*.subscribe(new Subscriber<List<NeteastNewsSummary>>() {
                     @Override
                     public void onCompleted() {
                         callback.requestComplete();
@@ -79,6 +77,6 @@ public class INewsListInteractorImpl implements INewsListInteractor<List<Neteast
                     public void onNext(List<NeteastNewsSummary> neteastNewsSummaries) {
                         callback.requestSuccess(neteastNewsSummaries);
                     }
-                });
+                });*/
     }
 }

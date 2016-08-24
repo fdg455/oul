@@ -18,11 +18,11 @@ import com.oushangfeng.ounews.module.photo.ui.adapter.OnPageChangeListenerAdapte
 import com.oushangfeng.ounews.module.photo.ui.adapter.PhotoAdapter;
 import com.oushangfeng.ounews.module.photo.view.IPhotoDetailView;
 import com.oushangfeng.ounews.utils.MeasureUtil;
+import com.oushangfeng.ounews.utils.StringUtils;
 import com.oushangfeng.ounews.widget.HackyViewPager;
 import com.oushangfeng.ounews.widget.ThreePointLoadingView;
 import com.socks.library.KLog;
 
-import io.vov.vitamio.utils.StringUtils;
 import zhou.widget.RichText;
 
 /**
@@ -112,16 +112,16 @@ public class PhotoDetailActivity extends BaseActivity<IPhotoDetailPresenter>
 
                 mPageTv.setText(s);
 
-                final String alt = photoList.data.pics.get(position).alt;
-                if (!TextUtils.isEmpty(alt) && !alt
-                        .equals(mContentTv.getText().toString().trim())) {
-                    ObjectAnimator.ofFloat(mContentTv, "alpha", 0.5f, 1).setDuration(500).start();
-                    mContentTv.setRichText(getString(R.string.photo_detail_content, alt));
-                    dynamicSetTextViewGravity();
+                if (photoList.data.pics.size() > 0) {
+                    final String alt = photoList.data.pics.get(position).alt;
+                    if (!TextUtils.isEmpty(alt) && !mContentTv.getText().toString().contains(alt)) {
+                        ObjectAnimator.ofFloat(mContentTv, "alpha", 0.5f, 1).setDuration(500).start();
+                        mContentTv.setRichText(getString(R.string.photo_detail_content, alt));
+                        dynamicSetTextViewGravity();
+                    }
+                    // 每次切换回来都要处理一下，因为切换回来当前的图片不会调用OnPhotoExpandListener的onExpand方法
+                    controlView(photoAdapter.getPics().get(position).showTitle);
                 }
-
-                // 每次切换回来都要处理一下，因为切换回来当前的图片不会调用OnPhotoExpandListener的onExpand方法
-                controlView(photoAdapter.getPics().get(position).showTitle);
 
             }
 

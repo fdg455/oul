@@ -59,6 +59,21 @@ public class VideoListFragment extends BaseFragment<IVideoListPresenter> impleme
     private ThreePointLoadingView mLoadingView;
 
     @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (mPresenter == null) {
+            return;
+        }
+        if (isVisibleToUser) {
+            //可见时执行的操作
+            mPresenter.onVisibleToUser();
+        } else {
+            //不可见时执行的操作
+            mPresenter.onInvisibleToUser();
+        }
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
@@ -90,6 +105,9 @@ public class VideoListFragment extends BaseFragment<IVideoListPresenter> impleme
         mRefreshLayout = (RefreshLayout) fragmentRootView.findViewById(R.id.refresh_layout);
 
         mPresenter = new IVideoListPresenterImpl(this, mVideoId, 0);
+        if (mPosition == 0) {
+            mPresenter.onVisibleToUser();
+        }
     }
 
 
@@ -105,14 +123,15 @@ public class VideoListFragment extends BaseFragment<IVideoListPresenter> impleme
 
     @Override
     public void updateVideoList(List<NeteastVideoSummary> data, @DataLoadType.DataLoadTypeChecker int type) {
+
+        if (mAdapter == null) {
+            initVideoList(null);
+        }
+
         switch (type) {
             case DataLoadType.TYPE_REFRESH_SUCCESS:
                 mRefreshLayout.refreshFinish();
-                if (mAdapter == null) {
-                    initVideoList(data);
-                } else {
-                    mAdapter.setData(data);
-                }
+                mAdapter.setData(data);
                 if (mRecyclerView.isAllLoaded()) {
                     // 之前全部加载完了的话，这里把状态改回来供底部加载用
                     mRecyclerView.notifyMoreLoaded();

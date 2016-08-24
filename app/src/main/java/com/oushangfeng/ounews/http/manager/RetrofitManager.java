@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.util.SparseArray;
 
 import com.oushangfeng.ounews.app.App;
+import com.oushangfeng.ounews.base.BaseSchedulerTransformer;
 import com.oushangfeng.ounews.bean.NeteastNewsDetail;
 import com.oushangfeng.ounews.bean.NeteastNewsSummary;
 import com.oushangfeng.ounews.bean.NeteastVideoSummary;
@@ -39,8 +40,6 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  * ClassName: RetrofitManager<p>
@@ -203,9 +202,9 @@ public class RetrofitManager {
      * @return 被观察对象
      */
     public Observable<Map<String, List<NeteastNewsSummary>>> getNewsListObservable(String type, String id, int startPage) {
-        return mNewsService.getNewsList(getCacheControl(), type, id, startPage)
-                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .unsubscribeOn(Schedulers.io());
+        return mNewsService.getNewsList(getCacheControl(), type, id, startPage).compose(new BaseSchedulerTransformer<Map<String, List<NeteastNewsSummary>>>());
+                /*.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .unsubscribeOn(Schedulers.io())*/
     }
 
     /**
@@ -215,8 +214,9 @@ public class RetrofitManager {
      * @return 被观察对象
      */
     public Observable<Map<String, NeteastNewsDetail>> getNewsDetailObservable(String postId) {
-        return mNewsService.getNewsDetail(getCacheControl(), postId).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).unsubscribeOn(Schedulers.io());
+        return mNewsService.getNewsDetail(getCacheControl(), postId).compose(new BaseSchedulerTransformer<Map<String, NeteastNewsDetail>>());
+                /*.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).unsubscribeOn(Schedulers.io());*/
     }
 
     /**
@@ -229,9 +229,9 @@ public class RetrofitManager {
         KLog.e("新浪图片新闻列表: " + photoTypeId + ";" + page);
         return mNewsService.getSinaPhotoList(getCacheControl(), photoTypeId,
                 "4ad30dabe134695c3b7c3a65977d7e72", "b207", "6042095012", "12050_0001",
-                "12050_0001", "867064013906290", "802909da86d9f5fc", page)
-                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .unsubscribeOn(Schedulers.io());
+                "12050_0001", "867064013906290", "802909da86d9f5fc", page).compose(new BaseSchedulerTransformer<SinaPhotoList>());
+                /*.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .unsubscribeOn(Schedulers.io());*/
     }
 
     /**
@@ -242,9 +242,9 @@ public class RetrofitManager {
      */
     public Observable<SinaPhotoDetail> getSinaPhotoDetailObservable(String id) {
         return mNewsService.getSinaPhotoDetail(getCacheControl(), Api.SINA_PHOTO_DETAIL_ID, "b207",
-                "6042095012", "12050_0001", "12050_0001", "867064013906290", "802909da86d9f5fc", id)
-                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .unsubscribeOn(Schedulers.io());
+                "6042095012", "12050_0001", "12050_0001", "867064013906290", "802909da86d9f5fc", id).compose(new BaseSchedulerTransformer<SinaPhotoDetail>());
+                /*.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .unsubscribeOn(Schedulers.io());*/
     }
 
     /**
@@ -256,9 +256,9 @@ public class RetrofitManager {
      */
     public Observable<Map<String, List<NeteastVideoSummary>>> getVideoListObservable(String id, int startPage) {
         KLog.e("网易视频列表: " + id + ";" + startPage);
-        return mNewsService.getVideoList(getCacheControl(), id, startPage)
-                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .unsubscribeOn(Schedulers.io());
+        return mNewsService.getVideoList(getCacheControl(), id, startPage).compose(new BaseSchedulerTransformer<Map<String, List<NeteastVideoSummary>>>());
+                /*.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .unsubscribeOn(Schedulers.io());*/
     }
 
     /**
@@ -268,8 +268,9 @@ public class RetrofitManager {
      * @return 被观察者
      */
     public Observable<WeatherInfo> getWeatherInfoObservable(String city) {
-        return mNewsService.getWeatherInfo(getCacheControl(), city).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).unsubscribeOn(Schedulers.io());
+        return mNewsService.getWeatherInfo(getCacheControl(), city).compose(new BaseSchedulerTransformer<WeatherInfo>());
+                /*.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).unsubscribeOn(Schedulers.io());*/
     }
 
 }

@@ -1,19 +1,16 @@
 package com.oushangfeng.ounews.module.video.model;
 
+import com.oushangfeng.ounews.base.BaseSubscriber;
 import com.oushangfeng.ounews.bean.NeteastVideoSummary;
 import com.oushangfeng.ounews.callback.RequestCallback;
 import com.oushangfeng.ounews.http.HostType;
 import com.oushangfeng.ounews.http.manager.RetrofitManager;
-import com.socks.library.KLog;
 
 import java.util.List;
 import java.util.Map;
 
 import rx.Observable;
-import rx.Subscriber;
 import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action0;
 import rx.functions.Func1;
 import rx.functions.Func2;
 
@@ -30,12 +27,15 @@ public class IVideoListInteractorImpl implements IVideoListInteractor<List<Netea
     @Override
     public Subscription requestVideoList(final RequestCallback<List<NeteastVideoSummary>> callback, final String id, int startPage) {
         return RetrofitManager.getInstance(HostType.NETEASE_NEWS_VIDEO)
-                .getVideoListObservable(id, startPage).doOnSubscribe(new Action0() {
+                .getVideoListObservable(id, startPage)
+                /*.doOnSubscribe(new Action0() {
                     @Override
                     public void call() {
                         callback.beforeRequest();
                     }
-                }).subscribeOn(AndroidSchedulers.mainThread()).flatMap(
+                })
+                .subscribeOn(AndroidSchedulers.mainThread())*/
+                .flatMap(
                         new Func1<Map<String, List<NeteastVideoSummary>>, Observable<NeteastVideoSummary>>() {
                             @Override
                             public Observable<NeteastVideoSummary> call(Map<String, List<NeteastVideoSummary>> map) {
@@ -49,7 +49,9 @@ public class IVideoListInteractorImpl implements IVideoListInteractor<List<Netea
                         // 时间排序
                         return neteastVideoSummary2.ptime.compareTo(neteastVideoSummary.ptime);
                     }
-                }).subscribe(new Subscriber<List<NeteastVideoSummary>>() {
+                })
+                .subscribe(new BaseSubscriber<List<NeteastVideoSummary>>(callback));
+                /*.subscribe(new Subscriber<List<NeteastVideoSummary>>() {
                     @Override
                     public void onCompleted() {
                         callback.requestComplete();
@@ -65,6 +67,6 @@ public class IVideoListInteractorImpl implements IVideoListInteractor<List<Netea
                     public void onNext(List<NeteastVideoSummary> data) {
                         callback.requestSuccess(data);
                     }
-                });
+                });*/
     }
 }

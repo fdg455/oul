@@ -1,1 +1,1 @@
-include ':app', ':daogenerator', ':vitamio', ':changeskin'
+include ':app', ':daogenerator', ':changeskin'
