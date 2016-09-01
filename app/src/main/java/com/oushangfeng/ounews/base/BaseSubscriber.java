@@ -3,6 +3,9 @@ package com.oushangfeng.ounews.base;
 import android.support.annotation.CallSuper;
 
 import com.oushangfeng.ounews.callback.RequestCallback;
+import com.socks.library.KLog;
+
+import java.net.UnknownHostException;
 
 import retrofit2.adapter.rxjava.HttpException;
 import rx.Subscriber;
@@ -50,7 +53,10 @@ public class BaseSubscriber<T> extends Subscriber<T> {
                         errorMsg = ((HttpException) e).message();
                         break;
                 }
+            } else if (e instanceof UnknownHostException) {
+                errorMsg = "不知名主机";
             }
+            KLog.e(e.toString());
             mRequestCallback.requestError(errorMsg);
         }
     }

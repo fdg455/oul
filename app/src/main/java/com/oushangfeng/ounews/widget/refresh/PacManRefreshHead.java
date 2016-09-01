@@ -79,10 +79,8 @@ public class PacManRefreshHead extends RefreshHead {
 
         if (attrs != null) {
 
-            final TypedArray typedArray = context
-                    .obtainStyledAttributes(attrs, R.styleable.PacManRefreshHead);
-            mPaint.setColor(typedArray.getColor(R.styleable.PacManRefreshHead_pacIconColor,
-                    ContextCompat.getColor(context, R.color.material_black55)));
+            final TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.PacManRefreshHead);
+            mPaint.setColor(typedArray.getColor(R.styleable.PacManRefreshHead_pacIconColor, ContextCompat.getColor(context, R.color.material_black55)));
             typedArray.recycle();
         }
 
@@ -101,8 +99,7 @@ public class PacManRefreshHead extends RefreshHead {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         // 算出宽度
-        mWidth = measureSize(widthMeasureSpec,
-                mScreenSize.x + getPaddingLeft() + getPaddingRight());
+        mWidth = measureSize(widthMeasureSpec, mScreenSize.x + getPaddingLeft() + getPaddingRight());
         mPaint.setStrokeWidth(mWidth * 1.0f / 200);
 
         mPacManRadius = (int) (mWidth * 1.0f / 50);
@@ -111,8 +108,7 @@ public class PacManRefreshHead extends RefreshHead {
 
         mBeanRadius = mPacManRadius / 3;
 
-        mHeight = measureSize(heightMeasureSpec,
-                mPacManRadius * 4 + getPaddingTop() + getPaddingBottom());
+        mHeight = measureSize(heightMeasureSpec, mPacManRadius * 4 + getPaddingTop() + getPaddingBottom());
 
         if (mPacManRadius * 4 + getPaddingTop() + getPaddingBottom() < 0) {
             mHeight = 0;
@@ -155,21 +151,17 @@ public class PacManRefreshHead extends RefreshHead {
             mEatAngle = 0;
         }
 
-        mRectF.set((mWidth - mTotalLength) / 2 + mPacManXOffset, mPacManRadius + getPaddingTop(),
-                (mWidth - mTotalLength) / 2 + mPacManRadius * 2 + mPacManXOffset,
+        mRectF.set((mWidth - mTotalLength) / 2 + mPacManXOffset, mPacManRadius + getPaddingTop(), (mWidth - mTotalLength) / 2 + mPacManRadius * 2 + mPacManXOffset,
                 mPacManRadius * 3 + getPaddingTop());
-        canvas.drawArc(mRectF, 45 - mEatAngle - mRotateSweep, 360 - (45 - mEatAngle) * 2, true,
-                mPaint);
+        canvas.drawArc(mRectF, 45 - mEatAngle - mRotateSweep, 360 - (45 - mEatAngle) * 2, true, mPaint);
 
         for (int i = 0; i < 5; i++) {
-            if (mStep != 0 && (mStep - 1) / 2 == i && 45 - mEatAngle <= Math
-                    .toDegrees(Math.atan(0.25f)) || mEatBeanPos[i] == i) {
+            if (mStep != 0 && (mStep - 1) / 2 == i && 45 - mEatAngle <= Math.toDegrees(Math.atan(0.25f)) || mEatBeanPos[i] == i) {
                 // 通过mStep和角度来判断是否吃了豆豆
                 mEatBeanPos[i] = i;
                 continue;
             }
-            canvas.drawCircle(mRectF.right - mPacManXOffset + mPacManRadius * (1 + 2 * i),
-                    mRectF.top + mPacManRadius, mBeanRadius, mPaint);
+            canvas.drawCircle(mRectF.right - mPacManXOffset + mPacManRadius * (1 + 2 * i), mRectF.top + mPacManRadius, mBeanRadius, mPaint);
         }
 
     }
@@ -186,7 +178,7 @@ public class PacManRefreshHead extends RefreshHead {
 
     @Override
     public void performLoaded() {
-        stopAnimator();
+        stopAnimator(false);
         postInvalidate();
     }
 
@@ -268,9 +260,7 @@ public class PacManRefreshHead extends RefreshHead {
                         mLoadAnimatorSet.start();
                     }
                 });
-                mLoadAnimatorSet
-                        .playSequentially(mLoadingAnimator1, mLoadingAnimator2, mLoadingAnimator3,
-                                mLoadingAnimator4);
+                mLoadAnimatorSet.playSequentially(mLoadingAnimator1, mLoadingAnimator2, mLoadingAnimator3, mLoadingAnimator4);
                 mLoadAnimatorSet.start();
             }
         });
@@ -280,7 +270,7 @@ public class PacManRefreshHead extends RefreshHead {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        stopAnimator();
+        stopAnimator(true);
     }
 
     /**
@@ -293,27 +283,29 @@ public class PacManRefreshHead extends RefreshHead {
 
     }
 
-    private void stopAnimator() {
+    private void stopAnimator(boolean removeListener) {
         if (mLoadAnimatorSet != null && mLoadAnimatorSet.isRunning()) {
 
-            mLoadingAnimator1.removeAllListeners();
-            mLoadingAnimator1.removeAllUpdateListeners();
-            mLoadingAnimator1.cancel();
+            if (removeListener) {
+                mLoadingAnimator1.removeAllListeners();
+                mLoadingAnimator1.removeAllUpdateListeners();
+                mLoadingAnimator1.cancel();
 
-            mLoadingAnimator2.removeAllListeners();
-            mLoadingAnimator2.removeAllUpdateListeners();
-            mLoadingAnimator2.cancel();
+                mLoadingAnimator2.removeAllListeners();
+                mLoadingAnimator2.removeAllUpdateListeners();
+                mLoadingAnimator2.cancel();
 
-            mLoadingAnimator3.removeAllListeners();
-            mLoadingAnimator3.removeAllUpdateListeners();
-            mLoadingAnimator3.cancel();
+                mLoadingAnimator3.removeAllListeners();
+                mLoadingAnimator3.removeAllUpdateListeners();
+                mLoadingAnimator3.cancel();
 
-            mLoadingAnimator4.removeAllListeners();
-            mLoadingAnimator4.removeAllUpdateListeners();
-            mLoadingAnimator4.cancel();
+                mLoadingAnimator4.removeAllListeners();
+                mLoadingAnimator4.removeAllUpdateListeners();
+                mLoadingAnimator4.cancel();
 
-            mLoadAnimatorSet.removeAllListeners();
-            mLoadAnimatorSet.cancel();
+                mLoadAnimatorSet.removeAllListeners();
+                mLoadAnimatorSet.cancel();
+            }
 
             mStep = 0;
             mEatAngle = 0;

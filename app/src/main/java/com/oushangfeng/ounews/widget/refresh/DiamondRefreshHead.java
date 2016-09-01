@@ -81,14 +81,17 @@ public class DiamondRefreshHead extends RefreshHead {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 
         // 算出宽度
-        mWidth = measureSize(widthMeasureSpec,
-                mScreenSize.x + getPaddingLeft() + getPaddingRight());
+        mWidth = measureSize(widthMeasureSpec, mScreenSize.x + getPaddingLeft() + getPaddingRight());
 
         // 初始化方块的长宽
-        if (mCubeSize == 0) mCubeSize = (int) (mWidth * 1.0f / 100);
+        if (mCubeSize == 0) {
+            mCubeSize = (int) (mWidth * 1.0f / 100);
+        }
 
         // 初始化方块矩阵的总宽度
-        if (mTotalWidth == 0) mTotalWidth = mCubeSize * 9;
+        if (mTotalWidth == 0) {
+            mTotalWidth = mCubeSize * 9;
+        }
 
         // 初始化相对底部的偏移量
         if (mBaseBottomOffset == 0) {
@@ -96,8 +99,7 @@ public class DiamondRefreshHead extends RefreshHead {
         }
 
         // 算出高度
-        mHeight = measureSize(heightMeasureSpec,
-                mCubeSize * 9 + getPaddingTop() + getPaddingBottom());
+        mHeight = measureSize(heightMeasureSpec, mCubeSize * 9 + getPaddingTop() + getPaddingBottom());
 
         // 若padding值与矩阵总的高度和为负值，为了避免算出 mHeight=-1即mHeight=ViewGroup.LayoutParams.MATCH_PARENT
         // 负值时高度强制设为0
@@ -137,18 +139,15 @@ public class DiamondRefreshHead extends RefreshHead {
 
         for (int i = 0; i < 2; i++) {
             int offset = i == 1 ? mLoadingOffset : 0;
-            canvas.drawRect((mWidth - mTotalWidth) / 2 + mLoadingOffset * 2,
-                    mCubeSize * 2 + mCubeSize * 2 * (i + 1) - mFirstBottomOffset - offset + getPaddingTop(),
+            canvas.drawRect((mWidth - mTotalWidth) / 2 + mLoadingOffset * 2, mCubeSize * 2 + mCubeSize * 2 * (i + 1) - mFirstBottomOffset - offset + getPaddingTop(),
                     (mWidth - mTotalWidth) / 2 + mCubeSize + mLoadingOffset * 2,
-                    mCubeSize * 2 + mCubeSize + mCubeSize * 2 * (i + 1) - mFirstBottomOffset - offset + getPaddingTop(),
-                    mPaint);
+                    mCubeSize * 2 + mCubeSize + mCubeSize * 2 * (i + 1) - mFirstBottomOffset - offset + getPaddingTop(), mPaint);
         }
 
         canvas.drawRect((mWidth - mTotalWidth) / 2 + mCubeSize * 2 + mLoadingOffset,
                 mCubeSize * 2 + mCubeSize * 2 * 2 - mFirstBottomOffset - mLoadingOffset + getPaddingTop(),
                 (mWidth - mTotalWidth) / 2 + mCubeSize * 2 + mCubeSize * 5 - mLoadingOffset,
-                mCubeSize * 2 + mCubeSize * 2 * 2 + mCubeSize - mFirstBottomOffset - mLoadingOffset + getPaddingTop(),
-                mPaint);
+                mCubeSize * 2 + mCubeSize * 2 * 2 + mCubeSize - mFirstBottomOffset - mLoadingOffset + getPaddingTop(), mPaint);
 
         // 绘制第二组方块矩阵
         mPaint.setColor(ContextCompat.getColor(getContext(), R.color.material_purple_700));
@@ -156,11 +155,9 @@ public class DiamondRefreshHead extends RefreshHead {
 
         for (int i = 0; i < 3; i++) {
             int offset = i == 0 ? mLoadingOffset : i == 2 ? -mLoadingOffset : 0;
-            canvas.drawRect((mWidth - mTotalWidth) / 2 + mCubeSize * 2 * (i + 1) + offset,
-                    mCubeSize * 2 + mCubeSize * 2 - mSecondBottomOffset + getPaddingTop(),
+            canvas.drawRect((mWidth - mTotalWidth) / 2 + mCubeSize * 2 * (i + 1) + offset, mCubeSize * 2 + mCubeSize * 2 - mSecondBottomOffset + getPaddingTop(),
                     (mWidth - mTotalWidth) / 2 + mCubeSize + mCubeSize * 2 * (i + 1) + offset,
-                    mCubeSize * 2 + mCubeSize + mCubeSize * 2 - mSecondBottomOffset + getPaddingTop(),
-                    mPaint);
+                    mCubeSize * 2 + mCubeSize + mCubeSize * 2 - mSecondBottomOffset + getPaddingTop(), mPaint);
         }
 
         // 绘制第三组方块矩阵
@@ -172,8 +169,7 @@ public class DiamondRefreshHead extends RefreshHead {
             canvas.drawRect((mWidth - mTotalWidth) / 2 + mCubeSize * 2 * 4 - mLoadingOffset * 2,
                     mCubeSize * 2 + mCubeSize * 2 * i - mThirdBottomOffset + offset + getPaddingTop(),
                     (mWidth - mTotalWidth) / 2 + mCubeSize + mCubeSize * 2 * 4 - mLoadingOffset * 2,
-                    mCubeSize * 2 + mCubeSize + mCubeSize * 2 * i - mThirdBottomOffset + offset + getPaddingTop(),
-                    mPaint);
+                    mCubeSize * 2 + mCubeSize + mCubeSize * 2 * i - mThirdBottomOffset + offset + getPaddingTop(), mPaint);
         }
 
         // 绘制第四组方块矩阵
@@ -182,11 +178,9 @@ public class DiamondRefreshHead extends RefreshHead {
 
         for (int i = 0; i < 4; i++) {
             int offset = i == 0 ? mLoadingOffset * 2 : i == 1 ? mLoadingOffset : i == 3 ? -mLoadingOffset : 0;
-            canvas.drawRect((mWidth - mTotalWidth) / 2 + mCubeSize * 2 * i + offset,
-                    mCubeSize * 2 - mFourthBottomOffset + mLoadingOffset + getPaddingTop(),
+            canvas.drawRect((mWidth - mTotalWidth) / 2 + mCubeSize * 2 * i + offset, mCubeSize * 2 - mFourthBottomOffset + mLoadingOffset + getPaddingTop(),
                     (mWidth - mTotalWidth) / 2 + mCubeSize + mCubeSize * 2 * i + offset,
-                    mCubeSize * 2 + mCubeSize - mFourthBottomOffset + mLoadingOffset + getPaddingTop(),
-                    mPaint);
+                    mCubeSize * 2 + mCubeSize - mFourthBottomOffset + mLoadingOffset + getPaddingTop(), mPaint);
         }
     }
 
@@ -238,7 +232,7 @@ public class DiamondRefreshHead extends RefreshHead {
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         // 销毁时移除动画
-        stopAnimator();
+        stopAnimator(true);
     }
 
     @Override
@@ -255,7 +249,7 @@ public class DiamondRefreshHead extends RefreshHead {
 
     @Override
     public void performLoaded() {
-        stopAnimator();
+        stopAnimator(false);
         postInvalidate();
     }
 
@@ -288,10 +282,12 @@ public class DiamondRefreshHead extends RefreshHead {
     /**
      * 停止动画
      */
-    private void stopAnimator() {
+    private void stopAnimator(boolean removeListener) {
         if (mLoadingAnimator != null && mLoadingAnimator.isRunning()) {
-            mLoadingAnimator.removeAllUpdateListeners();
-            mLoadingAnimator.removeAllListeners();
+            if (removeListener) {
+                mLoadingAnimator.removeAllUpdateListeners();
+                mLoadingAnimator.removeAllListeners();
+            }
             mLoadingAnimator.cancel();
         }
         mLoadingOffset = 0;
