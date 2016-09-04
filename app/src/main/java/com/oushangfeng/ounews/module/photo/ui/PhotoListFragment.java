@@ -132,7 +132,7 @@ public class PhotoListFragment extends BaseFragment<IPhotoListPresenter> impleme
                 break;
             case DataLoadType.TYPE_LOAD_MORE_FAIL:
                 mAdapter.hideFooter();
-                mRecyclerView.notifyMoreLoaded();
+                mRecyclerView.notifyMoreLoadedFail();
                 break;
         }
     }
