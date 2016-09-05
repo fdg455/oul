@@ -2,7 +2,9 @@ package com.oushangfeng.ounews.base;
 
 import android.support.annotation.CallSuper;
 
+import com.oushangfeng.ounews.app.App;
 import com.oushangfeng.ounews.callback.RequestCallback;
+import com.oushangfeng.ounews.utils.NetUtil;
 import com.socks.library.KLog;
 
 import java.net.UnknownHostException;
@@ -48,6 +50,13 @@ public class BaseSubscriber<T> extends Subscriber<T> {
                 switch (((HttpException) e).code()) {
                     case 403:
                         errorMsg = "没有权限访问此链接！";
+                        break;
+                    case 504:
+                        if (!NetUtil.isConnected(App.getContext())) {
+                            errorMsg = "没有联网哦！";
+                        } else {
+                            errorMsg = "网络连接超时！";
+                        }
                         break;
                     default:
                         errorMsg = ((HttpException) e).message();

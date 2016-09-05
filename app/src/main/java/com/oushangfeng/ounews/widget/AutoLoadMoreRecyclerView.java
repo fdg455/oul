@@ -22,7 +22,8 @@ public class AutoLoadMoreRecyclerView extends RecyclerView {
     // 所处的状态
     public static final int STATE_MORE_LOADING = 1;
     public static final int STATE_MORE_LOADED = 2;
-    public static final int STATE_ALL_LOADED = 3;
+    public static final int STATE_MORE_LOADED_FAIL = 3;
+    public static final int STATE_ALL_LOADED = 4;
 
     private int[] mVisiblePositions;
 
@@ -46,10 +47,26 @@ public class AutoLoadMoreRecyclerView extends RecyclerView {
     private void init() {
         super.addOnScrollListener(new OnScrollListener() {
 
-            @Override
+            /*@Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if (mCurrentState == STATE_MORE_LOADED && calculateRecyclerViewFirstPosition() == getAdapter()
+                if (mLoadMoreListener != null && mCurrentState == STATE_MORE_LOADED_FAIL && calculateRecyclerViewFirstPosition() < getAdapter().getItemCount() - 1) {
+                    mCurrentState = STATE_MORE_LOADED;
+                } else if (mCurrentState == STATE_MORE_LOADED && calculateRecyclerViewFirstPosition() == getAdapter().getItemCount() - 1 && mLoadMoreListener != null) {
+                    // 之前的状态为非正在加载状态
+                    KLog.e("加载更多数据");
+                    mLoadMoreListener.loadMore();
+                    mCurrentState = STATE_MORE_LOADING;
+                }
+            }*/
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState != RecyclerView.SCROLL_STATE_IDLE && mLoadMoreListener != null && mCurrentState == STATE_MORE_LOADED_FAIL && calculateRecyclerViewFirstPosition() < getAdapter()
+                        .getItemCount() - 1) {
+                    mCurrentState = STATE_MORE_LOADED;
+                } else if (newState == RecyclerView.SCROLL_STATE_IDLE && mCurrentState == STATE_MORE_LOADED && calculateRecyclerViewFirstPosition() == getAdapter()
                         .getItemCount() - 1 && mLoadMoreListener != null) {
                     // 之前的状态为非正在加载状态
                     KLog.e("加载更多数据");
@@ -57,20 +74,6 @@ public class AutoLoadMoreRecyclerView extends RecyclerView {
                     mCurrentState = STATE_MORE_LOADING;
                 }
             }
-
-           /* @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-
-                if (mCurrentState == STATE_MORE_LOADED *//*&& RecyclerView.SCROLL_STATE_IDLE == newState*//* && calculateRecyclerViewFirstPosition() == getAdapter()
-                        .getItemCount() - 1 && mLoadMoreListener != null) {
-                    // 之前的状态为非正在加载状态
-                    KLog.e("加载更多数据");
-                    mLoadMoreListener.loadMore();
-                    mCurrentState = STATE_MORE_LOADING;
-                }
-
-            }*/
         });
     }
 
@@ -99,11 +102,9 @@ public class AutoLoadMoreRecyclerView extends RecyclerView {
         // 判断LayoutManager类型获取第一个完全可视位置
         if (getLayoutManager() instanceof StaggeredGridLayoutManager) {
             if (mVisiblePositions == null) {
-                mVisiblePositions = new int[((StaggeredGridLayoutManager) getLayoutManager())
-                        .getSpanCount()];
+                mVisiblePositions = new int[((StaggeredGridLayoutManager) getLayoutManager()).getSpanCount()];
             }
-            ((StaggeredGridLayoutManager) getLayoutManager())
-                    .findLastCompletelyVisibleItemPositions(mVisiblePositions);
+            ((StaggeredGridLayoutManager) getLayoutManager()).findLastCompletelyVisibleItemPositions(mVisiblePositions);
             int max = -1;
             for (int pos : mVisiblePositions) {
                 max = Math.max(max, pos);
@@ -113,8 +114,7 @@ public class AutoLoadMoreRecyclerView extends RecyclerView {
         } else if (getLayoutManager() instanceof GridLayoutManager) {
             return ((GridLayoutManager) getLayoutManager()).findLastCompletelyVisibleItemPosition();
         } else {
-            return ((LinearLayoutManager) getLayoutManager())
-                    .findLastCompletelyVisibleItemPosition();
+            return ((LinearLayoutManager) getLayoutManager()).findLastCompletelyVisibleItemPosition();
         }
     }
 
@@ -123,6 +123,10 @@ public class AutoLoadMoreRecyclerView extends RecyclerView {
      */
     public void notifyMoreLoaded() {
         mCurrentState = STATE_MORE_LOADED;
+    }
+
+    public void notifyMoreLoadedFail() {
+        mCurrentState = STATE_MORE_LOADED_FAIL;
     }
 
     /**

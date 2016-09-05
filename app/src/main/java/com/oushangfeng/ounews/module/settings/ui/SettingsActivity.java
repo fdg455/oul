@@ -54,15 +54,14 @@ public class SettingsActivity extends BaseActivity<ISettingsPresenter> implement
                     return;
                 }
 
-                final boolean nightModeCheck = !((CheckedTextView) v).isChecked();
+                boolean nightModeCheck = !((CheckedTextView) v).isChecked();
 
                 ((CheckedTextView) v).setChecked(nightModeCheck);
                 SkinManager.getInstance().changeSkin(nightModeCheck ? "night" : "");
                 SpUtil.writeBoolean("enableNightMode", nightModeCheck);
 
                 // 这里设置主题不起作用，但是我们弹窗时候的主题和着色时的颜色状态列表属性是需要主题支持的
-                setTheme(
-                        nightModeCheck ? R.style.BaseAppThemeNight_AppTheme : R.style.BaseAppTheme_AppTheme);
+                setTheme(nightModeCheck ? R.style.BaseAppThemeNight_AppTheme : R.style.BaseAppTheme_AppTheme);
 
                 applyTint(mNightModeCheckedTextView);
                 applyTint(mSlideModeCheckedTextView);
@@ -84,12 +83,9 @@ public class SettingsActivity extends BaseActivity<ISettingsPresenter> implement
                 SpUtil.writeBoolean("disableSlide", !slideModeCheck);
 
                 if (slideModeCheck) {
-                    String currentSlideMode = SpUtil
-                            .readBoolean("enableSlideEdge") ? "边缘侧滑" : "整页侧滑";
-                    new MaterialDialog.Builder(this).title("选择侧滑模式(当前为" + currentSlideMode + ")")
-                            .items(R.array.slide_mode_items).itemsCallbackSingleChoice(
-                            SpUtil.readBoolean("enableSlideEdge") ? 0 : 1,
-                            new MaterialDialog.ListCallbackSingleChoice() {
+                    String currentSlideMode = SpUtil.readBoolean("enableSlideEdge") ? "边缘侧滑" : "整页侧滑";
+                    new MaterialDialog.Builder(this).title("选择侧滑模式(当前为" + currentSlideMode + ")").items(R.array.slide_mode_items)
+                            .itemsCallbackSingleChoice(SpUtil.readBoolean("enableSlideEdge") ? 0 : 1, new MaterialDialog.ListCallbackSingleChoice() {
                                 @Override
                                 public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
                                     SpUtil.writeBoolean("enableSlideEdge", which == 0);
@@ -111,20 +107,17 @@ public class SettingsActivity extends BaseActivity<ISettingsPresenter> implement
         applyTint(mSlideModeCheckedTextView);
 
         mNightModeCheckedTextView.setChecked(SpUtil.readBoolean("enableNightMode"));
-        mNightModeCheckedTextView
-                .setText(SpUtil.readBoolean("enableNightMode") ? "关闭夜间模式" : "开启夜间模式");
+        mNightModeCheckedTextView.setText(SpUtil.readBoolean("enableNightMode") ? "关闭夜间模式" : "开启夜间模式");
 
         mSlideModeCheckedTextView.setChecked(!SpUtil.readBoolean("disableSlide"));
-        mSlideModeCheckedTextView
-                .setText(!SpUtil.readBoolean("disableSlide") ? "关闭侧滑返回" : "开启侧滑返回");
+        mSlideModeCheckedTextView.setText(!SpUtil.readBoolean("disableSlide") ? "关闭侧滑返回" : "开启侧滑返回");
 
     }
 
     // 因为这里是通过鸿洋大神的换肤做的，而CheckedTextView着色不兼容5.0以下，
     // 所以切换皮肤的时候动态加载当前主题自定义的ColorStateList，对CheckMarkDrawable进行着色
     private void applyTint(CheckedTextView checkedTextView) {
-        ColorStateList indicator = ThemeUtil
-                .getColorStateList(this, R.attr.checkTextViewColorStateList);
+        ColorStateList indicator = ThemeUtil.getColorStateList(this, R.attr.checkTextViewColorStateList);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             checkedTextView.setCheckMarkTintList(indicator);
         } else {

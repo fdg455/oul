@@ -140,7 +140,7 @@ public class NewsListFragment extends BaseFragment<INewsListPresenter> implement
                 break;
             case DataLoadType.TYPE_LOAD_MORE_FAIL:
                 mAdapter.hideFooter();
-                mRecyclerView.notifyMoreLoaded();
+                mRecyclerView.notifyMoreLoadedFail();
                 break;
         }
     }
