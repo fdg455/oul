@@ -58,6 +58,7 @@ public class AutoLoadMoreRecyclerView extends RecyclerView {
                     mLoadMoreListener.loadMore();
                     mCurrentState = STATE_MORE_LOADING;
                 }
+            }
             }*/
 
             @Override
