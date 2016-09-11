@@ -70,7 +70,7 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mClickListener.onItemClick(v, holder.getLayoutPosition());
+                        mClickListener.onItemClick(v, holder.getAdapterPosition());
                     }
                 });
             }
