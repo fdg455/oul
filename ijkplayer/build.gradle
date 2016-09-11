@@ -1,0 +1,60 @@
+apply plugin: 'com.android.library'
+
+android {
+    // http://tools.android.com/tech-docs/new-build-system/tips
+    //noinspection GroovyAssignabilityCheck
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    //noinspection GroovyAssignabilityCheck
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    lintOptions {
+        abortOnError false
+    }
+    defaultConfig {
+        minSdkVersion 12
+        targetSdkVersion rootProject.ext.targetSdkVersion
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+//    productFlavors {
+//        all32 { minSdkVersion 12 }
+//        all64 { minSdkVersion 21 }
+//        armv5 { minSdkVersion 12 }
+//        armv7a { minSdkVersion 12 }
+//        arm64 { minSdkVersion 21 }
+//        x86 { minSdkVersion 12 }
+//        x86_64 { minSdkVersion 21 }
+//    }
+
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:24.2.0'
+    compile 'com.android.support:design:24.2.0'
+
+    compile project(':ijkplayer-java')
+    compile project(':ijkplayer-exo')
+
+//    all32Compile project(':ijkplayer-armv5')
+//    all32Compile project(':ijkplayer-armv7a')
+//    all32Compile project(':ijkplayer-x86')
+//
+//    all64Compile project(':ijkplayer-armv5')
+//    all64Compile project(':ijkplayer-armv7a')
+//    all64Compile project(':ijkplayer-arm64')
+//    all64Compile project(':ijkplayer-x86')
+//    all64Compile project(':ijkplayer-x86_64')
+//
+//    armv5Compile project(':ijkplayer-armv5')
+//    armv7aCompile project(':ijkplayer-armv7a')
+//    arm64Compile project(':ijkplayer-arm64')
+//    x86Compile project(':ijkplayer-x86')
+//    x86_64Compile project(':ijkplayer-x86_64')
+
+}

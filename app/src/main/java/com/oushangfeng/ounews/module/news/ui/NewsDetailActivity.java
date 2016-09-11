@@ -82,7 +82,7 @@ public class NewsDetailActivity extends BaseActivity<INewsDetailPresenter>
         toolbarLayout
                 .setCollapsedTitleTextColor(ContextCompat.getColor(this, R.color.material_white));
 
-        materialCollapsingForKitkat(toolbarLayout);
+        // materialCollapsingForKitkat(toolbarLayout);
 
         mNewsImageView = (ImageView) findViewById(R.id.iv_news_detail_photo);
 
@@ -106,9 +106,9 @@ public class NewsDetailActivity extends BaseActivity<INewsDetailPresenter>
     /**
      * 4.4设置全屏并动态修改Toolbar的位置实现类5.0效果，确保布局延伸到状态栏的效果
      *
-     * @param toolbarLayout
+     * @param collapsingToolbarLayout
      */
-    private void materialCollapsingForKitkat(final CollapsingToolbarLayout toolbarLayout) {
+    private void materialCollapsingForKitkat(final CollapsingToolbarLayout collapsingToolbarLayout) {
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
 
             // 设置Toolbar对顶部的距离
@@ -120,14 +120,14 @@ public class NewsDetailActivity extends BaseActivity<INewsDetailPresenter>
             /*// 算出伸缩移动的总距离
             final AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
             final int[] verticalMoveDistance = new int[1];
-            toolbarLayout.getViewTreeObserver()
+            collapsingToolbarLayout.getViewTreeObserver()
                     .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                         @Override
                         public void onGlobalLayout() {
-                            verticalMoveDistance[0] = toolbarLayout
+                            verticalMoveDistance[0] = collapsingToolbarLayout
                                     .getMeasuredHeight() - MeasureUtil
                                     .getToolbarHeight(NewsDetailActivity.this);
-                            toolbarLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                            collapsingToolbarLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                         }
                     });
             appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {

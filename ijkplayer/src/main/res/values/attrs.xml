@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="ProgressView">
+        <attr name="progress_bar_color" format="color"/>
+        <attr name="save_progress_bar_color" format="color"/>
+        <attr name="frame_color" format="color"/>
+        <attr name="origin_progress" format="float"/>
+        <attr name="max_progress" format="float"/>
+        <attr name="progress_orientation" format="enum">
+            <enum name="vertical" value="1"/>
+            <enum name="horizontal" value="2"/>
+        </attr>
+        <attr name="wave" format="boolean"/>
+    </declare-styleable>
+
+</resources>

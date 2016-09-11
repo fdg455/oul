@@ -1,29 +1,5 @@
 package com.oushangfeng.ounews.utils;
 
-import android.app.Activity;
-import android.content.Context;
-import android.media.AudioManager;
-import android.os.Handler;
-import android.os.Message;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.PopupWindow;
-import android.widget.SeekBar;
-import android.widget.TextView;
-
-import com.oushangfeng.ounews.R;
-import com.pili.pldroid.player.IMediaController;
-import com.pili.pldroid.player.PLMediaPlayer;
-import com.pili.pldroid.player.widget.PLVideoView;
-import com.socks.library.KLog;
-
-import java.lang.ref.WeakReference;
-
-
 /**
  * ClassName: <p>
  * Author: oubowu<p>
@@ -32,9 +8,10 @@ import java.lang.ref.WeakReference;
  * UpdateUser: <p>
  * UpdateDate: <p>
  */
-public class VideoPlayController1 implements IMediaController {
+@Deprecated
+public class VideoPlayController1 /*implements IMediaController*/ {
 
-    // 默认停留的时间
+    /*// 默认停留的时间
     private static final int DEFAULT_TIMEOUT = 5000;
     // 退出
     private static final int FADE_OUT = 1;
@@ -133,11 +110,11 @@ public class VideoPlayController1 implements IMediaController {
         mHandler = null;
     }
 
-    /**
+    *//**
      * 设置进度条和时间
      *
      * @return
-     */
+     *//*
     private long setProgress() {
         if (mVideoView == null || mIsDraging) return 0;
 
@@ -362,5 +339,5 @@ public class VideoPlayController1 implements IMediaController {
     public void setAnchorView(View view) {
 
     }
-
+*/
 }

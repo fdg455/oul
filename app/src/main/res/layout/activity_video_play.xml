@@ -16,18 +16,24 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"/>-->
 
-    <com.pili.pldroid.player.widget.PLVideoView
+    <!--<com.pili.pldroid.player.widget.PLVideoView
         android:id="@+id/PLVideoView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:visibility="invisible"/>
+        android:visibility="invisible"/>-->
+
+    <com.oushangfeng.ijkplayer.widget.media.IjkVideoView
+        android:id="@+id/ijk_video_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
     <com.oushangfeng.ounews.widget.ThreePointLoadingView
         android:id="@+id/tpl_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="invisible"
+        android:background="@color/material_black"
         app:pointColor="?attr/pointColor"/>
 
 </RelativeLayout>

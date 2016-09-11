@@ -1,1 +1,1 @@
-include ':app', ':daogenerator', ':changeskin'
+include ':app', ':daogenerator', ':changeskin', ':ijkplayer-arm64', ':ijkplayer-armv5', ':ijkplayer-armv7a', ':ijkplayer-java', ':ijkplayer-exo', ':ijkplayer-x86', ':ijkplayer-x86_64', ':ijkplayer'

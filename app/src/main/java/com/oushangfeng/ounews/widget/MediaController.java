@@ -1,38 +1,13 @@
 package com.oushangfeng.ounews.widget;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Rect;
-import android.media.AudioManager;
-import android.os.Build;
-import android.os.Handler;
-import android.os.Message;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
-import android.widget.PopupWindow;
-import android.widget.ProgressBar;
-import android.widget.SeekBar;
-import android.widget.TextView;
-
-import com.pili.pldroid.player.IMediaController;
-
-import java.util.Locale;
-
 /**
  * You can write a custom MediaController instead of this class
  * A MediaController widget must implement all the interface defined by com.pili.pldroid.player.IMediaController
  */
-public class MediaController extends FrameLayout implements IMediaController {
+@Deprecated
+public class MediaController /*extends FrameLayout implements IMediaController*/ {
 
-    private static final String TAG = "PLMediaController";
+    /*private static final String TAG = "PLMediaController";
     private MediaPlayerControl mPlayer;
     private Context mContext;
     private PopupWindow mWindow;
@@ -121,12 +96,12 @@ public class MediaController extends FrameLayout implements IMediaController {
         mAnimStyle = android.R.style.Animation;
     }
 
-    /**
+    *//**
      * Create the view that holds the widgets that control playback. Derived
      * classes can override this to create their own.
      *
      * @return The controller view.
-     */
+     *//*
     protected View makeControllerView() {
         return ((LayoutInflater) mContext
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(MEDIA_CONTROLLER_ID, this);
@@ -179,12 +154,12 @@ public class MediaController extends FrameLayout implements IMediaController {
         mCurrentTime = (TextView) v.findViewById(CURRENT_TIME_ID);
     }
 
-    /**
+    *//**
      * Control the action when the seekbar dragged by user
      *
      * @param seekWhenDragging
      * True the media will seek periodically
-     */
+     *//*
     public void setInstantSeeking(boolean seekWhenDragging) {
         mInstantSeeking = seekWhenDragging;
     }
@@ -197,7 +172,7 @@ public class MediaController extends FrameLayout implements IMediaController {
         }
     }
 
-    /**
+    *//**
      * <p>
      * Change the animation style resource for this controller.
      * </p>
@@ -212,7 +187,7 @@ public class MediaController extends FrameLayout implements IMediaController {
      * Set to -1 for the default animation, 0 for no animation,
      * or a resource identifier for an explicit animation.
      *
-     */
+     *//*
     public void setAnimationStyle(int animationStyle) {
         mAnimStyle = animationStyle;
     }
@@ -427,7 +402,7 @@ public class MediaController extends FrameLayout implements IMediaController {
         }
     };
 
-    /**
+    *//**
      * Set the view that acts as the anchor for the control view.
      *
      * - This can for example be a VideoView, or your Activity's main view.
@@ -435,7 +410,7 @@ public class MediaController extends FrameLayout implements IMediaController {
      *
      * @param view
      * The view to which to anchor the controller when it is visible.
-     */
+     *//*
     @Override
     public void setAnchorView(View view) {
         mAnchor = view;
@@ -463,13 +438,13 @@ public class MediaController extends FrameLayout implements IMediaController {
         show(sDefaultTimeout);
     }
 
-    /**
+    *//**
      * Show the controller on screen. It will go away automatically after
      * 'timeout' milliseconds of inactivity.
      *
      * @param timeout
      * The timeout in milliseconds. Use 0 to show the controller until hide() is called.
-     */
+     *//*
     @Override
     public void show(int timeout) {
         if (!mShowing) {
@@ -563,5 +538,5 @@ public class MediaController extends FrameLayout implements IMediaController {
             mProgress.setEnabled(enabled);
         disableUnsupportedButtons();
         super.setEnabled(enabled);
-    }
+    }*/
 }

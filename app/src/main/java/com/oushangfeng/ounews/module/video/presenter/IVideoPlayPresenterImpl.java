@@ -16,7 +16,7 @@ public class IVideoPlayPresenterImpl extends BasePresenterImpl<IVideoPlayView, V
 
     public IVideoPlayPresenterImpl(IVideoPlayView view, String path) {
         super(view);
-        mView.registerScreenBroadCastReceiver();
+        // mView.registerScreenBroadCastReceiver();
         mView.playVideo(path);
         mView.showProgress();
     }

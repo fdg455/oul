@@ -5,8 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     android:background="?android:attr/itemBackground"
+    android:fitsSystemWindows="true"
     tools:context=".module.news.ui.NewsDetailActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -24,7 +24,7 @@
             app:contentScrim="?attr/colorPrimary"
             app:expandedTitleGravity="bottom"
             app:expandedTitleMarginStart="48dp"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
             <!--我们设置了layout_scrollFlags:关于它的值我这里再说一下：
             scroll - 想滚动就必须设置这个。
@@ -59,8 +59,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
-                app:theme="@style/ToolbarTheme"
-                app:popupTheme="@style/AppTheme.PopupOverlay"/>
+                app:popupTheme="@style/AppTheme.PopupOverlay"
+                app:theme="@style/ToolbarTheme"/>
 
             <!--使用CollapsingToolbarLayout时必须把title设置到CollapsingToolbarLayout上，设置到Toolbar上不会显示。即：
             mCollapsingToolbarLayout.setTitle(" ");
@@ -82,14 +82,14 @@
         android:src="@drawable/ic_news_detail_photo_list_black"
         app:backgroundTint="?attr/fabColor"
         app:layout_anchor="@id/app_bar"
-        app:layout_anchorGravity="bottom|end"/>
+        app:layout_anchorGravity="bottom|end|right"/>
 
     <com.oushangfeng.ounews.widget.ThreePointLoadingView
         android:id="@+id/tpl_view"
-        android:layout_marginTop="?attr/actionBarSize"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:pointColor="?attr/pointColor"
-        android:visibility="invisible"/>
+        android:layout_marginTop="?attr/actionBarSize"
+        android:visibility="invisible"
+        app:pointColor="?attr/pointColor"/>
 
 </android.support.design.widget.CoordinatorLayout>
