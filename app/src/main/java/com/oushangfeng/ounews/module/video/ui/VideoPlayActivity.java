@@ -2,7 +2,6 @@ package com.oushangfeng.ounews.module.video.ui;
 
 import android.net.Uri;
 import android.os.Build;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -18,10 +17,6 @@ import com.oushangfeng.ounews.utils.ViewUtil;
 import com.oushangfeng.ounews.utils.ijkplayer.IjkController;
 import com.oushangfeng.ounews.utils.ijkplayer.widget.media.IjkVideoView;
 import com.oushangfeng.ounews.widget.ThreePointLoadingView;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
@@ -197,62 +192,6 @@ public class VideoPlayActivity extends BaseActivity<IVideoPlayPresenter> impleme
     public void deselectTrack(int stream) {
         if (mIjkVideoView != null) {
             mIjkVideoView.deselectTrack(stream);
-        }
-    }
-
-    private String fetchCpuInfo() {
-        String result = null;
-        CMDExecute cmdexe = new CMDExecute();
-        try {
-            String[] args = {"/system/bin/cat", "/proc/cpuinfo"};
-            result = cmdexe.run(args, "/system/bin/");
-            Log.e(result, result += result);
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.e("TAG", "VideoPlayActivity-211行-fetchCpuInfo(): " + e);
-        }
-
-        return result;
-    }
-
-    // 获得CPU架构数字。。。
-    private String cpuArchitecture(String result) {
-        String s = result;
-        int n_pos;
-        n_pos = s.indexOf("(");
-        String str_temp = new String();
-        str_temp = s.substring(n_pos + 1, s.length());
-        n_pos = str_temp.indexOf(")");
-        str_temp = str_temp.substring(0, n_pos);
-        n_pos = str_temp.indexOf("v");
-        str_temp = str_temp.substring(n_pos + 1, str_temp.length() - 1);
-        return str_temp;
-    }
-
-    class CMDExecute {
-        public synchronized String run(String[] args, String workdirectory) throws IOException {
-            String result = null;
-            try {
-                ProcessBuilder builder = new ProcessBuilder(args);
-                InputStream in = null;
-                //设置一个路径
-                if (workdirectory != null) {
-                    builder.directory(new File(workdirectory));
-                    builder.redirectErrorStream(true);
-                    Process process = builder.start();
-                    in = process.getInputStream();
-                    byte[] re = new byte[1024];
-                    while (in.read(re) != -1) {
-                        result = result + new String(re);
-                    }
-                    if (in != null) {
-                        in.close();
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return result;
         }
     }
 
