@@ -11,13 +11,12 @@ import com.oushangfeng.ounews.module.video.view.IVideoPlayView;
  * UpdateUser: <p>
  * UpdateDate: <p>
  */
-public class IVideoPlayPresenterImpl extends BasePresenterImpl<IVideoPlayView, Void>
-        implements IVideoPlayPresenter {
+public class IVideoPlayPresenterImpl extends BasePresenterImpl<IVideoPlayView, Void> implements IVideoPlayPresenter {
 
-    public IVideoPlayPresenterImpl(IVideoPlayView view, String path) {
+    public IVideoPlayPresenterImpl(IVideoPlayView view, String path, String name) {
         super(view);
         // mView.registerScreenBroadCastReceiver();
-        mView.playVideo(path);
+        mView.playVideo(path, name);
         mView.showProgress();
     }
 }

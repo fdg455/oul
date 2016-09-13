@@ -211,6 +211,7 @@ public class VideoListFragment extends BaseFragment<IVideoListPresenter> impleme
                 }
                 Intent intent = new Intent(getActivity(), VideoPlayActivity.class);
                 intent.putExtra("videoUrl", mp4Url);
+                intent.putExtra("videoName", mAdapter.getData().get(position).title);
                 ActivityOptionsCompat options = ActivityOptionsCompat
                         .makeScaleUpAnimation(view, view.getWidth() / 2, view.getHeight() / 2, 0,
                                 0);

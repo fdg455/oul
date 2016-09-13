@@ -10,8 +10,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -46,8 +46,7 @@ import zhou.widget.RichText;
 @ActivityFragmentInject(contentViewId = R.layout.activity_news_detail,
         menuId = R.menu.menu_settings,
         enableSlidr = true)
-public class NewsDetailActivity extends BaseActivity<INewsDetailPresenter>
-        implements INewsDetailView {
+public class NewsDetailActivity extends BaseActivity<INewsDetailPresenter> implements INewsDetailView {
 
     private ThreePointLoadingView mLoadingView;
     private ImageView mNewsImageView;
@@ -75,14 +74,17 @@ public class NewsDetailActivity extends BaseActivity<INewsDetailPresenter>
     @Override
     protected void initView() {
 
-        final CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout) findViewById(
-                R.id.toolbar_layout);
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
+            // 4.4设置全屏并动态修改Toolbar的位置实现类5.0效果，确保布局延伸到状态栏的效果
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) toolbar.getLayoutParams();
+            mlp.topMargin = MeasureUtil.getStatusBarHeight(this);
+        }
+
+        final CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         toolbarLayout.setTitle(getString(R.string.news_detail));
         toolbarLayout.setExpandedTitleColor(ContextCompat.getColor(this, R.color.accent));
-        toolbarLayout
-                .setCollapsedTitleTextColor(ContextCompat.getColor(this, R.color.material_white));
-
-        // materialCollapsingForKitkat(toolbarLayout);
+        toolbarLayout.setCollapsedTitleTextColor(ContextCompat.getColor(this, R.color.material_white));
 
         mNewsImageView = (ImageView) findViewById(R.id.iv_news_detail_photo);
 
@@ -103,51 +105,6 @@ public class NewsDetailActivity extends BaseActivity<INewsDetailPresenter>
 
     }
 
-    /**
-     * 4.4设置全屏并动态修改Toolbar的位置实现类5.0效果，确保布局延伸到状态栏的效果
-     *
-     * @param collapsingToolbarLayout
-     */
-    private void materialCollapsingForKitkat(final CollapsingToolbarLayout collapsingToolbarLayout) {
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
-
-            // 设置Toolbar对顶部的距离
-            final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-            final FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) toolbar
-                    .getLayoutParams();
-            layoutParams.topMargin = MeasureUtil.getStatusBarHeight(this);
-
-            /*// 算出伸缩移动的总距离
-            final AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
-            final int[] verticalMoveDistance = new int[1];
-            collapsingToolbarLayout.getViewTreeObserver()
-                    .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                        @Override
-                        public void onGlobalLayout() {
-                            verticalMoveDistance[0] = collapsingToolbarLayout
-                                    .getMeasuredHeight() - MeasureUtil
-                                    .getToolbarHeight(NewsDetailActivity.this);
-                            collapsingToolbarLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        }
-                    });
-            appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-                int lastVerticalOffset = 0;
-
-                @Override
-                public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                    // KLog.e(lastVerticalOffset + ";" + verticalOffset);
-                    if (lastVerticalOffset != verticalOffset && verticalMoveDistance[0] != 0) {
-                        layoutParams.topMargin = (int) (statusBarHeight - Math
-                                .abs(verticalOffset) * 1.0f / verticalMoveDistance[0] * statusBarHeight);
-                        // KLog.e(layoutParams.topMargin);
-                        toolbar.setLayoutParams(layoutParams);
-                    }
-                    lastVerticalOffset = verticalOffset;
-                }
-            });*/
-        }
-    }
-
     @Override
     public void initNewsDetail(NeteastNewsDetail data) {
         if (data.img != null && data.img.size() > 0) {
@@ -166,22 +123,15 @@ public class NewsDetailActivity extends BaseActivity<INewsDetailPresenter>
                 int h = Integer.parseInt(pixel[1]) * w / Integer.parseInt(pixel[0]);
 
                 if (data.img.get(0).src.contains(".gif")) {
-                    Glide.with(this).load(data.img.get(0).src).asGif()
-                            .placeholder(R.drawable.ic_loading).error(R.drawable.ic_fail)
-                            .diskCacheStrategy(DiskCacheStrategy.ALL).override(w, h)
-                            .into(mNewsImageView);
+                    Glide.with(this).load(data.img.get(0).src).asGif().placeholder(R.drawable.ic_loading).error(R.drawable.ic_fail)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL).override(w, h).into(mNewsImageView);
                 } else {
-                    Glide.with(this).load(data.img.get(0).src).asBitmap()
-                            .placeholder(R.drawable.ic_loading)
-                            .format(DecodeFormat.PREFER_ARGB_8888).error(R.drawable.ic_fail)
-                            .diskCacheStrategy(DiskCacheStrategy.ALL).override(w, h)
-                            .into(mNewsImageView);
+                    Glide.with(this).load(data.img.get(0).src).asBitmap().placeholder(R.drawable.ic_loading).format(DecodeFormat.PREFER_ARGB_8888)
+                            .error(R.drawable.ic_fail).diskCacheStrategy(DiskCacheStrategy.ALL).override(w, h).into(mNewsImageView);
                 }
             } else {
-                Glide.with(this).load(data.img.get(0).src).asBitmap()
-                        .placeholder(R.drawable.ic_loading).format(DecodeFormat.PREFER_ARGB_8888)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL).error(R.drawable.ic_fail)
-                        .into(mNewsImageView);
+                Glide.with(this).load(data.img.get(0).src).asBitmap().placeholder(R.drawable.ic_loading).format(DecodeFormat.PREFER_ARGB_8888)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL).error(R.drawable.ic_fail).into(mNewsImageView);
             }
 
             // 以下将数据封装成新浪需要的格式，用于点击跳转到图片浏览
@@ -205,9 +155,8 @@ public class NewsDetailActivity extends BaseActivity<INewsDetailPresenter>
         } else {
             // 图片详情列表没有数据的时候，取图片列表页面传送过来的图片显示
             mNewsImageView.setTag(R.id.img_tag, false);
-            Glide.with(this).load(mNewsListSrc).asBitmap().placeholder(R.drawable.ic_loading)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL).format(DecodeFormat.PREFER_ARGB_8888)
-                    .error(R.drawable.ic_fail).into(mNewsImageView);
+            Glide.with(this).load(mNewsListSrc).asBitmap().placeholder(R.drawable.ic_loading).diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .format(DecodeFormat.PREFER_ARGB_8888).error(R.drawable.ic_fail).into(mNewsImageView);
         }
 
         mTitleTv.setText(data.title);
@@ -246,8 +195,7 @@ public class NewsDetailActivity extends BaseActivity<INewsDetailPresenter>
             } else {
                 Intent intent = new Intent(this, PhotoDetailActivity.class);
                 intent.putExtra("neteast", mSinaPhotoDetail);
-                ActivityOptionsCompat options = ActivityOptionsCompat
-                        .makeScaleUpAnimation(v, v.getWidth() / 2, v.getHeight() / 2, 0, 0);
+                ActivityOptionsCompat options = ActivityOptionsCompat.makeScaleUpAnimation(v, v.getWidth() / 2, v.getHeight() / 2, 0, 0);
                 ActivityCompat.startActivity(this, intent, options.toBundle());
             }
         }

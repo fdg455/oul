@@ -12,7 +12,7 @@ import com.oushangfeng.ounews.base.BaseView;
  */
 public interface IVideoPlayView extends BaseView{
 
-    void playVideo(String path);
+    void playVideo(String path, String name);
 
 //    void registerScreenBroadCastReceiver();
 

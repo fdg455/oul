@@ -381,12 +381,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
             final View view = contentLayout.getChildAt(1);
             final int statusBarHeight = MeasureUtil.getStatusBarHeight(this);
             if (!(contentLayout instanceof LinearLayout) && view != null) {
-                //                if (view.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
-                //                    ((ViewGroup.MarginLayoutParams) view
-                //                            .getLayoutParams()).topMargin += statusBarHeight;
-                //                } else {
                 view.setPadding(0, statusBarHeight, 0, 0);
-                //                }
             }
             // 设置属性
             ViewGroup drawer = (ViewGroup) mDrawerLayout.getChildAt(1);

@@ -27,30 +27,16 @@
 
             <include layout="@layout/include_tablayout"/>
 
-           <!-- <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
-                app:layout_scrollFlags="scroll|enterAlways"
-                app:popupTheme="@style/AppTheme.PopupOverlay"
-                app:theme="@style/ToolbarTheme"/>
-
-            <android.support.design.widget.TabLayout
-                android:id="@+id/tab_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/colorPrimary"
-                app:tabGravity="fill"
-                app:tabIndicatorColor="@color/material_white"
-                app:tabMode="fixed"
-                app:tabSelectedTextColor="@color/icons"
-                app:tabTextColor="@color/material_grey_300"
-                tools:ignore="PrivateResource"/>-->
-
         </android.support.design.widget.AppBarLayout>
 
         <include layout="@layout/content_video"/>
+
+        <View
+            android:id="@+id/bg"
+            android:visibility="invisible"
+            android:background="@color/material_black"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
     </android.support.design.widget.CoordinatorLayout>
 

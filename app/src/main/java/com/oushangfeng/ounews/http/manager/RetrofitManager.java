@@ -2,6 +2,7 @@ package com.oushangfeng.ounews.http.manager;
 
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.util.SparseArray;
 
 import com.oushangfeng.ounews.app.App;
@@ -72,9 +73,12 @@ public class RetrofitManager {
         @Override
         public Response intercept(Chain chain) throws IOException {
             Request request = chain.request();
+
+            Log.e("TAG","请求网址: "+request.url());
+
             if (!NetUtil.isConnected(App.getContext())) {
                 request = request.newBuilder().cacheControl(CacheControl.FORCE_CACHE).build();
-                KLog.e("no network");
+                KLog.e("没有网络");
             }
             Response originalResponse = chain.proceed(request);
 
@@ -169,7 +173,7 @@ public class RetrofitManager {
 
                     sOkHttpClient = new OkHttpClient.Builder().cache(cache)
                             .addNetworkInterceptor(mRewriteCacheControlInterceptor)
-                            .addInterceptor(mRewriteCacheControlInterceptor)
+                            // .addInterceptor(mRewriteCacheControlInterceptor)
                             .addInterceptor(mLoggingInterceptor).retryOnConnectionFailure(true)
                             .connectTimeout(30, TimeUnit.SECONDS).build();
 

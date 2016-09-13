@@ -83,8 +83,7 @@ public class PhotoListFragment extends BaseFragment<IPhotoListPresenter> impleme
         mLoadingView = (ThreePointLoadingView) fragmentRootView.findViewById(R.id.tpl_view);
         mLoadingView.setOnClickListener(this);
 
-        mRecyclerView = (AutoLoadMoreRecyclerView) fragmentRootView
-                .findViewById(R.id.recycler_view);
+        mRecyclerView = (AutoLoadMoreRecyclerView) fragmentRootView.findViewById(R.id.recycler_view);
 
         mRefreshLayout = (RefreshLayout) fragmentRootView.findViewById(R.id.refresh_layout);
 
@@ -103,14 +102,15 @@ public class PhotoListFragment extends BaseFragment<IPhotoListPresenter> impleme
 
     @Override
     public void updatePhotoList(final List<SinaPhotoList.DataEntity.PhotoListEntity> data, @DataLoadType.DataLoadTypeChecker int type) {
+
+        if (mAdapter == null) {
+            initNewsList(data);
+        }
+
         switch (type) {
             case DataLoadType.TYPE_REFRESH_SUCCESS:
                 mRefreshLayout.refreshFinish();
-                if (mAdapter == null) {
-                    initNewsList(data);
-                } else {
-                    mAdapter.setData(data);
-                }
+                mAdapter.setData(data);
                 if (mRecyclerView.isAllLoaded()) {
                     // 之前全部加载完了的话，这里把状态改回来供底部加载用
                     mRecyclerView.notifyMoreLoaded();
@@ -139,11 +139,9 @@ public class PhotoListFragment extends BaseFragment<IPhotoListPresenter> impleme
 
     private void initNewsList(List<SinaPhotoList.DataEntity.PhotoListEntity> data) {
 
-        final StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2,
-                StaggeredGridLayoutManager.VERTICAL);
+        final StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
 
-        mAdapter = new BaseRecyclerAdapter<SinaPhotoList.DataEntity.PhotoListEntity>(getActivity(),
-                data, true, layoutManager) {
+        mAdapter = new BaseRecyclerAdapter<SinaPhotoList.DataEntity.PhotoListEntity>(getActivity(), data, true, layoutManager) {
 
             Random mRandom = new Random();
 
@@ -158,17 +156,14 @@ public class PhotoListFragment extends BaseFragment<IPhotoListPresenter> impleme
                 final ViewGroup.LayoutParams params = imageView.getLayoutParams();
                 // KLog.e("图片网址：" + item.kpic);
                 if (item.picWidth == -1 && item.picHeight == -1) {
-                    item.picWidth = MeasureUtil.getScreenSize(getActivity()).x / 2 - MeasureUtil
-                            .dip2px(getActivity(), 4) * 2 - MeasureUtil.dip2px(getActivity(), 2);
+                    item.picWidth = MeasureUtil.getScreenSize(getActivity()).x / 2 - MeasureUtil.dip2px(getActivity(), 4) * 2 - MeasureUtil.dip2px(getActivity(), 2);
                     item.picHeight = (int) (item.picWidth * (mRandom.nextFloat() / 2 + 1));
                 }
                 params.width = item.picWidth;
                 params.height = item.picHeight;
                 imageView.setLayoutParams(params);
 
-                Glide.with(getActivity()).load(item.kpic).asBitmap()
-                        .placeholder(R.drawable.ic_loading).error(R.drawable.ic_fail)
-                        .format(DecodeFormat.PREFER_ARGB_8888)
+                Glide.with(getActivity()).load(item.kpic).asBitmap().placeholder(R.drawable.ic_loading).error(R.drawable.ic_fail).format(DecodeFormat.PREFER_ARGB_8888)
                         .diskCacheStrategy(DiskCacheStrategy.ALL).into(imageView);
 
                 holder.getTextView(R.id.tv_photo_summary).setText(item.title);
@@ -183,25 +178,20 @@ public class PhotoListFragment extends BaseFragment<IPhotoListPresenter> impleme
                     return;
                 }
 
-                KLog.e(mAdapter.getData().get(position).title + ";" + mAdapter.getData()
-                        .get(position).id);
+                KLog.e(mAdapter.getData().get(position).title + ";" + mAdapter.getData().get(position).id);
 
                 view = view.findViewById(R.id.iv_photo_summary);
                 Intent intent = new Intent(getActivity(), PhotoDetailActivity.class);
                 intent.putExtra("photoId", mAdapter.getData().get(position).id);
                 //让新的Activity从一个小的范围扩大到全屏
-                ActivityOptionsCompat options = ActivityOptionsCompat
-                        .makeScaleUpAnimation(view, view.getWidth() / 2, view.getHeight() / 2, 0,
-                                0);
+                ActivityOptionsCompat options = ActivityOptionsCompat.makeScaleUpAnimation(view, view.getWidth() / 2, view.getHeight() / 2, 0, 0);
                 ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
 
             }
         });
 
-        mRecyclerView.setAutoLayoutManager(layoutManager).addAutoItemDecoration(
-                new BaseSpacesItemDecoration(MeasureUtil.dip2px(getActivity(), 4)))
-                .setAutoItemAnimator(new DefaultItemAnimator()).setAutoItemAnimatorDuration(250)
-                .setAutoAdapter(mAdapter);
+        mRecyclerView.setAutoLayoutManager(layoutManager).addAutoItemDecoration(new BaseSpacesItemDecoration(MeasureUtil.dip2px(getActivity(), 4)))
+                .setAutoItemAnimator(new DefaultItemAnimator()).setAutoItemAnimatorDuration(250).setAutoAdapter(mAdapter);
 
         mRecyclerView.setOnLoadMoreListener(new AutoLoadMoreRecyclerView.OnLoadMoreListener() {
             @Override

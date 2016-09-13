@@ -86,7 +86,7 @@ buildscript {
 }
 
 dependencies {
-//    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:24.2.0'
     compile 'com.android.support:design:24.2.0'
@@ -113,19 +113,25 @@ dependencies {
         transitive = true
     }
     compile project(':changeskin')
-    compile project(':ijkplayer')
 
-    all32Compile project(':ijkplayer-armv5')
-    all32Compile project(':ijkplayer-armv7a')
-    all32Compile project(':ijkplayer-x86')
-    all64Compile project(':ijkplayer-armv5')
-    all64Compile project(':ijkplayer-armv7a')
-    all64Compile project(':ijkplayer-arm64')
-    all64Compile project(':ijkplayer-x86')
-    all64Compile project(':ijkplayer-x86_64')
-    armv5Compile project(':ijkplayer-armv5')
-    armv7aCompile project(':ijkplayer-armv7a')
-    arm64Compile project(':ijkplayer-arm64')
-    x86Compile project(':ijkplayer-x86')
-    x86_64Compile project(':ijkplayer-x86_64')
+    all32Compile 'tv.danmaku.ijk.media:ijkplayer-armv5:0.6.2'
+    all32Compile 'tv.danmaku.ijk.media:ijkplayer-armv7a:0.6.2'
+    all32Compile 'tv.danmaku.ijk.media:ijkplayer-x86:0.6.2'
+    all64Compile 'tv.danmaku.ijk.media:ijkplayer-armv5:0.6.2'
+    all64Compile 'tv.danmaku.ijk.media:ijkplayer-armv7a:0.6.2'
+    all64Compile 'tv.danmaku.ijk.media:ijkplayer-arm64:0.6.2'
+    all64Compile 'tv.danmaku.ijk.media:ijkplayer-x86:0.6.2'
+    all64Compile 'tv.danmaku.ijk.media:ijkplayer-x86_64:0.6.2'
+    armv5Compile 'tv.danmaku.ijk.media:ijkplayer-armv5:0.6.2'
+    armv7aCompile 'tv.danmaku.ijk.media:ijkplayer-armv7a:0.6.2'
+    arm64Compile 'tv.danmaku.ijk.media:ijkplayer-arm64:0.6.2'
+    x86Compile 'tv.danmaku.ijk.media:ijkplayer-x86:0.6.2'
+    x86_64Compile 'tv.danmaku.ijk.media:ijkplayer-x86_64:0.6.2'
+
+    // required, enough for most devices.
+    compile 'tv.danmaku.ijk.media:ijkplayer-java:0.6.2'
+
+    // ExoPlayer as IMediaPlayer: optional, experimental
+    compile 'tv.danmaku.ijk.media:ijkplayer-exo:0.6.2'
+
 }

@@ -90,8 +90,7 @@ public class NewsListFragment extends BaseFragment<INewsListPresenter> implement
         mLoadingView = (ThreePointLoadingView) fragmentRootView.findViewById(R.id.tpl_view);
         mLoadingView.setOnClickListener(this);
 
-        mRecyclerView = (AutoLoadMoreRecyclerView) fragmentRootView
-                .findViewById(R.id.recycler_view);
+        mRecyclerView = (AutoLoadMoreRecyclerView) fragmentRootView.findViewById(R.id.recycler_view);
 
         mRefreshLayout = (RefreshLayout) fragmentRootView.findViewById(R.id.refresh_layout);
 
@@ -111,14 +110,15 @@ public class NewsListFragment extends BaseFragment<INewsListPresenter> implement
 
     @Override
     public void updateNewsList(final List<NeteastNewsSummary> data, @DataLoadType.DataLoadTypeChecker int type) {
+
+        if (mAdapter == null) {
+            initNewsList(data);
+        }
+
         switch (type) {
             case DataLoadType.TYPE_REFRESH_SUCCESS:
                 mRefreshLayout.refreshFinish();
-                if (mAdapter == null) {
-                    initNewsList(data);
-                } else {
-                    mAdapter.setData(data);
-                }
+                mAdapter.setData(data);
                 if (mRecyclerView.isAllLoaded()) {
                     // 之前全部加载完了的话，这里把状态改回来供底部加载用
                     mRecyclerView.notifyMoreLoaded();
@@ -155,10 +155,8 @@ public class NewsListFragment extends BaseFragment<INewsListPresenter> implement
 
             @Override
             public void bindData(BaseRecyclerViewHolder holder, int position, NeteastNewsSummary item) {
-                Glide.with(getActivity()).load(item.imgsrc).asBitmap().animate(R.anim.image_load)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.ic_loading)
-                        .error(R.drawable.ic_fail)
-                        .into(holder.getImageView(R.id.iv_news_summary_photo));
+                Glide.with(getActivity()).load(item.imgsrc).asBitmap().animate(R.anim.image_load).diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .placeholder(R.drawable.ic_loading).error(R.drawable.ic_fail).into(holder.getImageView(R.id.iv_news_summary_photo));
                 holder.getTextView(R.id.tv_news_summary_title).setText(item.title);
                 holder.getTextView(R.id.tv_news_summary_digest).setText(item.digest);
                 holder.getTextView(R.id.tv_news_summary_ptime).setText(item.ptime);
@@ -174,8 +172,7 @@ public class NewsListFragment extends BaseFragment<INewsListPresenter> implement
                 }
 
                 // imgextra不为空的话，无新闻内容，直接打开图片浏览
-                KLog.e(mAdapter.getData().get(position).title + ";" + mAdapter.getData()
-                        .get(position).postid);
+                KLog.e(mAdapter.getData().get(position).title + ";" + mAdapter.getData().get(position).postid);
 
                 view = view.findViewById(R.id.iv_news_summary_photo);
 
@@ -190,15 +187,11 @@ public class NewsListFragment extends BaseFragment<INewsListPresenter> implement
                     intent.putExtra("postid", mAdapter.getData().get(position).postid);
                     intent.putExtra("imgsrc", mAdapter.getData().get(position).imgsrc);
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                        ActivityOptions options = ActivityOptions
-                                .makeSceneTransitionAnimation(getActivity(),
-                                        view.findViewById(R.id.iv_news_summary_photo), "photos");
+                        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(getActivity(), view.findViewById(R.id.iv_news_summary_photo), "photos");
                         getActivity().startActivity(intent, options.toBundle());
                     } else {
                         //让新的Activity从一个小的范围扩大到全屏
-                        ActivityOptionsCompat options = ActivityOptionsCompat
-                                .makeScaleUpAnimation(view, view.getWidth() / 2,
-                                        view.getHeight() / 2, 0, 0);
+                        ActivityOptionsCompat options = ActivityOptionsCompat.makeScaleUpAnimation(view, view.getWidth() / 2, view.getHeight() / 2, 0, 0);
                         ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
                     }
                 } else {
@@ -218,8 +211,7 @@ public class NewsListFragment extends BaseFragment<INewsListPresenter> implement
                             mSinaPhotoDetail.data.pics.add(sinaPicsEntity);
                         }
                     } else if (data.get(position).imgextra != null) {
-                        for (NeteastNewsSummary.ImgextraEntity entiity : data
-                                .get(position).imgextra) {
+                        for (NeteastNewsSummary.ImgextraEntity entiity : data.get(position).imgextra) {
                             SinaPhotoDetail.SinaPhotoDetailPicsEntity sinaPicsEntity = new SinaPhotoDetail.SinaPhotoDetailPicsEntity();
                             sinaPicsEntity.pic = entiity.imgsrc;
                             sinaPicsEntity.kpic = entiity.imgsrc;
@@ -229,22 +221,18 @@ public class NewsListFragment extends BaseFragment<INewsListPresenter> implement
 
                     Intent intent = new Intent(getActivity(), PhotoDetailActivity.class);
                     intent.putExtra("neteast", mSinaPhotoDetail);
-                    ActivityOptionsCompat options = ActivityOptionsCompat
-                            .makeScaleUpAnimation(view, view.getWidth() / 2, view.getHeight() / 2,
-                                    0, 0);
+                    ActivityOptionsCompat options = ActivityOptionsCompat.makeScaleUpAnimation(view, view.getWidth() / 2, view.getHeight() / 2, 0, 0);
                     ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
 
                 }
             }
         });
 
-        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(),
-                LinearLayoutManager.VERTICAL, false);
+        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
 
         mRecyclerView.setAutoLayoutManager(linearLayoutManager).setAutoHasFixedSize(true)
-                .addAutoItemDecoration(
-                        new BaseSpacesItemDecoration(MeasureUtil.dip2px(getActivity(), 4)))
-                .setAutoItemAnimator(new DefaultItemAnimator()).setAutoAdapter(mAdapter);
+                .addAutoItemDecoration(new BaseSpacesItemDecoration(MeasureUtil.dip2px(getActivity(), 4))).setAutoItemAnimator(new DefaultItemAnimator())
+                .setAutoAdapter(mAdapter);
 
         mRecyclerView.setOnLoadMoreListener(new AutoLoadMoreRecyclerView.OnLoadMoreListener() {
             @Override

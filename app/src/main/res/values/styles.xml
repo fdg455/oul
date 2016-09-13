@@ -190,4 +190,18 @@
         <item name="android:paddingRight">16dip</item>
     </style>
 
+    <style name="pop_no_anim_style">
+        <item name="android:windowEnterAnimation">@anim/pop_show_no_anim</item>
+        <!-- 指定显示的动画xml -->
+        <item name="android:windowExitAnimation">@anim/pop_hide_no_anim</item>
+        <!-- 指定消失的动画xml -->
+    </style>
+
+    <style name="pop_anim_style">
+        <item name="android:windowEnterAnimation">@anim/pop_show_anim</item>
+        <!-- 指定显示的动画xml -->
+        <item name="android:windowExitAnimation">@anim/pop_hide_anim</item>
+        <!-- 指定消失的动画xml -->
+    </style>
+
 </resources>
