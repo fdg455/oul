@@ -1,14 +1,11 @@
 package com.oushangfeng.ounews.module.video.presenter;
 
-import android.text.TextUtils;
-
 import com.oushangfeng.ounews.base.BasePresenterImpl;
 import com.oushangfeng.ounews.bean.NeteastVideoSummary;
 import com.oushangfeng.ounews.common.DataLoadType;
 import com.oushangfeng.ounews.module.video.model.IVideoListInteractor;
 import com.oushangfeng.ounews.module.video.model.IVideoListInteractorImpl;
 import com.oushangfeng.ounews.module.video.view.IVideoListView;
-import com.socks.library.KLog;
 
 import java.util.List;
 
@@ -20,9 +17,7 @@ import java.util.List;
  * UpdateUser: <p>
  * UpdateDate: <p>
  */
-public class IVideoListPresenterImpl
-        extends BasePresenterImpl<IVideoListView, List<NeteastVideoSummary>>
-        implements IVideoListPresenter {
+public class IVideoListPresenterImpl extends BasePresenterImpl<IVideoListView, List<NeteastVideoSummary>> implements IVideoListPresenter {
 
     private IVideoListInteractor<List<NeteastVideoSummary>> mVideoListInteractor;
 
@@ -31,8 +26,6 @@ public class IVideoListPresenterImpl
 
     private boolean mIsRefresh = true;
     private boolean mHasInit;
-    private boolean mIsVisibleToUser;
-    private String errorMsg;
 
     public IVideoListPresenterImpl(IVideoListView view, String id, int startPage) {
         super(view);
@@ -51,19 +44,12 @@ public class IVideoListPresenterImpl
 
     @Override
     public void requestError(String e) {
-        // super.requestError(e);
+
         mView.hideProgress();
 
         mHasInit = true;
 
-        if (mIsVisibleToUser) {
-            mView.toast(e);
-        } else {
-            errorMsg = e;
-        }
-
-        mView.updateVideoList(null,
-                mIsRefresh ? DataLoadType.TYPE_REFRESH_FAIL : DataLoadType.TYPE_LOAD_MORE_FAIL);
+        mView.updateVideoList(null, e, mIsRefresh ? DataLoadType.TYPE_REFRESH_FAIL : DataLoadType.TYPE_LOAD_MORE_FAIL);
     }
 
 
@@ -76,35 +62,16 @@ public class IVideoListPresenterImpl
 
     @Override
     public void loadMoreData() {
-        KLog.e("加载更多数据: " + mId + ";" + mStartPage);
         mIsRefresh = false;
         mSubscription = mVideoListInteractor.requestVideoList(this, mId, mStartPage);
     }
 
     @Override
-    public void onVisibleToUser() {
-        mIsVisibleToUser = true;
-        if (!TextUtils.isEmpty(errorMsg)) {
-            mView.toast(errorMsg);
-        }
-    }
-
-    @Override
-    public void onInvisibleToUser() {
-        mIsVisibleToUser = false;
-        if (!TextUtils.isEmpty(errorMsg)) {
-            errorMsg = "";
-        }
-    }
-
-    @Override
     public void requestSuccess(List<NeteastVideoSummary> data) {
-        KLog.e("请求成功: ");
         mHasInit = true;
         if (data != null && data.size() > 0) {
             mStartPage += 10;
         }
-        mView.updateVideoList(data,
-                mIsRefresh ? DataLoadType.TYPE_REFRESH_SUCCESS : DataLoadType.TYPE_LOAD_MORE_SUCCESS);
+        mView.updateVideoList(data, "", mIsRefresh ? DataLoadType.TYPE_REFRESH_SUCCESS : DataLoadType.TYPE_LOAD_MORE_SUCCESS);
     }
 }

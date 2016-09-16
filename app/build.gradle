@@ -67,12 +67,12 @@ android {
     }
 
     productFlavors {
-        all32 { minSdkVersion 12 }
+        all32 { minSdkVersion 16 }
         all64 { minSdkVersion 21 }
-        armv5 { minSdkVersion 12 }
-        armv7a { minSdkVersion 12 }
+        armv5 { minSdkVersion 16 }
+        armv7a { minSdkVersion 16 }
         arm64 { minSdkVersion 21 }
-        x86 { minSdkVersion 12 }
+        x86 { minSdkVersion 16 }
         x86_64 { minSdkVersion 21 }
     }
 

@@ -15,7 +15,6 @@ import android.util.AttributeSet;
 import android.view.WindowManager;
 
 import com.oushangfeng.ounews.R;
-import com.socks.library.KLog;
 
 
 /**
@@ -99,7 +98,7 @@ public class PacManRefreshHead extends RefreshHead {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         // 算出宽度
-        mWidth = measureSize(widthMeasureSpec, mScreenSize.x + getPaddingLeft() + getPaddingRight());
+        mWidth = measureSize(widthMeasureSpec, mScreenSize.x );
         mPaint.setStrokeWidth(mWidth * 1.0f / 200);
 
         mPacManRadius = (int) (mWidth * 1.0f / 50);
@@ -108,13 +107,13 @@ public class PacManRefreshHead extends RefreshHead {
 
         mBeanRadius = mPacManRadius / 3;
 
-        mHeight = measureSize(heightMeasureSpec, mPacManRadius * 4 + getPaddingTop() + getPaddingBottom());
+        mHeight = measureSize(heightMeasureSpec, mPacManRadius * 4 );
 
         if (mPacManRadius * 4 + getPaddingTop() + getPaddingBottom() < 0) {
             mHeight = 0;
         }
 
-        setMeasuredDimension(mWidth, mHeight);
+        setMeasuredDimension(mWidth+ getPaddingLeft() + getPaddingRight(), mHeight+ getPaddingTop() + getPaddingBottom());
 
     }
 
@@ -189,16 +188,17 @@ public class PacManRefreshHead extends RefreshHead {
             @Override
             public void run() {
                 if (mLoadAnimatorSet != null && mLoadAnimatorSet.isRunning()) {
-                    KLog.e("动画还在运行，不操作");
+                    // KLog.e("动画还在运行，不操作");
                     return;
                 }
 
-                KLog.e("开始吃豆豆咯");
+                // KLog.e("开始吃豆豆咯");
                 mLoadingAnimator1 = new ValueAnimator();
                 mLoadingAnimator1.setIntValues(0, mPacManRadius * 12);
                 mLoadingAnimator1.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                     @Override
                     public void onAnimationUpdate(ValueAnimator animation) {
+
                         if ((int) animation.getAnimatedValue() != 0) {
                             mStep = (int) animation.getAnimatedValue() / mPacManRadius;
                         }
@@ -268,6 +268,12 @@ public class PacManRefreshHead extends RefreshHead {
     }
 
     @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        performLoading();
+    }
+
+    @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         stopAnimator(true);
@@ -305,6 +311,7 @@ public class PacManRefreshHead extends RefreshHead {
 
                 mLoadAnimatorSet.removeAllListeners();
                 mLoadAnimatorSet.cancel();
+
             }
 
             mStep = 0;

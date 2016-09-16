@@ -10,7 +10,7 @@ package com.oushangfeng.ounews.http;
  */
 public class Api {
 
-    public static final String NETEAST_HOST = "http://c.m.163.com/";
+    public static final String NETEAST_HOST = "https://c.m.163.com/";
     public static final String END_URL = "-20.html";
     public static final String ENDDETAIL_URL = "/full.html";
 

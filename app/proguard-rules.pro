@@ -148,6 +148,15 @@
 -keep class com.pili.pldroid.player.** { *; }
 -keep class tv.danmaku.ijk.media.player.** {*;}
 
+# ijkplayer
+-keep class tv.danmaku.ijk.media.player.** {*; }
+-keepclasseswithmembernames class tv.danmaku.ijk.media.player.IjkMediaPlayer{
+native ;
+}
+-keepclasseswithmembernames class tv.danmaku.ijk.media.player.ffmpeg.FFmpegApi{
+native ;
+}
+
 #一般官网都是有混淆的，没有的话就google，也没有的话自己按照上面的写法自己写，
 #还不会的话。。。。。只能换个包。。。。。如果你是直接包含的jar包的话，你这样写
 

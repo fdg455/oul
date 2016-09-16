@@ -43,7 +43,7 @@ public class NewsChannelAdapter extends BaseRecyclerAdapter<NewsChannelTable>
     public NewsChannelHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == TYPE_FOOTER) {
             return new NewsChannelHolder(mContext,
-                    mInflater.inflate(R.layout.item_footer, parent, false));
+                    mInflater.inflate(R.layout.item_load_more, parent, false));
         } else {
             final NewsChannelHolder holder = new NewsChannelHolder(mContext,
                     mInflater.inflate(getItemLayoutId(viewType), parent, false));

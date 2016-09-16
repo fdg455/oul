@@ -1,5 +1,6 @@
 package com.oushangfeng.ounews.base;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
@@ -238,6 +239,8 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
+            // 24.0.0版本后导航图标会有默认的与标题的距离，这里设置去掉
+            toolbar.setContentInsetStartWithNavigation(0);
             setSupportActionBar(toolbar);
             if (getSupportActionBar() != null) {
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -367,6 +370,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
     /**
      * 处理布局延伸到状态栏，对4.4以上系统有效
      */
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     private void handleStatusView() {
         // 针对4.4和SettingsActivity(因为要做换肤，而状态栏在5.0是设置为透明的，若不这样处理换肤时状态栏颜色不会变化)
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT || this instanceof SettingsActivity) {

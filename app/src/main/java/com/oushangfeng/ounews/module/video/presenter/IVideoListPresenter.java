@@ -16,8 +16,4 @@ public interface IVideoListPresenter extends BasePresenter{
 
     void loadMoreData();
     
-    void onVisibleToUser();
-    
-    void onInvisibleToUser();
-
 }

@@ -61,20 +61,16 @@ public class RetrofitManager {
     private static final String CACHE_CONTROL_NETWORK = "max-age=0";
 
     private static volatile OkHttpClient sOkHttpClient;
-
-    private NewsService mNewsService;
-
     // 管理不同HostType的单例
-    private static SparseArray<RetrofitManager> sInstanceManager = new SparseArray<>(
-            HostType.TYPE_COUNT);
-
+    private static SparseArray<RetrofitManager> sInstanceManager = new SparseArray<>(HostType.TYPE_COUNT);
+    private NewsService mNewsService;
     // 云端响应头拦截器，用来配置缓存策略
     private Interceptor mRewriteCacheControlInterceptor = new Interceptor() {
         @Override
         public Response intercept(Chain chain) throws IOException {
             Request request = chain.request();
 
-            Log.e("TAG","请求网址: "+request.url());
+            Log.e("TAG", "请求网址: " + request.url());
 
             if (!NetUtil.isConnected(App.getContext())) {
                 request = request.newBuilder().cacheControl(CacheControl.FORCE_CACHE).build();
@@ -85,12 +81,9 @@ public class RetrofitManager {
             if (NetUtil.isConnected(App.getContext())) {
                 //有网的时候读接口上的@Headers里的配置，你可以在这里进行统一的设置
                 String cacheControl = request.cacheControl().toString();
-                return originalResponse.newBuilder().header("Cache-Control", cacheControl)
-                        .removeHeader("Pragma").build();
+                return originalResponse.newBuilder().header("Cache-Control", cacheControl).removeHeader("Pragma").build();
             } else {
-                return originalResponse.newBuilder()
-                        .header("Cache-Control", "public, only-if-cached," + CACHE_STALE_SEC)
-                        .removeHeader("Pragma").build();
+                return originalResponse.newBuilder().header("Cache-Control", "public, only-if-cached," + CACHE_STALE_SEC).removeHeader("Pragma").build();
             }
         }
     };
@@ -135,6 +128,14 @@ public class RetrofitManager {
     private RetrofitManager() {
     }
 
+    private RetrofitManager(@HostType.HostTypeChecker int hostType) {
+
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(Api.getHost(hostType)).client(getOkHttpClient()).addConverterFactory(JacksonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create()).build();
+
+        mNewsService = retrofit.create(NewsService.class);
+    }
+
     /**
      * 获取单例
      *
@@ -152,15 +153,6 @@ public class RetrofitManager {
         }
     }
 
-    private RetrofitManager(@HostType.HostTypeChecker int hostType) {
-
-        Retrofit retrofit = new Retrofit.Builder().baseUrl(Api.getHost(hostType))
-                .client(getOkHttpClient()).addConverterFactory(JacksonConverterFactory.create())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create()).build();
-
-        mNewsService = retrofit.create(NewsService.class);
-    }
-
     // 配置OkHttpClient
     private OkHttpClient getOkHttpClient() {
         if (sOkHttpClient == null) {
@@ -168,14 +160,11 @@ public class RetrofitManager {
                 if (sOkHttpClient == null) {
                     // OkHttpClient配置是一样的,静态创建一次即可
                     // 指定缓存路径,缓存大小100Mb
-                    Cache cache = new Cache(new File(App.getContext().getCacheDir(), "HttpCache"),
-                            1024 * 1024 * 100);
+                    Cache cache = new Cache(new File(App.getContext().getCacheDir(), "HttpCache"), 1024 * 1024 * 100);
 
-                    sOkHttpClient = new OkHttpClient.Builder().cache(cache)
-                            .addNetworkInterceptor(mRewriteCacheControlInterceptor)
+                    sOkHttpClient = new OkHttpClient.Builder().cache(cache).addNetworkInterceptor(mRewriteCacheControlInterceptor)
                             // .addInterceptor(mRewriteCacheControlInterceptor)
-                            .addInterceptor(mLoggingInterceptor).retryOnConnectionFailure(true)
-                            .connectTimeout(30, TimeUnit.SECONDS).build();
+                            .addInterceptor(mLoggingInterceptor).retryOnConnectionFailure(true).connectTimeout(30, TimeUnit.SECONDS).build();
 
                 }
             }
@@ -195,7 +184,7 @@ public class RetrofitManager {
 
     /**
      * 网易新闻列表 例子：http://c.m.163.com/nc/article/headline/T1348647909107/0-20.html
-     * <p/>
+     * <p>
      * 对API调用了observeOn(MainThread)之后，线程会跑在主线程上，包括onComplete也是，
      * unsubscribe也在主线程，然后如果这时候调用call.cancel会导致NetworkOnMainThreadException
      * 加一句unsubscribeOn(io)
@@ -207,8 +196,6 @@ public class RetrofitManager {
      */
     public Observable<Map<String, List<NeteastNewsSummary>>> getNewsListObservable(String type, String id, int startPage) {
         return mNewsService.getNewsList(getCacheControl(), type, id, startPage).compose(new BaseSchedulerTransformer<Map<String, List<NeteastNewsSummary>>>());
-                /*.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .unsubscribeOn(Schedulers.io())*/
     }
 
     /**
@@ -219,8 +206,6 @@ public class RetrofitManager {
      */
     public Observable<Map<String, NeteastNewsDetail>> getNewsDetailObservable(String postId) {
         return mNewsService.getNewsDetail(getCacheControl(), postId).compose(new BaseSchedulerTransformer<Map<String, NeteastNewsDetail>>());
-                /*.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).unsubscribeOn(Schedulers.io());*/
     }
 
     /**
@@ -231,11 +216,9 @@ public class RetrofitManager {
      */
     public Observable<SinaPhotoList> getSinaPhotoListObservable(String photoTypeId, int page) {
         KLog.e("新浪图片新闻列表: " + photoTypeId + ";" + page);
-        return mNewsService.getSinaPhotoList(getCacheControl(), photoTypeId,
-                "4ad30dabe134695c3b7c3a65977d7e72", "b207", "6042095012", "12050_0001",
-                "12050_0001", "867064013906290", "802909da86d9f5fc", page).compose(new BaseSchedulerTransformer<SinaPhotoList>());
-                /*.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .unsubscribeOn(Schedulers.io());*/
+        return mNewsService
+                .getSinaPhotoList(getCacheControl(), photoTypeId, "4ad30dabe134695c3b7c3a65977d7e72", "b207", "6042095012", "12050_0001", "12050_0001", "867064013906290",
+                        "802909da86d9f5fc", page).compose(new BaseSchedulerTransformer<SinaPhotoList>());
     }
 
     /**
@@ -245,10 +228,9 @@ public class RetrofitManager {
      * @return 被观察者
      */
     public Observable<SinaPhotoDetail> getSinaPhotoDetailObservable(String id) {
-        return mNewsService.getSinaPhotoDetail(getCacheControl(), Api.SINA_PHOTO_DETAIL_ID, "b207",
-                "6042095012", "12050_0001", "12050_0001", "867064013906290", "802909da86d9f5fc", id).compose(new BaseSchedulerTransformer<SinaPhotoDetail>());
-                /*.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .unsubscribeOn(Schedulers.io());*/
+        return mNewsService
+                .getSinaPhotoDetail(getCacheControl(), Api.SINA_PHOTO_DETAIL_ID, "b207", "6042095012", "12050_0001", "12050_0001", "867064013906290", "802909da86d9f5fc",
+                        id).compose(new BaseSchedulerTransformer<SinaPhotoDetail>());
     }
 
     /**
@@ -261,8 +243,6 @@ public class RetrofitManager {
     public Observable<Map<String, List<NeteastVideoSummary>>> getVideoListObservable(String id, int startPage) {
         KLog.e("网易视频列表: " + id + ";" + startPage);
         return mNewsService.getVideoList(getCacheControl(), id, startPage).compose(new BaseSchedulerTransformer<Map<String, List<NeteastVideoSummary>>>());
-                /*.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .unsubscribeOn(Schedulers.io());*/
     }
 
     /**
@@ -273,8 +253,6 @@ public class RetrofitManager {
      */
     public Observable<WeatherInfo> getWeatherInfoObservable(String city) {
         return mNewsService.getWeatherInfo(getCacheControl(), city).compose(new BaseSchedulerTransformer<WeatherInfo>());
-                /*.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).unsubscribeOn(Schedulers.io());*/
     }
 
 }

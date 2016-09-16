@@ -7,6 +7,7 @@ import com.oushangfeng.ounews.callback.RequestCallback;
 import com.oushangfeng.ounews.utils.NetUtil;
 import com.socks.library.KLog;
 
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
 import retrofit2.adapter.rxjava.HttpException;
@@ -64,6 +65,8 @@ public class BaseSubscriber<T> extends Subscriber<T> {
                 }
             } else if (e instanceof UnknownHostException) {
                 errorMsg = "不知名主机";
+            } else if (e instanceof SocketTimeoutException) {
+                errorMsg = "网络连接超时！";
             }
             KLog.e(e.toString());
             mRequestCallback.requestError(errorMsg);

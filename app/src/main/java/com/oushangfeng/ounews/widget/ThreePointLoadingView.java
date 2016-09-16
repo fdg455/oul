@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 import com.oushangfeng.ounews.R;
@@ -86,10 +87,8 @@ public class ThreePointLoadingView extends View {
         mBallPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
 
         if (attrs != null) {
-            final TypedArray typedArray = context
-                    .obtainStyledAttributes(attrs, R.styleable.ThreePointLoadingView);
-            mBallPaint.setColor(typedArray.getColor(R.styleable.ThreePointLoadingView_pointColor,
-                    ContextCompat.getColor(context, R.color.primary)));
+            final TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ThreePointLoadingView);
+            mBallPaint.setColor(typedArray.getColor(R.styleable.ThreePointLoadingView_pointColor, ContextCompat.getColor(context, R.color.primary)));
             typedArray.recycle();
         }
 
@@ -105,10 +104,8 @@ public class ThreePointLoadingView extends View {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 
         // 考虑padding值
-        mWidth = measureSize(widthMeasureSpec,
-                MeasureUtil.dip2px(getContext(), 180)) + getPaddingLeft() + getPaddingRight();
-        mHeight = measureSize(heightMeasureSpec,
-                MeasureUtil.dip2px(getContext(), 180)) + getPaddingTop() + getPaddingBottom();
+        mWidth = measureSize(widthMeasureSpec, MeasureUtil.dip2px(getContext(), 180)) + getPaddingLeft() + getPaddingRight();
+        mHeight = measureSize(heightMeasureSpec, MeasureUtil.dip2px(getContext(), 180)) + getPaddingTop() + getPaddingBottom();
 
         setMeasuredDimension(mWidth, mHeight);
 
@@ -159,8 +156,7 @@ public class ThreePointLoadingView extends View {
     protected void onDraw(Canvas canvas) {
 
         // 根据x方向偏移量求出y方向偏移量
-        mOffsetY = (float) Math
-                .sqrt(mMoveLength / 2 * mMoveLength / 2 - (mMoveLength / 2 - mOffsetX) * (mMoveLength / 2 - mOffsetX));
+        mOffsetY = (float) Math.sqrt(mMoveLength / 2 * mMoveLength / 2 - (mMoveLength / 2 - mOffsetX) * (mMoveLength / 2 - mOffsetX));
 
         // 绘制B圆
         mBallPaint.setAlpha(mBBallAlpha);
@@ -183,10 +179,10 @@ public class ThreePointLoadingView extends View {
 
     @Override
     protected void onDetachedFromWindow() {
-        stopLoading();
+        stopLoading(true);
+        mAnimator = null;
+        Log.e("TAG", "ThreePointLoadingView-189行-onDetachedFromWindow(): ");
         super.onDetachedFromWindow();
-        // 销毁view时取消动画，避免内存泄露
-        // KLog.e("销毁view时取消动画，避免内存泄露"+this+" --- "+getContext()+" ---- "+ ++count);
     }
 
     private int count = 0;
@@ -203,14 +199,16 @@ public class ThreePointLoadingView extends View {
 
     public void stop() {
         setVisibility(INVISIBLE);
-        stopLoading();
+        stopLoading(false);
         postInvalidate();
     }
 
-    private void stopLoading() {
+    private void stopLoading(boolean removeListener) {
         if (mAnimator != null && mAnimator.isRunning()) {
-            mAnimator.removeAllListeners();
-            mAnimator.removeAllUpdateListeners();
+            if (removeListener) {
+                mAnimator.removeAllListeners();
+                mAnimator.removeAllUpdateListeners();
+            }
             mAnimator.cancel();
             mOffsetX = 0;
             mABallAlpha = 255;
