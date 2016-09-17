@@ -8,22 +8,22 @@
 
 ## 二、运行截图 ##
 
-![](/pic/1.png) (图一)
-![](/pic/2.png) (图二)
+![](/pic/1.png) 
+![](/pic/2.png) 
 
-![](/pic/3.png) (图三)
-![](/pic/4.png) (图四)
+![](/pic/3.png) 
+![](/pic/4.png) 
 
-![](/pic/5.png) (图五)
-![](/pic/6.png) (图六)
+![](/pic/5.png) 
+![](/pic/6.png) 
 
-![](/pic/7.png) (图七)
-![](/pic/8.png) (图八)
-![](/pic/9.png) (图九)
+![](/pic/7.png) 
+![](/pic/8.png) 
+![](/pic/9.png) 
 
-![](/pic/10.png) (图十)
-![](/pic/11.png) (图十一)
-![](/pic/12.png) (图十二)
+![](/pic/10.png) 
+![](/pic/11.png) 
+![](/pic/12.png)
 
 ## 三、用到的开源库 ##
 * [Quick-News API来自此项目，特此感谢](https://github.com/tigerguixh/QuickNews)
