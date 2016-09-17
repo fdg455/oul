@@ -18,6 +18,7 @@ import com.oushangfeng.ounews.module.photo.ui.adapter.OnPageChangeListenerAdapte
 import com.oushangfeng.ounews.module.photo.ui.adapter.PhotoAdapter;
 import com.oushangfeng.ounews.module.photo.view.IPhotoDetailView;
 import com.oushangfeng.ounews.utils.MeasureUtil;
+import com.oushangfeng.ounews.utils.SpUtil;
 import com.oushangfeng.ounews.utils.StringUtils;
 import com.oushangfeng.ounews.widget.HackyViewPager;
 import com.oushangfeng.ounews.widget.ThreePointLoadingView;
@@ -37,8 +38,7 @@ import zhou.widget.RichText;
         enableSlidr = true,
         menuId = R.menu.menu_settings,
         toolbarTitle = R.string.photo_detail)
-public class PhotoDetailActivity extends BaseActivity<IPhotoDetailPresenter>
-        implements IPhotoDetailView {
+public class PhotoDetailActivity extends BaseActivity<IPhotoDetailPresenter> implements IPhotoDetailView {
 
     private ThreePointLoadingView mLoadingView;
     // 捕获安卓系统报的一个bug
@@ -101,18 +101,21 @@ public class PhotoDetailActivity extends BaseActivity<IPhotoDetailPresenter>
             @Override
             public void onPageSelected(int position) {
 
-                if (position == 0 && mSlidrInterface != null) {
-                    mSlidrInterface.unlock();
-                } else if (mSlidrInterface != null) {
-                    mSlidrInterface.lock();
+                if (mSlidrInterface != null && !SpUtil.readBoolean("enableSlideEdge")) {
+                    // 设置了侧滑返回，并且是整页侧滑的时候，第一页是整页侧滑，其他页边缘侧滑
+                    if (position == 0) {
+                        mSlidrInterface.getSlidrConfig().setEdgeOnly(false);
+                    } else {
+                        mSlidrInterface.getSlidrConfig().setEdgeOnly(true);
+                    }
                 }
 
-                final String s = getString(R.string.photo_page, position + 1,
-                        photoList.data.pics.size());
-
-                mPageTv.setText(s);
-
                 if (photoList.data.pics.size() > 0) {
+
+                    final String s = getString(R.string.photo_page, position + 1, photoList.data.pics.size());
+
+                    mPageTv.setText(s);
+
                     final String alt = photoList.data.pics.get(position).alt;
                     if (!TextUtils.isEmpty(alt) && !mContentTv.getText().toString().contains(alt)) {
                         ObjectAnimator.ofFloat(mContentTv, "alpha", 0.5f, 1).setDuration(500).start();
@@ -121,6 +124,8 @@ public class PhotoDetailActivity extends BaseActivity<IPhotoDetailPresenter>
                     }
                     // 每次切换回来都要处理一下，因为切换回来当前的图片不会调用OnPhotoExpandListener的onExpand方法
                     controlView(photoAdapter.getPics().get(position).showTitle);
+                } else {
+                    mPageTv.setText(getString(R.string.photo_page, 0, 0));
                 }
 
             }
@@ -129,17 +134,16 @@ public class PhotoDetailActivity extends BaseActivity<IPhotoDetailPresenter>
 
         mViewPager.addOnPageChangeListener(mPageChangeListenerAdapter);
 
-        mContentTv.getViewTreeObserver()
-                .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        mPageTvWidth = mPageTv.getMeasuredWidth();
-                        mContentTvWidth = mContentTv.getMeasuredWidth();
-                        KLog.e("长度：" + mPageTvWidth + ";" + mContentTvWidth);
-                        mPageChangeListenerAdapter.onPageSelected(0);
-                        mContentTv.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    }
-                });
+        mContentTv.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mPageTvWidth = mPageTv.getMeasuredWidth();
+                mContentTvWidth = mContentTv.getMeasuredWidth();
+                KLog.e("长度：" + mPageTvWidth + ";" + mContentTvWidth);
+                mPageChangeListenerAdapter.onPageSelected(0);
+                mContentTv.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
 
         photoAdapter.setOnPhotoExpandListener(new PhotoAdapter.OnPhotoExpandListener() {
             @Override
@@ -158,8 +162,7 @@ public class PhotoDetailActivity extends BaseActivity<IPhotoDetailPresenter>
      * 根据文本的长度动态设置对齐方式
      */
     private void dynamicSetTextViewGravity() {
-        if ((mContentTv.getPaint()
-                .measureText(mContentTv.getText().toString()) < mContentTvWidth)) {
+        if ((mContentTv.getPaint().measureText(mContentTv.getText().toString()) < mContentTvWidth)) {
             mContentTv.setGravity(Gravity.CENTER);
             // 设为中心对齐，去掉前面两个空格
             mContentTv.setRichText(StringUtils.replaceBlank(mContentTv.getText().toString()));
@@ -188,12 +191,9 @@ public class PhotoDetailActivity extends BaseActivity<IPhotoDetailPresenter>
                 public void onAnimationUpdate(ValueAnimator animation) {
 
                     mTitleTv.setTag(false);
-                    mTitleTv.setPadding(mTitleTv.getPaddingLeft(),
-                            -(int) animation.getAnimatedValue(), mTitleTv.getPaddingRight(),
-                            mTitleTv.getPaddingBottom());
+                    mTitleTv.setPadding(mTitleTv.getPaddingLeft(), -(int) animation.getAnimatedValue(), mTitleTv.getPaddingRight(), mTitleTv.getPaddingBottom());
 
-                    mContentTv.setPadding(mContentTv.getPaddingLeft(), mContentTv.getPaddingTop(),
-                            mContentTv.getPaddingRight(), -(int) animation.getAnimatedValue());
+                    mContentTv.setPadding(mContentTv.getPaddingLeft(), mContentTv.getPaddingTop(), mContentTv.getPaddingRight(), -(int) animation.getAnimatedValue());
 
                     ViewCompat.setScaleX(mPageTv, 1 - animation.getAnimatedFraction());
                     ViewCompat.setScaleY(mPageTv, 1 - animation.getAnimatedFraction());
@@ -209,12 +209,10 @@ public class PhotoDetailActivity extends BaseActivity<IPhotoDetailPresenter>
                 public void onAnimationUpdate(ValueAnimator animation) {
 
                     mTitleTv.setTag(true);
-                    mTitleTv.setPadding(mTitleTv.getPaddingLeft(),
-                            -(int) animation.getAnimatedValue() + mTitleTvPaddingTop,
-                            mTitleTv.getPaddingRight(), mTitleTv.getPaddingBottom());
+                    mTitleTv.setPadding(mTitleTv.getPaddingLeft(), -(int) animation.getAnimatedValue() + mTitleTvPaddingTop, mTitleTv.getPaddingRight(),
+                            mTitleTv.getPaddingBottom());
 
-                    mContentTv.setPadding(mContentTv.getPaddingLeft(), mContentTv.getPaddingTop(),
-                            mContentTv.getPaddingRight(),
+                    mContentTv.setPadding(mContentTv.getPaddingLeft(), mContentTv.getPaddingTop(), mContentTv.getPaddingRight(),
                             -(int) animation.getAnimatedValue() + mContentTvPaddingBottom);
 
                     ViewCompat.setScaleX(mPageTv, animation.getAnimatedFraction());

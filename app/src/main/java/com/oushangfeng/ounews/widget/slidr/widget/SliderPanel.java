@@ -53,6 +53,10 @@ public class SliderPanel extends FrameLayout {
     private boolean mIsEdgeTouched = false;
     private int mEdgePosition;
 
+    public SlidrConfig getConfig() {
+        return mConfig;
+    }
+
     private SlidrConfig mConfig;
 
 	public SliderPanel(Context context) {

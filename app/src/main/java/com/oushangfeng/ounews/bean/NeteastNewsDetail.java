@@ -174,6 +174,7 @@ public class NeteastNewsDetail {
     @JsonProperty("apps")
     public List<?> apps;
 
+
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class SourceinfoEntity {
         @JsonProperty("alias")
@@ -266,7 +267,19 @@ public class NeteastNewsDetail {
         public String urlM3u8;
         @JsonProperty("size")
         public String size;
+        @JsonProperty("mp4Hd_url")
+        public String mp4HdUrl;
+        @JsonProperty("mp4_url")
+        public String mp4Url;
+        @JsonProperty("m3u8Hd_url")
+        public String m3u8HdUrl;
+        @JsonProperty("m3u8_url")
+        public String m3u8Url;
+        @JsonProperty("vid")
+        public String vid;
     }
+
+
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class RelativeSysEntity {

@@ -18,8 +18,12 @@
 ![](/pic/6.png) (图六)
 
 ![](/pic/7.png) (图七)
-![](/pic/8.gif) (图八)
-![](/pic/9.gif) (图九)
+![](/pic/8.png) (图八)
+![](/pic/9.png) (图九)
+
+![](/pic/10.png) (图十)
+![](/pic/11.png) (图十一)
+![](/pic/12.png) (图十二)
 
 ## 三、用到的开源库 ##
 * [Quick-News API来自此项目，特此感谢](https://github.com/tigerguixh/QuickNews)
@@ -29,7 +33,7 @@
 * [Glide 图片加载](https://github.com/bumptech/glide)
 * [GreenDao 数据库操作](https://github.com/greenrobot/greenDAO)
 * [PhotoView 图片缩放](https://github.com/chrisbanes/PhotoView)
-* [Vitamio 视频播放](https://github.com/yixia/VitamioBundle)
+* [Ijkplayer 视频播放](https://github.com/Bilibili/ijkplayer)
 * [AndroidChangeSkin 无需重启换肤](https://github.com/hongyangAndroid/AndroidChangeSkin)
 * ......
 
@@ -51,7 +55,7 @@ Android实现RecyclerView侧滑删除和长按拖拽-ItemTouchHelper<br>http://b
 
 基于RxJava、RxAndroid的EventBus实现<br>http://www.cnblogs.com/tiantianbyconan/p/4578699.html</br>
 
- 深入浅出RxJava<br>http://blog.csdn.net/lzyzsd/article/details/41833541</br>
+深入浅出RxJava<br>http://blog.csdn.net/lzyzsd/article/details/41833541</br>
 
 ## 五、声明 ##
 

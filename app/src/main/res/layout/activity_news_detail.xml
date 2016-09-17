@@ -24,7 +24,7 @@
             app:contentScrim="?attr/colorPrimary"
             app:expandedTitleGravity="bottom"
             app:expandedTitleMarginStart="48dp"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <!--我们设置了layout_scrollFlags:关于它的值我这里再说一下：
             scroll - 想滚动就必须设置这个。
@@ -80,6 +80,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_news_detail_photo_list_black"
+        android:tint="@color/material_black"
         app:backgroundTint="?attr/fabColor"
         app:layout_anchor="@id/app_bar"
         app:layout_anchorGravity="bottom|end|right"/>
@@ -91,5 +92,11 @@
         android:layout_marginTop="?attr/actionBarSize"
         android:visibility="invisible"
         app:pointColor="?attr/pointColor"/>
+
+    <ViewStub
+        android:id="@+id/view_stub"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout="@layout/include_bg"/>
 
 </android.support.design.widget.CoordinatorLayout>

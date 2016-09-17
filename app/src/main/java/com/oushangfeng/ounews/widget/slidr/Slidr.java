@@ -191,6 +191,11 @@ public class Slidr {
             public void unlock() {
                 panel.unlock();
             }
+
+            @Override
+            public SlidrConfig getSlidrConfig() {
+                return panel.getConfig();
+            }
         };
 
         // Return the lock interface

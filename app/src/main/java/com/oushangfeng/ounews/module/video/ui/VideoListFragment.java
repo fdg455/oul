@@ -200,7 +200,7 @@ public class VideoListFragment extends BaseFragment<IVideoListPresenter> impleme
             @Override
             public void loadMore() {
                 mPresenter.loadMoreData();
-                mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount());
+                // mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount());
             }
         });
 

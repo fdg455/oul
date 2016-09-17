@@ -236,7 +236,7 @@ public class NewsListFragment extends BaseFragment<INewsListPresenter> implement
             @Override
             public void loadMore() {
                 mPresenter.loadMoreData();
-                mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount());
+                // mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount());
             }
         });
 

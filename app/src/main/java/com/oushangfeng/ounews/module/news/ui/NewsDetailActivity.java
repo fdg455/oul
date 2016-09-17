@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.ContextCompat;
@@ -11,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,12 +29,16 @@ import com.oushangfeng.ounews.module.news.presenter.INewsDetailPresenter;
 import com.oushangfeng.ounews.module.news.presenter.INewsDetailPresenterImpl;
 import com.oushangfeng.ounews.module.news.view.INewsDetailView;
 import com.oushangfeng.ounews.module.photo.ui.PhotoDetailActivity;
+import com.oushangfeng.ounews.module.video.ui.VideoPlayActivity;
 import com.oushangfeng.ounews.utils.MeasureUtil;
+import com.oushangfeng.ounews.utils.RxBus;
 import com.oushangfeng.ounews.utils.ViewUtil;
 import com.oushangfeng.ounews.widget.ThreePointLoadingView;
 
 import java.util.ArrayList;
 
+import rx.Observable;
+import rx.functions.Action1;
 import zhou.widget.RichText;
 
 /**
@@ -54,9 +60,14 @@ public class NewsDetailActivity extends BaseActivity<INewsDetailPresenter> imple
     private TextView mFromTv;
     private RichText mBodyTv;
 
-    private String mNewsListSrc;
+    private FloatingActionButton mFab;
 
+    private View mBg;
+
+    private String mNewsListSrc;
     private SinaPhotoDetail mSinaPhotoDetail;
+
+    private Observable<Boolean> mBgObservable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,7 +108,8 @@ public class NewsDetailActivity extends BaseActivity<INewsDetailPresenter> imple
 
         mBodyTv = (RichText) findViewById(R.id.tv_news_detail_body);
 
-        findViewById(R.id.fab).setOnClickListener(this);
+        mFab = (FloatingActionButton) findViewById(R.id.fab);
+        mFab.setOnClickListener(this);
 
         mNewsListSrc = getIntent().getStringExtra("imgsrc");
 
@@ -106,7 +118,50 @@ public class NewsDetailActivity extends BaseActivity<INewsDetailPresenter> imple
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mBgObservable != null) {
+            RxBus.get().unregister("Bg", mBgObservable);
+        }
+    }
+
+    @Override
     public void initNewsDetail(NeteastNewsDetail data) {
+
+        if (data.video != null && data.video.size() > 0) {
+            final NeteastNewsDetail.VideoEntity video = data.video.get(0);
+            final String mp4HdUrl = video.mp4HdUrl;
+            final String mp4Url = video.mp4Url;
+            if (!TextUtils.isEmpty(mp4HdUrl)) {
+                mFab.setImageResource(R.drawable.ic_play_normal);
+                mFab.setTag(mp4HdUrl);
+            } else if (!TextUtils.isEmpty(mp4Url)) {
+                mFab.setImageResource(R.drawable.ic_play_normal);
+                mFab.setTag(mp4Url);
+            }
+
+            if (mBgObservable == null) {
+                mBgObservable = RxBus.get().register("Bg", Boolean.class);
+                mBgObservable.subscribe(new Action1<Boolean>() {
+                    @Override
+                    public void call(Boolean aBoolean) {
+
+                        if (mBg == null) {
+                            ViewStub viewStub = (ViewStub) findViewById(R.id.view_stub);
+                            mBg = viewStub.inflate();
+                        }
+
+                        if (aBoolean) {
+                            mBg.setVisibility(View.INVISIBLE);
+                        } else {
+                            mBg.setVisibility(View.VISIBLE);
+                        }
+                    }
+                });
+            }
+
+        }
+
         if (data.img != null && data.img.size() > 0) {
             // 设置tag用于点击跳转浏览图片列表的时候判断是否有图片可供浏览
             mNewsImageView.setTag(R.id.img_tag, true);
@@ -124,7 +179,7 @@ public class NewsDetailActivity extends BaseActivity<INewsDetailPresenter> imple
 
                 if (data.img.get(0).src.contains(".gif")) {
                     Glide.with(this).load(data.img.get(0).src).asGif().placeholder(R.drawable.ic_loading).error(R.drawable.ic_fail)
-                            .diskCacheStrategy(DiskCacheStrategy.ALL).override(w, h).into(mNewsImageView);
+                            .diskCacheStrategy(DiskCacheStrategy.SOURCE).override(w, h).into(mNewsImageView);
                 } else {
                     Glide.with(this).load(data.img.get(0).src).asBitmap().placeholder(R.drawable.ic_loading).format(DecodeFormat.PREFER_ARGB_8888)
                             .error(R.drawable.ic_fail).diskCacheStrategy(DiskCacheStrategy.ALL).override(w, h).into(mNewsImageView);
@@ -134,22 +189,24 @@ public class NewsDetailActivity extends BaseActivity<INewsDetailPresenter> imple
                         .diskCacheStrategy(DiskCacheStrategy.ALL).error(R.drawable.ic_fail).into(mNewsImageView);
             }
 
-            // 以下将数据封装成新浪需要的格式，用于点击跳转到图片浏览
-            mSinaPhotoDetail = new SinaPhotoDetail();
-            mSinaPhotoDetail.data = new SinaPhotoDetail.SinaPhotoDetailDataEntity();
-            mSinaPhotoDetail.data.title = data.title;
-            mSinaPhotoDetail.data.content = data.digest;
-            mSinaPhotoDetail.data.pics = new ArrayList<>();
-            for (NeteastNewsDetail.ImgEntity entiity : data.img) {
-                SinaPhotoDetail.SinaPhotoDetailPicsEntity sinaPicsEntity = new SinaPhotoDetail.SinaPhotoDetailPicsEntity();
-                sinaPicsEntity.pic = entiity.src;
-                sinaPicsEntity.alt = entiity.alt;
-                sinaPicsEntity.kpic = entiity.src;
-                if (pixel != null && pixel.length == 2) {
-                    // 新浪分辨率是按100x100这种形式的
-                    sinaPicsEntity.size = pixel[0] + "x" + pixel[1];
+            if (mFab.getTag() == null) {
+                // 以下将数据封装成新浪需要的格式，用于点击跳转到图片浏览
+                mSinaPhotoDetail = new SinaPhotoDetail();
+                mSinaPhotoDetail.data = new SinaPhotoDetail.SinaPhotoDetailDataEntity();
+                mSinaPhotoDetail.data.title = data.title;
+                mSinaPhotoDetail.data.content = data.digest;
+                mSinaPhotoDetail.data.pics = new ArrayList<>();
+                for (NeteastNewsDetail.ImgEntity entiity : data.img) {
+                    SinaPhotoDetail.SinaPhotoDetailPicsEntity sinaPicsEntity = new SinaPhotoDetail.SinaPhotoDetailPicsEntity();
+                    sinaPicsEntity.pic = entiity.src;
+                    sinaPicsEntity.alt = entiity.alt;
+                    sinaPicsEntity.kpic = entiity.src;
+                    if (pixel != null && pixel.length == 2) {
+                        // 新浪分辨率是按100x100这种形式的
+                        sinaPicsEntity.size = pixel[0] + "x" + pixel[1];
+                    }
+                    mSinaPhotoDetail.data.pics.add(sinaPicsEntity);
                 }
-                mSinaPhotoDetail.data.pics.add(sinaPicsEntity);
             }
 
         } else {
@@ -190,13 +247,21 @@ public class NewsDetailActivity extends BaseActivity<INewsDetailPresenter> imple
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.fab) {
-            if (!(boolean) mNewsImageView.getTag(R.id.img_tag) || mSinaPhotoDetail == null) {
-                toast("没有图片供浏览哎o(╥﹏╥)o");
-            } else {
-                Intent intent = new Intent(this, PhotoDetailActivity.class);
-                intent.putExtra("neteast", mSinaPhotoDetail);
+            if (mFab.getTag() != null && mFab.getTag() instanceof String) {
+                Intent intent = new Intent(this, VideoPlayActivity.class);
+                intent.putExtra("videoUrl", (String) mFab.getTag());
+                intent.putExtra("videoName", mTitleTv.getText().toString());
                 ActivityOptionsCompat options = ActivityOptionsCompat.makeScaleUpAnimation(v, v.getWidth() / 2, v.getHeight() / 2, 0, 0);
                 ActivityCompat.startActivity(this, intent, options.toBundle());
+            } else {
+                if (!(boolean) mNewsImageView.getTag(R.id.img_tag) || mSinaPhotoDetail == null) {
+                    toast("没有图片供浏览哎o(╥﹏╥)o");
+                } else {
+                    Intent intent = new Intent(this, PhotoDetailActivity.class);
+                    intent.putExtra("neteast", mSinaPhotoDetail);
+                    ActivityOptionsCompat options = ActivityOptionsCompat.makeScaleUpAnimation(v, v.getWidth() / 2, v.getHeight() / 2, 0, 0);
+                    ActivityCompat.startActivity(this, intent, options.toBundle());
+                }
             }
         }
     }

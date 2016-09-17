@@ -3,6 +3,7 @@ package com.oushangfeng.ounews.module.video.ui;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.view.View;
+import android.view.ViewStub;
 
 import com.oushangfeng.ounews.R;
 import com.oushangfeng.ounews.annotation.ActivityFragmentInject;
@@ -47,12 +48,18 @@ public class VideoActivity extends BaseActivity<IVideoPresenter> implements IVid
 
         mPresenter = new IVideoPresenterImpl(this);
 
-        mBg = findViewById(R.id.bg);
+        // mBg = findViewById(R.id.bg);
 
         mBgObservable = RxBus.get().register("Bg", Boolean.class);
         mBgObservable.subscribe(new Action1<Boolean>() {
             @Override
             public void call(Boolean aBoolean) {
+
+                if (mBg==null){
+                    ViewStub viewStub = (ViewStub) findViewById(R.id.view_stub);
+                    mBg = viewStub.inflate();
+                }
+
                 if (aBoolean) {
                     mBg.setVisibility(View.INVISIBLE);
                 } else {

@@ -2,9 +2,11 @@ package com.oushangfeng.ounews.module.settings.ui;
 
 import android.content.res.ColorStateList;
 import android.os.Build;
+import android.text.Html;
 import android.view.View;
 import android.widget.CheckedTextView;
 
+import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.oushangfeng.ounews.R;
 import com.oushangfeng.ounews.annotation.ActivityFragmentInject;
@@ -95,7 +97,19 @@ public class SettingsActivity extends BaseActivity<ISettingsPresenter> implement
                 }
                 break;
             case R.id.tv_about:
-                new MaterialDialog.Builder(this).content(R.string.about_info).show();
+                final MaterialDialog dialog = new MaterialDialog.Builder(this).title("说明").titleGravity(GravityEnum.CENTER).content("").show();
+                dialog.getContentView().setText(Html.fromHtml("&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;此练习项目API来源于:高仿网易新闻客户端"+"<a href='https://github.com/tigerguixh/QuickNews'>QuickNews</a><br>"
+                        +"&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;使用了诸如:<br>"
+                        + "<a href='https://github.com/square/retrofit'>Retrofit2.0</a>,"
+                        +"<a href='https://github.com/ReactiveX/RxJava'>RxJava</a>,"
+                        +"<a href='https://github.com/greenrobot/greenDAO'>GreenDAO</a>,"
+                        +"<a href='https://github.com/bumptech/glide'>Glide</a>,"
+                        +"<a href='https://github.com/hongyangAndroid/AndroidChangeSkin'>AndroidChangeSkin</a>,"
+                        +"<a href='https://github.com/Bilibili/ijkplayer'>Ijkplayer</a><br>等优秀开源项目。<br>"
+                        +"&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;自己也自定义了刷新的控件，加载的控件，封装了RecyclerView的适配器，对MVP模式进行了基类的提取，用<a href='https://github.com/square/okhttp'>OkHttp</a>实现了请求缓存。<br>"
+                        +"&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;App分为新闻、视频、图片三个模块，特色功能有换肤、侧滑返回。<br>"
+                        +"&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;希望关注的朋友能与我交流学习。<br>"
+                ));
                 break;
         }
     }

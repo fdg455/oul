@@ -33,6 +33,7 @@ import com.oushangfeng.ounews.utils.ijkplayer.utils.ViewHelper;
 import com.oushangfeng.ounews.utils.ijkplayer.widget.media.IMediaController;
 import com.oushangfeng.ounews.utils.ijkplayer.widget.media.IjkVideoView;
 import com.oushangfeng.ounews.utils.ijkplayer.widget.view.ProgressView;
+import com.socks.library.KLog;
 
 import java.lang.ref.WeakReference;
 
@@ -93,6 +94,8 @@ public class IjkController implements IMediaController, View.OnTouchListener, Vi
 
     private WindowManager.LayoutParams mParams;
     private int mTouchSlop;
+
+    private float mBrightness = -1;
 
     public IjkController(Activity context, String name) {
         mContext = context;
@@ -190,7 +193,7 @@ public class IjkController implements IMediaController, View.OnTouchListener, Vi
 
         mTouchSlop = ViewConfiguration.get(mContext).getScaledPagingTouchSlop();
 
-        Log.e("TAG", "IjkController-189行-initPopupWindow(): " + getScreenBrightness(mContext));
+        KLog.e(getScreenBrightness(mContext));
 
     }
 
@@ -400,11 +403,10 @@ public class IjkController implements IMediaController, View.OnTouchListener, Vi
                         mParams = mContext.getWindow().getAttributes();
 
                         // 0~1范围
-                        float brightness = mParams.screenBrightness;
+                        // float brightness = mParams.screenBrightness;
 
-                        if (brightness == -1) {
-                            // -1为跟随屏幕的亮度，所以这里取屏幕亮度，0~255范围
-                            brightness = getScreenBrightness(mContext) / 255.0f;
+                        if (mBrightness == -1) {
+                            mBrightness = getScreenBrightness(mContext) / 255.0f;
                         }
 
                         if (Math.abs(dy) >= mTouchSlop / 2) {
@@ -420,24 +422,24 @@ public class IjkController implements IMediaController, View.OnTouchListener, Vi
 
                             if (dy < 0) {
                                 // 向上滑动，增加亮度
-                                brightness += 0.1;
-                                brightness = Math.min(brightness, 1);
+                                mBrightness += 0.1;
+                                mBrightness = Math.min(mBrightness, 1);
                             } else {
                                 // 向下滑动，减小亮度
-                                brightness -= 0.1;
-                                brightness = Math.max(brightness, 0);
+                                mBrightness -= 0.1;
+                                mBrightness = Math.max(mBrightness, 0);
                             }
 
-                            mParams.screenBrightness = brightness;
+                            mParams.screenBrightness = mBrightness;
                             mContext.getWindow().setAttributes(mParams);
 
-                            mPvBrightnessVolume.setProgress(brightness);
-                            mTvBrightnessVolume.setText(String.format("%.1f", brightness));
+                            mPvBrightnessVolume.setProgress(mBrightness);
+                            mTvBrightnessVolume.setText(String.format("%.1f", mBrightness));
 
                         } else {
                             mPvBrightnessVolume.setMaxProgress(1);
-                            mPvBrightnessVolume.setProgress(brightness);
-                            mTvBrightnessVolume.setText(String.format("%.1f", brightness));
+                            mPvBrightnessVolume.setProgress(mBrightness);
+                            mTvBrightnessVolume.setText(String.format("%.1f", mBrightness));
                         }
 
                     }

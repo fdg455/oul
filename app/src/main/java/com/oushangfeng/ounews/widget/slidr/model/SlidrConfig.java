@@ -215,6 +215,18 @@ public class SlidrConfig {
         this.distanceThreshold = distanceThreshold;
     }
 
+    public void setEdgeOnly(boolean edgeOnly) {
+        this.edgeOnly = edgeOnly;
+    }
+
+    public float getEdgeSize() {
+        return edgeSize;
+    }
+
+    public void setEdgeSize(float edgeSize) {
+        this.edgeSize = edgeSize;
+    }
+
     /**
      * The Builder for this configuration class. This is the only way to create a
      * configuration

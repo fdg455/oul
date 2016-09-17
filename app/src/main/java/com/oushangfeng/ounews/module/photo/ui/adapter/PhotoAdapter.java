@@ -55,13 +55,11 @@ public class PhotoAdapter extends PagerAdapter {
 
         final String kpic = mPics.get(position).kpic;
         if (kpic.contains("gif")) {
-            Glide.with(mContext).load(kpic).asGif().placeholder(R.drawable.ic_loading)
-                    .error(R.drawable.ic_fail).diskCacheStrategy(DiskCacheStrategy.ALL)
+            Glide.with(mContext).load(kpic).asGif().placeholder(R.drawable.ic_loading).error(R.drawable.ic_fail).diskCacheStrategy(DiskCacheStrategy.SOURCE)
                     .into(photoView);
             photoView.setZoomable(false);
         } else {
-            Glide.with(mContext).load(kpic).asBitmap().placeholder(R.drawable.ic_loading)
-                    .error(R.drawable.ic_fail).format(DecodeFormat.PREFER_ARGB_8888)
+            Glide.with(mContext).load(kpic).asBitmap().placeholder(R.drawable.ic_loading).error(R.drawable.ic_fail).format(DecodeFormat.PREFER_ARGB_8888)
                     .diskCacheStrategy(DiskCacheStrategy.ALL).into(photoView);
             photoView.setZoomable(true);
         }
@@ -83,8 +81,7 @@ public class PhotoAdapter extends PagerAdapter {
             }
         });
 
-        container.addView(photoView, ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT);
+        container.addView(photoView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         return photoView;
     }
 

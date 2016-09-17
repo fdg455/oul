@@ -539,7 +539,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
      * @param tabLayout TabLayout
      */
     protected void setOnTabSelectEvent(final ViewPager viewPager, final TabLayout tabLayout) {
-        tabLayout.setOnTabSelectedListener(new OnTabSelectedListenerAdapter() {
+        tabLayout.addOnTabSelectedListener(new OnTabSelectedListenerAdapter() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition(), true);

@@ -26,19 +26,20 @@ public class BaseSpacesItemDecoration extends RecyclerView.ItemDecoration {
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
         int position = parent.getChildAdapterPosition(view);
+
         outRect.left = mSpace;
         outRect.right = mSpace;
         outRect.top = 0;
-        outRect.bottom = mSpace;
+        outRect.bottom = mSpace ;
 
         if (parent.getLayoutManager() instanceof StaggeredGridLayoutManager) {
 
             final int index = ((StaggeredGridLayoutManager.LayoutParams) view.getLayoutParams()).getSpanIndex();
 
             if (index % 2 == 0) {
-                outRect.right = mSpace / 2;
+                outRect.right = mSpace / 2 ;
             } else {
-                outRect.left = mSpace / 2;
+                outRect.left = mSpace / 2 ;
             }
 
             if (position < ((StaggeredGridLayoutManager) parent.getLayoutManager()).getSpanCount()) {
@@ -47,9 +48,9 @@ public class BaseSpacesItemDecoration extends RecyclerView.ItemDecoration {
 
         } else if (parent.getLayoutManager() instanceof GridLayoutManager) {
             if (position % 2 == 0) {
-                outRect.right = mSpace / 2;
+                outRect.right = mSpace / 2 ;
             } else {
-                outRect.left = mSpace / 2;
+                outRect.left = mSpace / 2 ;
             }
             if (position < ((GridLayoutManager) parent.getLayoutManager()).getSpanCount()) {
                 // 保证第一行有相对顶部有高度

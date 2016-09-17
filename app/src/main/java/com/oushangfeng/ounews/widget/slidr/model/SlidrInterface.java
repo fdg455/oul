@@ -6,4 +6,5 @@ package com.oushangfeng.ounews.widget.slidr.model;
 public interface SlidrInterface {
     void lock();
     void unlock();
+    SlidrConfig getSlidrConfig();
 }

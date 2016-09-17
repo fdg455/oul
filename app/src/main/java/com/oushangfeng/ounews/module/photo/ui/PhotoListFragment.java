@@ -181,7 +181,7 @@ public class PhotoListFragment extends BaseFragment<IPhotoListPresenter> impleme
             @Override
             public void loadMore() {
                 mPresenter.loadMoreData();
-                mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount());
+                // mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount());
             }
         });
 
