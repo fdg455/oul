@@ -19,7 +19,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.oushangfeng.ounews.R;
 import com.oushangfeng.ounews.annotation.ActivityFragmentInject;
 import com.oushangfeng.ounews.base.BaseFragment;
-import com.oushangfeng.ounews.base.BaseSuperRecyclerAdapter;
+import com.oushangfeng.ounews.base.BaseRecyclerAdapter;
 import com.oushangfeng.ounews.base.BaseRecyclerViewHolder;
 import com.oushangfeng.ounews.base.BaseSpacesItemDecoration;
 import com.oushangfeng.ounews.bean.NeteastVideoSummary;
@@ -55,7 +55,7 @@ public class VideoListFragment extends BaseFragment<IVideoListPresenter> impleme
 
     protected String mVideoId;
 
-    private BaseSuperRecyclerAdapter<NeteastVideoSummary> mAdapter;
+    private BaseRecyclerAdapter<NeteastVideoSummary> mAdapter;
     private RecyclerView mRecyclerView;
     private RefreshLayout mRefreshLayout;
     private ThreePointLoadingView mLoadingView;
@@ -130,7 +130,6 @@ public class VideoListFragment extends BaseFragment<IVideoListPresenter> impleme
                 mAdapter.addMoreData(data);
                 break;
             case DataLoadType.TYPE_LOAD_MORE_FAIL:
-                // toast(errorMsg);
                 mAdapter.loadMoreFailed(errorMsg);
                 break;
         }
@@ -140,7 +139,7 @@ public class VideoListFragment extends BaseFragment<IVideoListPresenter> impleme
 
         final StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
 
-        mAdapter = new BaseSuperRecyclerAdapter<NeteastVideoSummary>(getActivity(), data, true, layoutManager) {
+        mAdapter = new BaseRecyclerAdapter<NeteastVideoSummary>(getActivity(), data, true, layoutManager) {
 
             Random mRandom = new Random();
 

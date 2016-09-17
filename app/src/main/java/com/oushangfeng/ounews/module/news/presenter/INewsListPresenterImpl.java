@@ -18,9 +18,7 @@ import java.util.List;
  * UpdateUser: <p>
  * UpdateDate: <p>
  */
-public class INewsListPresenterImpl
-        extends BasePresenterImpl<INewsListView, List<NeteastNewsSummary>>
-        implements INewsListPresenter {
+public class INewsListPresenterImpl extends BasePresenterImpl<INewsListView, List<NeteastNewsSummary>> implements INewsListPresenter {
 
     private INewsListInteractor<List<NeteastNewsSummary>> mNewsListInteractor;
     private String mNewsType;
@@ -41,6 +39,7 @@ public class INewsListPresenterImpl
     @Override
     public void beforeRequest() {
         if (!mHasInit) {
+            mHasInit = true;
             mView.showProgress();
         }
     }
@@ -48,19 +47,15 @@ public class INewsListPresenterImpl
     @Override
     public void requestError(String e) {
         super.requestError(e);
-        mView.updateNewsList(null,
-                mIsRefresh ? DataLoadType.TYPE_REFRESH_FAIL : DataLoadType.TYPE_LOAD_MORE_FAIL);
+        mView.updateNewsList(null, e, mIsRefresh ? DataLoadType.TYPE_REFRESH_FAIL : DataLoadType.TYPE_LOAD_MORE_FAIL);
     }
 
     @Override
     public void requestSuccess(List<NeteastNewsSummary> data) {
-        KLog.e("请求成功");
-        mHasInit = true;
         if (data != null) {
             mStartPage += 20;
         }
-        mView.updateNewsList(data,
-                mIsRefresh ? DataLoadType.TYPE_REFRESH_SUCCESS : DataLoadType.TYPE_LOAD_MORE_SUCCESS);
+        mView.updateNewsList(data, "", mIsRefresh ? DataLoadType.TYPE_REFRESH_SUCCESS : DataLoadType.TYPE_LOAD_MORE_SUCCESS);
 
     }
 

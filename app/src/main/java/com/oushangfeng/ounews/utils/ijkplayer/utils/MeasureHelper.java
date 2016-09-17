@@ -1,4 +1,4 @@
-package com.oushangfeng.ounews.utils.ijkplayer.widget.view;
+package com.oushangfeng.ounews.utils.ijkplayer.utils;
 
 import android.app.Activity;
 import android.content.Context;
@@ -16,14 +16,14 @@ import com.oushangfeng.ounews.R;
 
 
 /**
- * ClassName：MeasureUtil<p>
+ * ClassName：MeasureHelper<p>
  * Author：Oubowu<p>
  * Fuction：测量工具类<p>
  * CreateDate：2015/7/8 17:19<p>
  * UpdateAuthor：<p>
  * UpdateDate：<p>
  */
-public class MeasureUtil {
+public class MeasureHelper {
     /**
      * 获取状态栏的高度
      *

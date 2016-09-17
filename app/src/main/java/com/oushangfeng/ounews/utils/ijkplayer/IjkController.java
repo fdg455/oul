@@ -27,11 +27,11 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.oushangfeng.ounews.R;
-import com.oushangfeng.ounews.utils.ijkplayer.utils.StringUtils;
-import com.oushangfeng.ounews.utils.ijkplayer.utils.ViewUtil;
+import com.oushangfeng.ounews.utils.ijkplayer.utils.MeasureHelper;
+import com.oushangfeng.ounews.utils.ijkplayer.utils.StringHelper;
+import com.oushangfeng.ounews.utils.ijkplayer.utils.ViewHelper;
 import com.oushangfeng.ounews.utils.ijkplayer.widget.media.IMediaController;
 import com.oushangfeng.ounews.utils.ijkplayer.widget.media.IjkVideoView;
-import com.oushangfeng.ounews.utils.ijkplayer.widget.view.MeasureUtil;
 import com.oushangfeng.ounews.utils.ijkplayer.widget.view.ProgressView;
 
 import java.lang.ref.WeakReference;
@@ -175,9 +175,9 @@ public class IjkController implements IMediaController, View.OnTouchListener, Vi
         mView.setOnTouchListener(this);
         mView.setOnClickListener(this);
 
-        ((ViewGroup.MarginLayoutParams) mLlTopBar.getLayoutParams()).topMargin = MeasureUtil.getNavigationBarHeight(mContext);
+        ((ViewGroup.MarginLayoutParams) mLlTopBar.getLayoutParams()).topMargin = MeasureHelper.getNavigationBarHeight(mContext);
 
-        ((ViewGroup.MarginLayoutParams) mIvLockOutside.getLayoutParams()).topMargin += MeasureUtil.getNavigationBarHeight(mContext);
+        ((ViewGroup.MarginLayoutParams) mIvLockOutside.getLayoutParams()).topMargin += MeasureHelper.getNavigationBarHeight(mContext);
         mIvLockOutside.setSelected(true);
 
         mAnimatorListener = new AnimatorListener();
@@ -215,7 +215,7 @@ public class IjkController implements IMediaController, View.OnTouchListener, Vi
         mPlayer.seekTo((int) currentPosition);
         mPlayer.pause();
 
-        mTvCurrentTime.setText(StringUtils.generateTime((long) currentPosition, false));
+        mTvCurrentTime.setText(StringHelper.generateTime((long) currentPosition, false));
 
     }
 
@@ -594,7 +594,7 @@ public class IjkController implements IMediaController, View.OnTouchListener, Vi
             }
 
         } else if (i1 == R.id.iv_rotate) {// 2016/9/9 0009 旋转屏幕
-            ViewUtil.rotateScreen(mContext);
+            ViewHelper.rotateScreen(mContext);
 
         }
     }
@@ -634,8 +634,8 @@ public class IjkController implements IMediaController, View.OnTouchListener, Vi
                 final int currentPosition = (int) Math.ceil(controller.mPlayer.getCurrentPosition() / 1000f);
                 final int duration = Math.round(controller.mPlayer.getDuration() / 1000f);
 
-                String currentTime = StringUtils.generateTime(controller.mPlayer.getCurrentPosition(), false);
-                final String time = StringUtils.generateTime(controller.mPlayer.getDuration(), true);
+                String currentTime = StringHelper.generateTime(controller.mPlayer.getCurrentPosition(), false);
+                final String time = StringHelper.generateTime(controller.mPlayer.getDuration(), true);
 
                 if (currentTime.compareTo(time) == 1) {
                     currentTime = time;
@@ -670,7 +670,7 @@ public class IjkController implements IMediaController, View.OnTouchListener, Vi
                         if (!controller.isShowing()) {
 
                             controller.mPopupWindow
-                                    .showAsDropDown(controller.mAnchor, 0, -controller.mAnchor.getHeight() - MeasureUtil.getNavigationBarHeight(controller.mContext));
+                                    .showAsDropDown(controller.mAnchor, 0, -controller.mAnchor.getHeight() - MeasureHelper.getNavigationBarHeight(controller.mContext));
 
                             if (!mFirstShow) {
                                 controller.mLlTopBar.post(new Runnable() {

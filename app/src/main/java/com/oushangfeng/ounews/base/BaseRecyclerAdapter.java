@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * ClassName: BaseRecyclerAdapter<p>
+ * ClassName:
  * Author:oubowu<p>
  * Fuction: RecyclerView通用适配器<p>
  * CreateDate:2016/2/16 22:47<p>
@@ -31,15 +31,16 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
 
     public static final int TYPE_HEADER = 1;
     public static final int TYPE_ITEM = 2;
-    public static final int TYPE_FOOTER = 3;
-    public static final int TYPE_MORE = 4;
+    public static final int TYPE_MORE = 3;
+    public static final int TYPE_EMPTY = 4;
+    private static final int TYPE_MORE_FAIL = 5;
 
     protected List<T> mData;
     protected Context mContext;
     protected boolean mUseAnimation;
     protected LayoutInflater mInflater;
     protected OnItemClickListener mClickListener;
-    protected boolean mShowFooter;
+    protected boolean mShowLoadMoreView;
     protected boolean mShowEmptyView;
 
     private RecyclerView.LayoutManager mLayoutManager;
@@ -50,6 +51,8 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
     private int mMoreItemCount;
 
     private OnLoadMoreListener mOnLoadMoreListener;
+
+    private boolean mEnableLoadMore;
 
     public BaseRecyclerAdapter(Context context, List<T> data) {
         this(context, data, true);
@@ -70,9 +73,28 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
 
     @Override
     public BaseRecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (viewType == TYPE_FOOTER) {
+        if (viewType == TYPE_MORE) {
             return new BaseRecyclerViewHolder(mContext, mInflater.inflate(R.layout.item_load_more, parent, false));
-        } else if (viewType == TYPE_MORE) {
+        } else if (viewType == TYPE_MORE_FAIL) {
+            final BaseRecyclerViewHolder holder = new BaseRecyclerViewHolder(mContext, mInflater.inflate(R.layout.item_load_more_failed, parent, false));
+            if (mOnLoadMoreListener != null) {
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mEnableLoadMore = true;
+                        mShowLoadMoreView = true;
+                        notifyItemChanged(getItemCount() - 1);
+                        holder.itemView.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mOnLoadMoreListener.loadMore();
+                            }
+                        }, 300);
+                    }
+                });
+            }
+            return holder;
+        } else if (viewType == TYPE_EMPTY) {
             final BaseRecyclerViewHolder holder = new BaseRecyclerViewHolder(mContext, mInflater.inflate(R.layout.item_empty_view, parent, false));
             if (mEmptyClickListener != null) {
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -101,11 +123,13 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
 
     @Override
     public void onBindViewHolder(BaseRecyclerViewHolder holder, int position) {
-        if (getItemViewType(position) == TYPE_FOOTER) {
-            fullSpan(holder, TYPE_FOOTER);
-            holder.getPacman(R.id.pac_man).performLoading();
-        } else if (getItemViewType(position) == TYPE_MORE) {
+        if (getItemViewType(position) == TYPE_MORE) {
             fullSpan(holder, TYPE_MORE);
+        } else if (getItemViewType(position) == TYPE_MORE_FAIL) {
+            fullSpan(holder, TYPE_MORE_FAIL);
+            holder.setText(R.id.tv_failed, mExtraMsg + "请点击重试！");
+        } else if (getItemViewType(position) == TYPE_EMPTY) {
+            fullSpan(holder, TYPE_EMPTY);
             holder.setText(R.id.tv_error, mExtraMsg);
         } else {
             bindData(holder, position, mData.get(position));
@@ -114,8 +138,15 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
             }
         }
 
-        if (!mShowEmptyView && mOnLoadMoreListener != null && position == getItemCount() - 1 && getItemCount() >= mMoreItemCount) {
-            mOnLoadMoreListener.loadMore();
+        if (!mShowEmptyView && mOnLoadMoreListener != null && mEnableLoadMore && !mShowLoadMoreView && position == getItemCount() - 1 && getItemCount() >= mMoreItemCount) {
+            mShowLoadMoreView = true;
+            holder.itemView.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mOnLoadMoreListener.loadMore();
+                    notifyItemInserted(getItemCount());
+                }
+            }, 300);
         }
 
     }
@@ -191,20 +222,37 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
     public int getItemViewType(int position) {
 
         if (mShowEmptyView) {
+            return TYPE_EMPTY;
+        }
+
+        if (mOnLoadMoreListener != null && mEnableLoadMore && mShowLoadMoreView && getItemCount() - 1 == position) {
             return TYPE_MORE;
         }
 
-        if (mShowFooter && getItemCount() - 1 == position) {
-            return TYPE_FOOTER;
+        if (mOnLoadMoreListener != null && !mShowLoadMoreView && !mEnableLoadMore && getItemCount() - 1 == position) {
+            return TYPE_MORE_FAIL;
         }
+
         return bindViewType(position);
     }
 
     @Override
     public int getItemCount() {
-        int i = mShowFooter ? 1 : 0;
-        // KLog.e("插入: "+i);
+        int i = mOnLoadMoreListener == null ? 0 : (mEnableLoadMore && mShowLoadMoreView) || (!mShowLoadMoreView && !mEnableLoadMore) ? 1 : 0;
         return mShowEmptyView ? 1 : mData != null ? mData.size() + i : 0;
+    }
+
+    public abstract int getItemLayoutId(int viewType);
+
+    public abstract void bindData(BaseRecyclerViewHolder holder, int position, T item);
+
+    protected int bindViewType(int position) {
+        return 0;
+    }
+
+    public void showEmptyView(boolean showEmptyView, @NonNull String msg) {
+        mShowEmptyView = showEmptyView;
+        mExtraMsg = msg;
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -215,43 +263,28 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
         mEmptyClickListener = listener;
     }
 
-
-    public abstract int getItemLayoutId(int viewType);
-
-    public abstract void bindData(BaseRecyclerViewHolder holder, int position, T item);
-
-    protected int bindViewType(int position) {
-        return 0;
-    }
-
-    public void showFooter() {
-        notifyItemInserted(getItemCount());
-        mShowFooter = true;
-    }
-
-    public void showFooter(int itemCount) {
-        // KLog.e("Adapter显示尾部: " + getItemCount());
-        // notifyItemInserted(getItemCount());
-        mShowFooter = true;
-        mMoreItemCount = itemCount;
-    }
-
-
-    public void hideFooter() {
-        notifyItemRemoved(getItemCount() - 1);
-        mShowFooter = false;
-    }
-
-    public boolean isShowEmptyView() {
-        return mShowEmptyView;
-    }
-
-    public void showEmptyView(boolean showEmptyView, @NonNull String msg) {
-        mShowEmptyView = showEmptyView;
-        mExtraMsg = msg;
-    }
-
-    public void setOnLoadMoreListener(OnLoadMoreListener onLoadMoreListener) {
+    public void setOnLoadMoreListener(int moreItemCount, @NonNull OnLoadMoreListener onLoadMoreListener) {
+        mMoreItemCount = moreItemCount;
         mOnLoadMoreListener = onLoadMoreListener;
+        mEnableLoadMore = true;
     }
+
+    public void loadMoreSuccess() {
+        mEnableLoadMore = true;
+        mShowLoadMoreView = false;
+        notifyItemRemoved(getItemCount());
+    }
+
+    public void loadMoreFailed(String errorMsg) {
+        mEnableLoadMore = false;
+        mShowLoadMoreView = false;
+        mExtraMsg = errorMsg;
+        notifyItemChanged(getItemCount() - 1);
+    }
+
+    public void enableLoadMore(boolean enableLoadMore) {
+        mEnableLoadMore = enableLoadMore;
+    }
+
+
 }

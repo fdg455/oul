@@ -32,16 +32,25 @@ public class BaseSpacesItemDecoration extends RecyclerView.ItemDecoration {
         outRect.bottom = mSpace;
 
         if (parent.getLayoutManager() instanceof StaggeredGridLayoutManager) {
-            outRect.left = 0;
-            outRect.right = 0;
-            outRect.top = 0;
-            outRect.bottom = 0;
-            if (position < ((StaggeredGridLayoutManager) parent.getLayoutManager())
-                    .getSpanCount()) {
-                // 利用item的margin配合RecyclerView的margin值使得间隔相等，这里只需设第一行item的相对顶部的高度
+
+            final int index = ((StaggeredGridLayoutManager.LayoutParams) view.getLayoutParams()).getSpanIndex();
+
+            if (index % 2 == 0) {
+                outRect.right = mSpace / 2;
+            } else {
+                outRect.left = mSpace / 2;
+            }
+
+            if (position < ((StaggeredGridLayoutManager) parent.getLayoutManager()).getSpanCount()) {
                 outRect.top = mSpace;
             }
+
         } else if (parent.getLayoutManager() instanceof GridLayoutManager) {
+            if (position % 2 == 0) {
+                outRect.right = mSpace / 2;
+            } else {
+                outRect.left = mSpace / 2;
+            }
             if (position < ((GridLayoutManager) parent.getLayoutManager()).getSpanCount()) {
                 // 保证第一行有相对顶部有高度
                 outRect.top = mSpace;

@@ -7,6 +7,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -15,12 +16,14 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.oushangfeng.ounews.R;
 import com.oushangfeng.ounews.annotation.ActivityFragmentInject;
 import com.oushangfeng.ounews.base.BaseFragment;
-import com.oushangfeng.ounews.base.BaseRecyclerAdapter;
 import com.oushangfeng.ounews.base.BaseRecyclerViewHolder;
 import com.oushangfeng.ounews.base.BaseSpacesItemDecoration;
+import com.oushangfeng.ounews.base.BaseRecyclerAdapter;
 import com.oushangfeng.ounews.bean.NeteastNewsSummary;
 import com.oushangfeng.ounews.bean.SinaPhotoDetail;
+import com.oushangfeng.ounews.callback.OnEmptyClickListener;
 import com.oushangfeng.ounews.callback.OnItemClickAdapter;
+import com.oushangfeng.ounews.callback.OnLoadMoreListener;
 import com.oushangfeng.ounews.common.DataLoadType;
 import com.oushangfeng.ounews.module.news.presenter.INewsListPresenter;
 import com.oushangfeng.ounews.module.news.presenter.INewsListPresenterImpl;
@@ -28,7 +31,6 @@ import com.oushangfeng.ounews.module.news.view.INewsListView;
 import com.oushangfeng.ounews.module.photo.ui.PhotoDetailActivity;
 import com.oushangfeng.ounews.utils.ClickUtils;
 import com.oushangfeng.ounews.utils.MeasureUtil;
-import com.oushangfeng.ounews.widget.AutoLoadMoreRecyclerView;
 import com.oushangfeng.ounews.widget.ThreePointLoadingView;
 import com.oushangfeng.ounews.widget.refresh.RefreshLayout;
 import com.socks.library.KLog;
@@ -56,7 +58,7 @@ public class NewsListFragment extends BaseFragment<INewsListPresenter> implement
     protected String mNewsType;
 
     private BaseRecyclerAdapter<NeteastNewsSummary> mAdapter;
-    private AutoLoadMoreRecyclerView mRecyclerView;
+    private RecyclerView mRecyclerView;
     private RefreshLayout mRefreshLayout;
 
     private SinaPhotoDetail mSinaPhotoDetail;
@@ -90,7 +92,7 @@ public class NewsListFragment extends BaseFragment<INewsListPresenter> implement
         mLoadingView = (ThreePointLoadingView) fragmentRootView.findViewById(R.id.tpl_view);
         mLoadingView.setOnClickListener(this);
 
-        mRecyclerView = (AutoLoadMoreRecyclerView) fragmentRootView.findViewById(R.id.recycler_view);
+        mRecyclerView = (RecyclerView) fragmentRootView.findViewById(R.id.recycler_view);
 
         mRefreshLayout = (RefreshLayout) fragmentRootView.findViewById(R.id.refresh_layout);
 
@@ -109,38 +111,32 @@ public class NewsListFragment extends BaseFragment<INewsListPresenter> implement
     }
 
     @Override
-    public void updateNewsList(final List<NeteastNewsSummary> data, @DataLoadType.DataLoadTypeChecker int type) {
+    public void updateNewsList(final List<NeteastNewsSummary> data, String errorMsg, @DataLoadType.DataLoadTypeChecker int type) {
 
         if (mAdapter == null) {
             initNewsList(data);
         }
 
+        mAdapter.showEmptyView(false, "");
+
         switch (type) {
             case DataLoadType.TYPE_REFRESH_SUCCESS:
                 mRefreshLayout.refreshFinish();
+                mAdapter.enableLoadMore(true);
                 mAdapter.setData(data);
-                if (mRecyclerView.isAllLoaded()) {
-                    // 之前全部加载完了的话，这里把状态改回来供底部加载用
-                    mRecyclerView.notifyMoreLoaded();
-                }
                 break;
             case DataLoadType.TYPE_REFRESH_FAIL:
                 mRefreshLayout.refreshFinish();
+                mAdapter.enableLoadMore(false);
+                mAdapter.showEmptyView(true, errorMsg);
+                mAdapter.notifyDataSetChanged();
                 break;
             case DataLoadType.TYPE_LOAD_MORE_SUCCESS:
-                // 隐藏尾部加载
-                mAdapter.hideFooter();
-                if (data == null || data.size() == 0) {
-                    mRecyclerView.notifyAllLoaded();
-                    toast("全部加载完毕噜(☆＿☆)");
-                } else {
-                    mAdapter.addMoreData(data);
-                    mRecyclerView.notifyMoreLoaded();
-                }
+                mAdapter.loadMoreSuccess();
+                mAdapter.addMoreData(data);
                 break;
             case DataLoadType.TYPE_LOAD_MORE_FAIL:
-                mAdapter.hideFooter();
-                mRecyclerView.notifyMoreLoadedFail();
+                mAdapter.loadMoreFailed(errorMsg);
                 break;
         }
     }
@@ -228,22 +224,32 @@ public class NewsListFragment extends BaseFragment<INewsListPresenter> implement
             }
         });
 
-        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-
-        mRecyclerView.setAutoLayoutManager(linearLayoutManager).setAutoHasFixedSize(true)
-                .addAutoItemDecoration(new BaseSpacesItemDecoration(MeasureUtil.dip2px(getActivity(), 4))).setAutoItemAnimator(new DefaultItemAnimator())
-                .setAutoAdapter(mAdapter);
-
-        mRecyclerView.setOnLoadMoreListener(new AutoLoadMoreRecyclerView.OnLoadMoreListener() {
+        mAdapter.setOnEmptyClickListener(new OnEmptyClickListener() {
             @Override
-            public void loadMore() {
-                // 状态停止，并且滑动到最后一位
-                mPresenter.loadMoreData();
-                // 显示尾部加载
-                mAdapter.showFooter();
-                mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
+            public void onEmptyClick() {
+                showProgress();
+                mPresenter.refreshData();
             }
         });
+
+        mAdapter.setOnLoadMoreListener(10, new OnLoadMoreListener() {
+            @Override
+            public void loadMore() {
+                mPresenter.loadMoreData();
+                mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount());
+            }
+        });
+
+        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+
+        mRecyclerView.setLayoutManager(linearLayoutManager);
+        mRecyclerView.addItemDecoration(new BaseSpacesItemDecoration(MeasureUtil.dip2px(getActivity(), 4)));
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.getItemAnimator().setAddDuration(250);
+        mRecyclerView.getItemAnimator().setMoveDuration(250);
+        mRecyclerView.getItemAnimator().setChangeDuration(250);
+        mRecyclerView.getItemAnimator().setRemoveDuration(250);
+        mRecyclerView.setAdapter(mAdapter);
 
         mRefreshLayout.setRefreshListener(new RefreshLayout.OnRefreshListener() {
             @Override

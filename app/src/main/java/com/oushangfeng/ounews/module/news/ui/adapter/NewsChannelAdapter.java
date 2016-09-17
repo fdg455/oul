@@ -6,8 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.oushangfeng.ounews.R;
-import com.oushangfeng.ounews.base.BaseRecyclerAdapter;
 import com.oushangfeng.ounews.base.BaseRecyclerViewHolder;
+import com.oushangfeng.ounews.base.BaseRecyclerAdapter;
 import com.oushangfeng.ounews.callback.SimpleItemTouchHelperCallback;
 import com.oushangfeng.ounews.greendao.NewsChannelTable;
 import com.socks.library.KLog;
@@ -41,7 +41,7 @@ public class NewsChannelAdapter extends BaseRecyclerAdapter<NewsChannelTable>
 
     @Override
     public NewsChannelHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (viewType == TYPE_FOOTER) {
+        if (viewType == TYPE_MORE) {
             return new NewsChannelHolder(mContext,
                     mInflater.inflate(R.layout.item_load_more, parent, false));
         } else {

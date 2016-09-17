@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 
 import com.oushangfeng.ounews.R;
+import com.oushangfeng.ounews.utils.ijkplayer.utils.MeasureHelper;
 
 import java.text.DecimalFormat;
 
@@ -34,7 +35,7 @@ public class ProgressView extends View {
     private float mStrokeWidth;
     private Path mPath;
 
-    private DropView mDropView;
+    //    private DropView mDropView;
     private float mMaxProgress;
 
     private float mSaveProgress;
@@ -150,7 +151,7 @@ public class ProgressView extends View {
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
         mPaint.setColor(mFrameColor);
         mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setStrokeWidth(MeasureUtil.dip2px(context, 1.5f));
+        mPaint.setStrokeWidth(MeasureHelper.dip2px(context, 1.5f));
         mStrokeWidth = mPaint.getStrokeWidth() / 2;
 
         mRectF = new RectF();
@@ -169,11 +170,11 @@ public class ProgressView extends View {
         int h;
 
         if (mOrientation == Orientation.ORIENTATION_HORIZONTAL) {
-            w = MeasureUtil.measureSize(widthMeasureSpec, MeasureUtil.getScreenSize(getContext()).x);
-            h = MeasureUtil.measureSize(heightMeasureSpec, MeasureUtil.dip2px(getContext(), 20));
+            w = MeasureHelper.measureSize(widthMeasureSpec, MeasureHelper.getScreenSize(getContext()).x);
+            h = MeasureHelper.measureSize(heightMeasureSpec, MeasureHelper.dip2px(getContext(), 20));
         } else {
-            w = MeasureUtil.measureSize(widthMeasureSpec, MeasureUtil.dip2px(getContext(), 20));
-            h = MeasureUtil.measureSize(heightMeasureSpec, MeasureUtil.getScreenSize(getContext()).x);
+            w = MeasureHelper.measureSize(widthMeasureSpec, MeasureHelper.dip2px(getContext(), 20));
+            h = MeasureHelper.measureSize(heightMeasureSpec, MeasureHelper.getScreenSize(getContext()).x);
         }
 
         setMeasuredDimension(w, h);
@@ -345,17 +346,23 @@ public class ProgressView extends View {
         final float y = event.getY();
 
         if (mOrientation == Orientation.ORIENTATION_HORIZONTAL) {
-            float dropViewX = 0;
 
             switch (event.getAction()) {
 
                 case MotionEvent.ACTION_DOWN:
                     if (mLastX != x) {
                         mActionDown = true;
-                        if (mDropView != null) {
-                            mDropView.setVisibility(VISIBLE);
-                            mDropView.animate().scaleX(1).scaleY(1).setDuration(250)/*.start()*/;
+
+                        mProgress = (x - mStrokeWidth * 4) * mMaxProgress / mTotalDistance;
+
+                        mProgress = Math.max(Math.min(mProgress, mMaxProgress), 0);
+
+                        if (mOnProgressChangeListener != null) {
+                            mOnProgressChangeListener.onProgressChange(mProgress);
                         }
+
+                        invalidate();
+
                     }
 
                     break;
@@ -365,54 +372,12 @@ public class ProgressView extends View {
 
                         mActionMove = true;
 
-                        if (!mActionDown && mDropView != null && !mIsAnimate) {
-                            mDropView.setVisibility(VISIBLE);
-                            mDropView.animate().scaleX(1).scaleY(1).setDuration(250)/*.start()*/;
-                            mDropView.animate().setListener(new AnimatorListenerAdapter() {
-                                @Override
-                                public void onAnimationEnd(Animator animation) {
-                                    mIsAnimate = false;
-                                }
-
-
-                                @Override
-                                public void onAnimationStart(Animator animation) {
-                                    mIsAnimate = true;
-                                }
-                            });
-                        } else if (mDropView != null && mDropView.getScaleX() == 0 &&
-                                mDropView.getScaleY() == 0) {
-                            mDropView.animate().scaleX(1).scaleY(1).setDuration(250)/*.start()*/;
-                        }
-
                         mProgress = (x - mStrokeWidth * 4) * mMaxProgress / mTotalDistance;
 
-                        if (mProgress >= 0 && mProgress <= mMaxProgress) {
-                            if (mDropView != null) {
-                                mProgressText = mDecimalFormat.format(mProgress / mMaxProgress * 100) + "%";
-                                dropViewX = x + mStrokeWidth * 4 + mlp.leftMargin;
-                            }
-                        } else if (mProgress < 0) {
-                            if (mDropView != null) {
-                                mProgressText = "0%";
-                                dropViewX = mStrokeWidth * 8 + mlp.leftMargin;
-                            }
-                            mProgress = 0;
-                        } else if (mProgress > mMaxProgress) {
-                            if (mDropView != null) {
-                                mProgressText = "100%";
-                                dropViewX = mTotalDistance + mStrokeWidth * 8 + mlp.leftMargin;
-                            }
-                            mProgress = mMaxProgress;
-                        }
+                        mProgress = Math.max(Math.min(mProgress, mMaxProgress), 0);
 
                         if (mOnProgressChangeListener != null) {
                             mOnProgressChangeListener.onProgressChange(mProgress);
-                        }
-
-                        if (mDropView != null) {
-                            mDropView.setText(mProgressText);
-                            mDropView.setX(dropViewX);
                         }
 
                         invalidate();
@@ -423,14 +388,6 @@ public class ProgressView extends View {
                 case MotionEvent.ACTION_CANCEL:
                     if (mOnProgressChangeListener != null) {
                         mOnProgressChangeListener.onProgressEnd();
-                    }
-                    if (mDropView != null) {
-                        mDropView.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                mDropView.animate().scaleX(0).scaleY(0).setDuration(250)/*.start()*/;
-                            }
-                        }, 250);
                     }
                     mActionDown = false;
                     mActionMove = false;
@@ -444,6 +401,16 @@ public class ProgressView extends View {
                     if (mLastY != y) {
                         mActionDown = true;
 
+                        mProgress = (getHeight() - y - mStrokeWidth * 4) * mMaxProgress / mTotalDistance;
+
+                        mProgress = Math.max(Math.min(mProgress, mMaxProgress), 0);
+
+                        if (mOnProgressChangeListener != null) {
+                            mOnProgressChangeListener.onProgressChange(mProgress);
+                        }
+
+                        invalidate();
+
                     }
 
                     break;
@@ -454,29 +421,7 @@ public class ProgressView extends View {
 
                         mProgress = (getHeight() - y - mStrokeWidth * 4) * mMaxProgress / mTotalDistance;
 
-                        if (mProgress >= 0 && mProgress <= mMaxProgress) {
-                            if (mDropView != null) {
-                                mProgressText = mDecimalFormat.format(mProgress / mMaxProgress * 100) + "%";
-                            }
-                        } else if (mProgress < 0) {
-                            if (mDropView != null) {
-                                mProgressText = "0%";
-                            }
-                            mProgress = 0;
-                        } else if (mProgress > mMaxProgress) {
-                            if (mDropView != null) {
-                                mProgressText = "100%";
-                            }
-                            mProgress = mMaxProgress;
-                        }
-
-                        if (mOnProgressChangeListener != null) {
-                            mOnProgressChangeListener.onProgressChange(mProgress);
-                        }
-
-                        if (mDropView != null) {
-                            mDropView.setText(mProgressText);
-                        }
+                        mProgress = Math.max(Math.min(mProgress, mMaxProgress), 0);
 
                         if (mOnProgressChangeListener != null) {
                             mOnProgressChangeListener.onProgressChange(mProgress);
@@ -502,17 +447,6 @@ public class ProgressView extends View {
         mLastY = y;
 
         return true;
-    }
-
-
-    public void attachToDropView(DropView dropView) {
-        mDropView = dropView;
-        mDropView.setColor(mProgressbarColor);
-    }
-
-
-    public OnProgressChangeListener getOnProgressChangeListener() {
-        return mOnProgressChangeListener;
     }
 
 

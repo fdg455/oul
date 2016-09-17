@@ -5,14 +5,14 @@ import android.content.pm.ActivityInfo;
 import android.view.WindowManager;
 
 /**
- * ClassName: ViewUtil<p>
+ * ClassName: ViewHelper<p>
  * Author: oubowu<p>
  * Fuction: 处理屏幕啥的工具<p>
  * CreateDate: 2016/2/17 21:39<p>
  * UpdateUser: <p>
  * UpdateDate: <p>
  */
-public class ViewUtil {
+public class ViewHelper {
 
     public static void rotateScreen(Activity activity) {
         if (activity.getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {

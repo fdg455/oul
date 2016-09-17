@@ -38,6 +38,7 @@ public class IVideoListPresenterImpl extends BasePresenterImpl<IVideoListView, L
     @Override
     public void beforeRequest() {
         if (!mHasInit) {
+            mHasInit = true;
             mView.showProgress();
         }
     }
@@ -45,9 +46,7 @@ public class IVideoListPresenterImpl extends BasePresenterImpl<IVideoListView, L
     @Override
     public void requestError(String e) {
 
-        mView.hideProgress();
-
-        mHasInit = true;
+        super.requestError(e);
 
         mView.updateVideoList(null, e, mIsRefresh ? DataLoadType.TYPE_REFRESH_FAIL : DataLoadType.TYPE_LOAD_MORE_FAIL);
     }
@@ -68,7 +67,6 @@ public class IVideoListPresenterImpl extends BasePresenterImpl<IVideoListView, L
 
     @Override
     public void requestSuccess(List<NeteastVideoSummary> data) {
-        mHasInit = true;
         if (data != null && data.size() > 0) {
             mStartPage += 10;
         }

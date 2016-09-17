@@ -2,22 +2,21 @@
 <com.oushangfeng.ounews.widget.refresh.RefreshLayout
     android:id="@+id/refresh_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
-    <com.oushangfeng.ounews.widget.AutoLoadMoreRecyclerView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_marginLeft="2dp"
-        android:layout_marginRight="2dp"
         android:layout_height="match_parent"/>
 
     <com.oushangfeng.ounews.widget.ThreePointLoadingView
         android:id="@+id/tpl_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:pointColor="?attr/pointColor"
-        android:visibility="invisible"/>
+        android:background="?attr/backgroundColor"
+        android:visibility="invisible"
+        app:pointColor="?attr/pointColor"/>
 
 </com.oushangfeng.ounews.widget.refresh.RefreshLayout>

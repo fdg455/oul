@@ -1,5 +1,7 @@
 package com.oushangfeng.ounews.module.photo.view;
 
+import android.support.annotation.NonNull;
+
 import com.oushangfeng.ounews.base.BaseView;
 import com.oushangfeng.ounews.bean.SinaPhotoList;
 import com.oushangfeng.ounews.common.DataLoadType;
@@ -16,6 +18,6 @@ import java.util.List;
  */
 public interface IPhotoListView extends BaseView {
 
-    void updatePhotoList(List<SinaPhotoList.DataEntity.PhotoListEntity> data, @DataLoadType.DataLoadTypeChecker int type);
+    void updatePhotoList(List<SinaPhotoList.DataEntity.PhotoListEntity> data, @NonNull String errorMsg, @DataLoadType.DataLoadTypeChecker int type);
 
 }

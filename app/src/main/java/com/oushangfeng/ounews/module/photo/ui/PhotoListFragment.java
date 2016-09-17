@@ -5,10 +5,9 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
@@ -16,24 +15,24 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.oushangfeng.ounews.R;
 import com.oushangfeng.ounews.annotation.ActivityFragmentInject;
 import com.oushangfeng.ounews.base.BaseFragment;
-import com.oushangfeng.ounews.base.BaseRecyclerAdapter;
 import com.oushangfeng.ounews.base.BaseRecyclerViewHolder;
 import com.oushangfeng.ounews.base.BaseSpacesItemDecoration;
+import com.oushangfeng.ounews.base.BaseRecyclerAdapter;
 import com.oushangfeng.ounews.bean.SinaPhotoList;
+import com.oushangfeng.ounews.callback.OnEmptyClickListener;
 import com.oushangfeng.ounews.callback.OnItemClickAdapter;
+import com.oushangfeng.ounews.callback.OnLoadMoreListener;
 import com.oushangfeng.ounews.common.DataLoadType;
 import com.oushangfeng.ounews.module.photo.presenter.IPhotoListPresenter;
 import com.oushangfeng.ounews.module.photo.presenter.IPhotoListPresenterImpl;
 import com.oushangfeng.ounews.module.photo.view.IPhotoListView;
 import com.oushangfeng.ounews.utils.ClickUtils;
 import com.oushangfeng.ounews.utils.MeasureUtil;
-import com.oushangfeng.ounews.widget.AutoLoadMoreRecyclerView;
 import com.oushangfeng.ounews.widget.ThreePointLoadingView;
 import com.oushangfeng.ounews.widget.refresh.RefreshLayout;
 import com.socks.library.KLog;
 
 import java.util.List;
-import java.util.Random;
 
 /**
  * ClassName: PhotoListFragment<p>
@@ -53,7 +52,7 @@ public class PhotoListFragment extends BaseFragment<IPhotoListPresenter> impleme
     protected String mPhotoId;
 
     private BaseRecyclerAdapter<SinaPhotoList.DataEntity.PhotoListEntity> mAdapter;
-    private AutoLoadMoreRecyclerView mRecyclerView;
+    private RecyclerView mRecyclerView;
     private RefreshLayout mRefreshLayout;
 
     private ThreePointLoadingView mLoadingView;
@@ -83,7 +82,7 @@ public class PhotoListFragment extends BaseFragment<IPhotoListPresenter> impleme
         mLoadingView = (ThreePointLoadingView) fragmentRootView.findViewById(R.id.tpl_view);
         mLoadingView.setOnClickListener(this);
 
-        mRecyclerView = (AutoLoadMoreRecyclerView) fragmentRootView.findViewById(R.id.recycler_view);
+        mRecyclerView = (RecyclerView) fragmentRootView.findViewById(R.id.recycler_view);
 
         mRefreshLayout = (RefreshLayout) fragmentRootView.findViewById(R.id.refresh_layout);
 
@@ -101,7 +100,7 @@ public class PhotoListFragment extends BaseFragment<IPhotoListPresenter> impleme
     }
 
     @Override
-    public void updatePhotoList(final List<SinaPhotoList.DataEntity.PhotoListEntity> data, @DataLoadType.DataLoadTypeChecker int type) {
+    public void updatePhotoList(final List<SinaPhotoList.DataEntity.PhotoListEntity> data, String errorMsg, @DataLoadType.DataLoadTypeChecker int type) {
 
         if (mAdapter == null) {
             initNewsList(data);
@@ -110,40 +109,30 @@ public class PhotoListFragment extends BaseFragment<IPhotoListPresenter> impleme
         switch (type) {
             case DataLoadType.TYPE_REFRESH_SUCCESS:
                 mRefreshLayout.refreshFinish();
+                mAdapter.enableLoadMore(true);
                 mAdapter.setData(data);
-                if (mRecyclerView.isAllLoaded()) {
-                    // 之前全部加载完了的话，这里把状态改回来供底部加载用
-                    mRecyclerView.notifyMoreLoaded();
-                }
                 break;
             case DataLoadType.TYPE_REFRESH_FAIL:
                 mRefreshLayout.refreshFinish();
+                mAdapter.enableLoadMore(false);
+                mAdapter.showEmptyView(true, errorMsg);
+                mAdapter.notifyDataSetChanged();
                 break;
             case DataLoadType.TYPE_LOAD_MORE_SUCCESS:
-                // 隐藏尾部加载
-                mAdapter.hideFooter();
-                if (data == null || data.size() == 0) {
-                    mRecyclerView.notifyAllLoaded();
-                    toast("全部加载完毕噜(☆＿☆)");
-                } else {
-                    mAdapter.addMoreData(data);
-                    mRecyclerView.notifyMoreLoaded();
-                }
+                mAdapter.loadMoreSuccess();
+                mAdapter.addMoreData(data);
                 break;
             case DataLoadType.TYPE_LOAD_MORE_FAIL:
-                mAdapter.hideFooter();
-                mRecyclerView.notifyMoreLoadedFail();
+                mAdapter.loadMoreFailed(errorMsg);
                 break;
         }
     }
 
     private void initNewsList(List<SinaPhotoList.DataEntity.PhotoListEntity> data) {
 
-        final StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        final GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2, GridLayoutManager.VERTICAL, false);
 
         mAdapter = new BaseRecyclerAdapter<SinaPhotoList.DataEntity.PhotoListEntity>(getActivity(), data, true, layoutManager) {
-
-            Random mRandom = new Random();
 
             @Override
             public int getItemLayoutId(int viewType) {
@@ -152,19 +141,9 @@ public class PhotoListFragment extends BaseFragment<IPhotoListPresenter> impleme
 
             @Override
             public void bindData(BaseRecyclerViewHolder holder, final int position, final SinaPhotoList.DataEntity.PhotoListEntity item) {
-                final ImageView imageView = holder.getImageView(R.id.iv_photo_summary);
-                final ViewGroup.LayoutParams params = imageView.getLayoutParams();
-                // KLog.e("图片网址：" + item.kpic);
-                if (item.picWidth == -1 && item.picHeight == -1) {
-                    item.picWidth = MeasureUtil.getScreenSize(getActivity()).x / 2 - MeasureUtil.dip2px(getActivity(), 4) * 2 - MeasureUtil.dip2px(getActivity(), 2);
-                    item.picHeight = (int) (item.picWidth * (mRandom.nextFloat() / 2 + 1));
-                }
-                params.width = item.picWidth;
-                params.height = item.picHeight;
-                imageView.setLayoutParams(params);
 
                 Glide.with(getActivity()).load(item.kpic).asBitmap().placeholder(R.drawable.ic_loading).error(R.drawable.ic_fail).format(DecodeFormat.PREFER_ARGB_8888)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL).into(imageView);
+                        .diskCacheStrategy(DiskCacheStrategy.ALL).into(holder.getImageView(R.id.iv_photo_summary));
 
                 holder.getTextView(R.id.tv_photo_summary).setText(item.title);
             }
@@ -190,21 +169,30 @@ public class PhotoListFragment extends BaseFragment<IPhotoListPresenter> impleme
             }
         });
 
-        mRecyclerView.setAutoLayoutManager(layoutManager).addAutoItemDecoration(new BaseSpacesItemDecoration(MeasureUtil.dip2px(getActivity(), 4)))
-                .setAutoItemAnimator(new DefaultItemAnimator()).setAutoItemAnimatorDuration(250).setAutoAdapter(mAdapter);
-
-        mRecyclerView.setOnLoadMoreListener(new AutoLoadMoreRecyclerView.OnLoadMoreListener() {
+        mAdapter.setOnEmptyClickListener(new OnEmptyClickListener() {
             @Override
-            public void loadMore() {
-                // 状态停止，并且滑动到最后一位
-                mPresenter.loadMoreData();
-                // 显示尾部加载
-                // KLog.e("显示尾部加载前："+mAdapter.getItemCount());
-                mAdapter.showFooter();
-                // KLog.e("显示尾部加载后："+mAdapter.getItemCount());
-                mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
+            public void onEmptyClick() {
+                showProgress();
+                mPresenter.refreshData();
             }
         });
+
+        mAdapter.setOnLoadMoreListener(10, new OnLoadMoreListener() {
+            @Override
+            public void loadMore() {
+                mPresenter.loadMoreData();
+                mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount());
+            }
+        });
+
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.addItemDecoration(new BaseSpacesItemDecoration(MeasureUtil.dip2px(getActivity(), 4)));
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.getItemAnimator().setAddDuration(250);
+        mRecyclerView.getItemAnimator().setMoveDuration(250);
+        mRecyclerView.getItemAnimator().setChangeDuration(250);
+        mRecyclerView.getItemAnimator().setRemoveDuration(250);
+        mRecyclerView.setAdapter(mAdapter);
 
         mRefreshLayout.setRefreshListener(new RefreshLayout.OnRefreshListener() {
             @Override

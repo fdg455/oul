@@ -18,9 +18,7 @@ import java.util.List;
  * UpdateUser: <p>
  * UpdateDate: <p>
  */
-public class IPhotoListPresenterImpl
-        extends BasePresenterImpl<IPhotoListView, List<SinaPhotoList.DataEntity.PhotoListEntity>>
-        implements IPhotoListPresenter {
+public class IPhotoListPresenterImpl extends BasePresenterImpl<IPhotoListView, List<SinaPhotoList.DataEntity.PhotoListEntity>> implements IPhotoListPresenter {
 
     private IPhotoListInteractor<List<SinaPhotoList.DataEntity.PhotoListEntity>> mPhotoListInteractor;
     private String mPhotoId;
@@ -40,6 +38,7 @@ public class IPhotoListPresenterImpl
     @Override
     public void beforeRequest() {
         if (!mHasInit) {
+            mHasInit = true;
             mView.showProgress();
         }
     }
@@ -47,8 +46,7 @@ public class IPhotoListPresenterImpl
     @Override
     public void requestError(String e) {
         super.requestError(e);
-        mView.updatePhotoList(null,
-                mIsRefresh ? DataLoadType.TYPE_REFRESH_FAIL : DataLoadType.TYPE_LOAD_MORE_FAIL);
+        mView.updatePhotoList(null, e, mIsRefresh ? DataLoadType.TYPE_REFRESH_FAIL : DataLoadType.TYPE_LOAD_MORE_FAIL);
     }
 
     @Override
@@ -67,13 +65,10 @@ public class IPhotoListPresenterImpl
 
     @Override
     public void requestSuccess(List<SinaPhotoList.DataEntity.PhotoListEntity> data) {
-        KLog.e("请求成功: ");
-        mHasInit = true;
         if (data != null && data.size() > 0) {
             mStartPage++;
         }
-        mView.updatePhotoList(data,
-                mIsRefresh ? DataLoadType.TYPE_REFRESH_SUCCESS : DataLoadType.TYPE_LOAD_MORE_SUCCESS);
+        mView.updatePhotoList(data, "", mIsRefresh ? DataLoadType.TYPE_REFRESH_SUCCESS : DataLoadType.TYPE_LOAD_MORE_SUCCESS);
 
     }
 

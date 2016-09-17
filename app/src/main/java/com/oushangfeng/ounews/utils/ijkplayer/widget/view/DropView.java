@@ -12,9 +12,12 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.oushangfeng.ounews.utils.ijkplayer.utils.MeasureHelper;
+
 /**
  * Created by Oubowu on 2016/8/25 0025 17:41.
  */
+@Deprecated
 public class DropView extends View {
 
     private Paint mPaint;
@@ -68,10 +71,10 @@ public class DropView extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 
-        final int w = MeasureUtil.measureSize(widthMeasureSpec,
-            MeasureUtil.dip2px(getContext(), 25));
-        final int h = MeasureUtil.measureSize(heightMeasureSpec,
-            MeasureUtil.dip2px(getContext(), 25 * 1.5f));
+        final int w = MeasureHelper.measureSize(widthMeasureSpec,
+            MeasureHelper.dip2px(getContext(), 25));
+        final int h = MeasureHelper.measureSize(heightMeasureSpec,
+            MeasureHelper.dip2px(getContext(), 25 * 1.5f));
         setMeasuredDimension(w, h);
 
     }

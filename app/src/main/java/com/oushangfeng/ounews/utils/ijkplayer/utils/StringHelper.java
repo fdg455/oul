@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class StringUtils {
+public class StringHelper {
     public static String join(Object[] elements, CharSequence separator) {
         return join(Arrays.asList(elements), separator);
     }

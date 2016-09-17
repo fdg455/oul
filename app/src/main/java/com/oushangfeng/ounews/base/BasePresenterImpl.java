@@ -43,7 +43,6 @@ public class BasePresenterImpl<T extends BaseView, V> implements BasePresenter, 
     @Override
     public void requestError(String msg) {
         KLog.e(msg);
-        mView.toast(msg);
         mView.hideProgress();
     }
 
