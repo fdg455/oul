@@ -28,6 +28,7 @@ import com.bumptech.glide.Glide;
 import com.oushangfeng.ounews.BuildConfig;
 import com.oushangfeng.ounews.R;
 import com.oushangfeng.ounews.annotation.ActivityFragmentInject;
+import com.oushangfeng.ounews.app.App;
 import com.oushangfeng.ounews.app.AppManager;
 import com.oushangfeng.ounews.module.news.ui.NewsActivity;
 import com.oushangfeng.ounews.module.photo.ui.PhotoActivity;
@@ -55,8 +56,7 @@ import rx.functions.Action1;
  * UpdateUser:<p>
  * UpdateDate:<p>
  */
-public abstract class BaseActivity<T extends BasePresenter> extends AppCompatActivity
-        implements View.OnClickListener, BaseView {
+public abstract class BaseActivity<T extends BasePresenter> extends AppCompatActivity implements View.OnClickListener, BaseView {
 
     /**
      * 将代理类通用行为抽出来
@@ -129,8 +129,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
         super.onCreate(savedInstanceState);
 
         if (getClass().isAnnotationPresent(ActivityFragmentInject.class)) {
-            ActivityFragmentInject annotation = getClass()
-                    .getAnnotation(ActivityFragmentInject.class);
+            ActivityFragmentInject annotation = getClass().getAnnotation(ActivityFragmentInject.class);
             mContentViewId = annotation.contentViewId();
             mEnableSlidr = annotation.enableSlidr();
             mHasNavigationView = annotation.hasNavigationView();
@@ -139,15 +138,12 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
             mToolbarIndicator = annotation.toolbarIndicator();
             mMenuDefaultCheckedItem = annotation.menuDefaultCheckedItem();
         } else {
-            throw new RuntimeException(
-                    "Class must add annotations of ActivityFragmentInitParams.class");
+            throw new RuntimeException("Class must add annotations of ActivityFragmentInitParams.class");
         }
 
         if (BuildConfig.DEBUG) {
-            StrictMode.setThreadPolicy(
-                    new StrictMode.ThreadPolicy.Builder().detectAll().penaltyLog().build());
-            StrictMode.setVmPolicy(
-                    new StrictMode.VmPolicy.Builder().detectAll().penaltyLog().build());
+            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().penaltyLog().build());
+            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().penaltyLog().build());
         }
 
         if (this instanceof SettingsActivity) {
@@ -160,8 +156,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
 
         if (mEnableSlidr && !SpUtil.readBoolean("disableSlide")) {
             // 默认开启侧滑，默认是整个页码侧滑
-            mSlidrInterface = SlidrUtil
-                    .initSlidrDefaultConfig(this, SpUtil.readBoolean("enableSlideEdge"));
+            mSlidrInterface = SlidrUtil.initSlidrDefaultConfig(this, App.get().getActivityHelper().getLastActivityDecorView(), SpUtil.readBoolean("enableSlideEdge"));
         }
 
         if (mHasNavigationView) {
@@ -217,14 +212,11 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
      */
     private void initTheme() {
         if (this instanceof NewsActivity) {
-            setTheme(SpUtil.readBoolean(
-                    "enableNightMode") ? R.style.BaseAppThemeNight_LauncherAppTheme : R.style.BaseAppTheme_LauncherAppTheme);
+            setTheme(SpUtil.readBoolean("enableNightMode") ? R.style.BaseAppThemeNight_LauncherAppTheme : R.style.BaseAppTheme_LauncherAppTheme);
         } else if (!mEnableSlidr && mHasNavigationView) {
-            setTheme(SpUtil.readBoolean(
-                    "enableNightMode") ? R.style.BaseAppThemeNight_AppTheme : R.style.BaseAppTheme_AppTheme);
+            setTheme(SpUtil.readBoolean("enableNightMode") ? R.style.BaseAppThemeNight_AppTheme : R.style.BaseAppTheme_AppTheme);
         } else {
-            setTheme(SpUtil.readBoolean(
-                    "enableNightMode") ? R.style.BaseAppThemeNight_SlidrTheme : R.style.BaseAppTheme_SlidrTheme);
+            setTheme(SpUtil.readBoolean("enableNightMode") ? R.style.BaseAppThemeNight_SlidrTheme : R.style.BaseAppTheme_SlidrTheme);
         }
     }
 
@@ -296,36 +288,36 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
         if (mMenuDefaultCheckedItem != -1 && mNavigationView != null) {
             mNavigationView.setCheckedItem(mMenuDefaultCheckedItem);
         }
-        mNavigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(MenuItem item) {
-                        if (item.isChecked()) return true;
-                        switch (item.getItemId()) {
-                            case R.id.action_news:
-                                mClass = NewsActivity.class;
-                                break;
-                            case R.id.action_video:
-                                mClass = VideoActivity.class;
-                                break;
-                            case R.id.action_photo:
-                                mClass = PhotoActivity.class;
-                                break;
-                            case R.id.action_settings:
-                                mClass = SettingsActivity.class;
-                                break;
-                        }
-                        mDrawerLayout.closeDrawer(GravityCompat.START);
-                        return false;
-                    }
-                });
+        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem item) {
+                if (item.isChecked()) {
+                    return true;
+                }
+                switch (item.getItemId()) {
+                    case R.id.action_news:
+                        mClass = NewsActivity.class;
+                        break;
+                    case R.id.action_video:
+                        mClass = VideoActivity.class;
+                        break;
+                    case R.id.action_photo:
+                        mClass = PhotoActivity.class;
+                        break;
+                    case R.id.action_settings:
+                        mClass = SettingsActivity.class;
+                        break;
+                }
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+                return false;
+            }
+        });
         mNavigationView.post(new Runnable() {
             @Override
             public void run() {
                 final ImageView imageView = (ImageView) BaseActivity.this.findViewById(R.id.avatar);
                 if (imageView != null) {
-                    Glide.with(mNavigationView.getContext()).load(R.drawable.ic_header).crossFade()
-                            .transform(new GlideCircleTransform(mNavigationView.getContext()))
+                    Glide.with(mNavigationView.getContext()).load(R.drawable.ic_header).crossFade().transform(new GlideCircleTransform(mNavigationView.getContext()))
                             .into(imageView);
                 }
             }
@@ -360,8 +352,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
                         toolbar.setAlpha((toolbarHeight + verticalOffset) * 1.0f / toolbarHeight);
                     }
                     // AppBarLayout没有偏移量时，告诉Fragment刷新控件可用
-                    RxBus.get()
-                            .post("enableRefreshLayoutOrScrollRecyclerView", verticalOffset == 0);
+                    RxBus.get().post("enableRefreshLayoutOrScrollRecyclerView", verticalOffset == 0);
                 }
             });
         }
@@ -376,8 +367,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT || this instanceof SettingsActivity) {
 
             // 生成一个状态栏大小的矩形
-            View statusBarView = ViewUtil
-                    .createStatusView(this, ThemeUtil.getColor(this, R.attr.colorPrimary));
+            View statusBarView = ViewUtil.createStatusView(this, ThemeUtil.getColor(this, R.attr.colorPrimary));
             // 添加 statusBarView 到布局中
             ViewGroup contentLayout = (ViewGroup) mDrawerLayout.getChildAt(0);
             contentLayout.addView(statusBarView, 0);
@@ -402,8 +392,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
 
         } else if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
             // 5.0以上跟4.4统一，状态栏颜色和Toolbar的一致
-            mDrawerLayout
-                    .setStatusBarBackgroundColor(ThemeUtil.getColor(this, R.attr.colorPrimary));
+            mDrawerLayout.setStatusBarBackgroundColor(ThemeUtil.getColor(this, R.attr.colorPrimary));
         }
     }
 
@@ -416,8 +405,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
             @Override
             public void call(Boolean themeChange) {
                 try {
-                    if (themeChange && !AppManager.getAppManager().getCurrentNavActivity().getName()
-                            .equals(BaseActivity.this.getClass().getName())) {
+                    if (themeChange && !AppManager.getAppManager().getCurrentNavActivity().getName().equals(BaseActivity.this.getClass().getName())) {
                         //  切换皮肤的做法是设置页面通过鸿洋大大的不重启换肤，其他后台导航页面的统统干掉，跳转回去的时候，
                         //  因为用了FLAG_ACTIVITY_REORDER_TO_FRONT，发现栈中无之前的activity存在了，就重启设置了主题，
                         // 这样一来就不会所有Activity都做无重启刷新控件更该主题造成的卡顿现象
@@ -446,9 +434,9 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
 
     public void showActivityReorderToFront(Activity aty, Class<?> cls, boolean backPress) {
 
-        AppManager.getAppManager().orderNavActivity(cls.getName(), backPress);
+        App.get().getActivityHelper().addActivity(cls);
 
-        KLog.e("跳转回去：" + cls.getName());
+        AppManager.getAppManager().orderNavActivity(cls.getName(), backPress);
 
         Intent intent = new Intent();
         intent.setClass(aty, cls);
@@ -491,8 +479,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
                 return true;
             } else if (!(this instanceof NewsActivity) && mHasNavigationView) {
                 try {
-                    showActivityReorderToFront(this,
-                            AppManager.getAppManager().getLastNavActivity(), true);
+                    showActivityReorderToFront(this, AppManager.getAppManager().getLastNavActivity(), true);
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                     KLog.e("找不到类名啊");

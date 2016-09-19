@@ -31,6 +31,8 @@ public class App extends Application {
 
     private static Context sApplicationContext;
 
+    private ActivityHelper mActivityHelper;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -40,6 +42,14 @@ public class App extends Application {
         setupDatabase();
         sApplicationContext = this;
         KLog.init(BuildConfig.DEBUG);
+
+        mActivityHelper = new ActivityHelper();
+        registerActivityLifecycleCallbacks(mActivityHelper);
+
+    }
+
+    public ActivityHelper getActivityHelper() {
+        return mActivityHelper;
     }
 
     @Override
@@ -87,4 +97,9 @@ public class App extends Application {
     public static Context getContext() {
         return sApplicationContext;
     }
+
+    public static App get() {
+        return (App) getContext();
+    }
+
 }

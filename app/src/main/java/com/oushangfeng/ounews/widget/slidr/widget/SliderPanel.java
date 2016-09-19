@@ -28,24 +28,22 @@ import com.socks.library.KLog;
 public class SliderPanel extends FrameLayout {
 
     /***********************************************************************************************
-     *
      * Constants
-     *
      */
 
     private static final int MIN_FLING_VELOCITY = 400; // dips per second
 
     /***********************************************************************************************
-     *
      * Variables
-     *
      */
 
     private int mScreenWidth;
     private int mScreenHeight;
 
-    private View mDimView;
+    private ShadowView mDimView;
+    //    private View mDimView;
     private View mDecorView;
+    private View mCacheView;
     private ViewDragHelper mDragHelper;
     private OnPanelSlideListener mListener;
 
@@ -59,47 +57,53 @@ public class SliderPanel extends FrameLayout {
 
     private SlidrConfig mConfig;
 
-	public SliderPanel(Context context) {
-		super(context);
-	}
-
-	/***********************************************************************************************
-	 *
-	 * Constructors
-	 *
-	 */
-
-    public SliderPanel(Context context, View decorView) {
-		this(context, decorView, null);
+    public SliderPanel(Context context) {
+        super(context);
     }
 
-    public SliderPanel(Context context, View decorView, SlidrConfig config){
+    /***********************************************************************************************
+     * Constructors
+     */
+
+    public SliderPanel(Context context, View decorView) {
+        this(context, decorView, null);
+    }
+
+    public SliderPanel(Context context, View decorView, SlidrConfig config) {
         super(context);
         mDecorView = decorView;
-		mConfig = (config == null ? new SlidrConfig.Builder().build() : config);
+        mConfig = (config == null ? new SlidrConfig.Builder().build() : config);
+        init();
+    }
+
+    public SliderPanel(Context context, View decorView, View cacheView, SlidrConfig config) {
+        super(context);
+        mDecorView = decorView;
+        mCacheView = cacheView;
+        mConfig = (config == null ? new SlidrConfig.Builder().build() : config);
         init();
     }
 
     /**
      * Set the panel slide listener that gets called based on slider changes
+     *
      * @param listener callback implementation
      */
-    public void setOnPanelSlideListener(OnPanelSlideListener listener){
+    public void setOnPanelSlideListener(OnPanelSlideListener listener) {
         mListener = listener;
     }
 
     /**
      * Initialize the slider panel
-     *
      */
-    private void init(){
+    private void init() {
         mScreenWidth = getResources().getDisplayMetrics().widthPixels;
 
         final float density = getResources().getDisplayMetrics().density;
         final float minVel = MIN_FLING_VELOCITY * density;
 
         ViewDragHelper.Callback callback;
-        switch (mConfig.getPosition()){
+        switch (mConfig.getPosition()) {
             case LEFT:
                 callback = mLeftCallback;
                 mEdgePosition = ViewDragHelper.EDGE_LEFT;
@@ -136,9 +140,13 @@ public class SliderPanel extends FrameLayout {
         ViewGroupCompat.setMotionEventSplittingEnabled(this, false);
 
         // Setup the dimmer view
-        mDimView = new View(getContext());
-        mDimView.setBackgroundColor(mConfig.getScrimColor());
-        mDimView.setAlpha(mConfig.getScrimStartAlpha());
+        //        mDimView = new View(getContext());
+        //        mDimView.setBackgroundColor(mConfig.getScrimColor());
+        //        mDimView.setAlpha(mConfig.getScrimStartAlpha());
+
+        mDimView = new ShadowView(getContext(), mCacheView);
+
+        mDimView.setVisibility(INVISIBLE);
 
         // Add the dimmer view to the layout
         addView(mDimView);
@@ -152,6 +160,16 @@ public class SliderPanel extends FrameLayout {
             @Override
             public void run() {
                 mScreenHeight = getHeight();
+
+                ViewCompat.setX(mDimView, -mDimView.getWidth() / 2);
+
+                float endX = mDimView.getX() + mDimView.getWidth();
+                float startX = mDecorView.getX();
+
+                KLog.e(endX + ";" + startX);
+
+                mDimView.setShadowOffset(endX - startX, 1);
+
             }
         });
 
@@ -172,9 +190,7 @@ public class SliderPanel extends FrameLayout {
     private float mSlidrDistantX, mSlidrDistantY;
 
     /***********************************************************************************************
-     *
      * Touch Methods
-     *
      */
 
     @Override
@@ -194,11 +210,11 @@ public class SliderPanel extends FrameLayout {
                 break;
         }
 
-        if(mIsLocked){
+        if (mIsLocked) {
             return false;
         }
 
-        if(mConfig.isEdgeOnly()) {
+        if (mConfig.isEdgeOnly()) {
             mIsEdgeTouched = canDragFromEdge(ev);
         }
 
@@ -214,15 +230,15 @@ public class SliderPanel extends FrameLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if(mIsLocked){
+        if (mIsLocked) {
             return false;
         }
 
         try {
             mDragHelper.processTouchEvent(event);
-        }catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             return false;
-        }catch (ArrayIndexOutOfBoundsException e){
+        } catch (ArrayIndexOutOfBoundsException e) {
             return false;
         }
 
@@ -250,7 +266,7 @@ public class SliderPanel extends FrameLayout {
     @Override
     public void computeScroll() {
         super.computeScroll();
-        if(mDragHelper.continueSettling(true)){
+        if (mDragHelper.continueSettling(true)) {
             ViewCompat.postInvalidateOnAnimation(this);
         }
     }
@@ -258,7 +274,7 @@ public class SliderPanel extends FrameLayout {
     /**
      * Lock this sliding panel to ignore touch inputs.
      */
-    public void lock(){
+    public void lock() {
         mDragHelper.abort();
         mIsLocked = true;
     }
@@ -266,7 +282,7 @@ public class SliderPanel extends FrameLayout {
     /**
      * Unlock this sliding panel to listen to touch inputs.
      */
-    public void unlock(){
+    public void unlock() {
         mDragHelper.abort();
         mIsLocked = false;
     }
@@ -329,16 +345,16 @@ public class SliderPanel extends FrameLayout {
             int leftThreshold = (int) (getWidth() * mConfig.getDistanceThreshold());
             boolean isVerticalSwiping = Math.abs(yvel) > mConfig.getVelocityThreshold();
 
-            if(xvel > 0){
+            if (xvel > 0) {
 
-                if(Math.abs(xvel) > mConfig.getVelocityThreshold() && !isVerticalSwiping){
+                if (Math.abs(xvel) > mConfig.getVelocityThreshold() && !isVerticalSwiping) {
                     settleLeft = mScreenWidth;
-                }else if(left > leftThreshold){
+                } else if (left > leftThreshold) {
                     settleLeft = mScreenWidth;
                 }
 
-            }else if(xvel == 0){
-                if(left > leftThreshold){
+            } else if (xvel == 0) {
+                if (left > leftThreshold) {
                     settleLeft = mScreenWidth;
                 }
             }
@@ -350,9 +366,24 @@ public class SliderPanel extends FrameLayout {
         @Override
         public void onViewPositionChanged(View changedView, int left, int top, int dx, int dy) {
             super.onViewPositionChanged(changedView, left, top, dx, dy);
-            float percent = 1f - ((float)left / (float)mScreenWidth);
+            float percent = 1f - ((float) left / (float) mScreenWidth);
 
-            if(mListener != null) mListener.onSlideChange(percent);
+            if (mListener != null) {
+                mListener.onSlideChange(percent);
+            }
+
+            if (mDimView.getVisibility() == INVISIBLE) {
+                mDimView.setVisibility(VISIBLE);
+            }
+
+            ViewCompat.setX(mDimView, -mDimView.getWidth() / 2 + mDimView.getWidth() / 2 * (1 - percent));
+
+            float endX = mDimView.getX() + mDimView.getWidth();
+            float startX = mDecorView.getX();
+
+            // KLog.e(endX + ";" + startX + ";" + (endX - startX));
+
+            mDimView.setShadowOffset(endX - startX, percent);
 
             // Update the dimmer alpha
             applyScrim(percent);
@@ -361,15 +392,21 @@ public class SliderPanel extends FrameLayout {
         @Override
         public void onViewDragStateChanged(int state) {
             super.onViewDragStateChanged(state);
-            if(mListener != null) mListener.onStateChanged(state);
-            switch (state){
+            if (mListener != null) {
+                mListener.onStateChanged(state);
+            }
+            switch (state) {
                 case ViewDragHelper.STATE_IDLE:
-                    if(mDecorView.getLeft() == 0){
+                    if (mDecorView.getLeft() == 0) {
                         // State Open
-                        if(mListener != null) mListener.onOpened();
-                    }else{
+                        if (mListener != null) {
+                            mListener.onOpened();
+                        }
+                    } else {
                         // State Closed
-                        if(mListener != null) mListener.onClosed();
+                        if (mListener != null) {
+                            mListener.onClosed();
+                        }
                     }
                     break;
                 case ViewDragHelper.STATE_DRAGGING:
@@ -412,16 +449,16 @@ public class SliderPanel extends FrameLayout {
             int leftThreshold = (int) (getWidth() * mConfig.getDistanceThreshold());
             boolean isVerticalSwiping = Math.abs(yvel) > mConfig.getVelocityThreshold();
 
-            if(xvel < 0){
+            if (xvel < 0) {
 
-                if(Math.abs(xvel) > mConfig.getVelocityThreshold() && !isVerticalSwiping){
+                if (Math.abs(xvel) > mConfig.getVelocityThreshold() && !isVerticalSwiping) {
                     settleLeft = -mScreenWidth;
-                }else if(left < -leftThreshold){
+                } else if (left < -leftThreshold) {
                     settleLeft = -mScreenWidth;
                 }
 
-            }else if(xvel == 0){
-                if(left < -leftThreshold){
+            } else if (xvel == 0) {
+                if (left < -leftThreshold) {
                     settleLeft = -mScreenWidth;
                 }
             }
@@ -433,9 +470,11 @@ public class SliderPanel extends FrameLayout {
         @Override
         public void onViewPositionChanged(View changedView, int left, int top, int dx, int dy) {
             super.onViewPositionChanged(changedView, left, top, dx, dy);
-            float percent = 1f - ((float)Math.abs(left) / (float)mScreenWidth);
+            float percent = 1f - ((float) Math.abs(left) / (float) mScreenWidth);
 
-            if(mListener != null) mListener.onSlideChange(percent);
+            if (mListener != null) {
+                mListener.onSlideChange(percent);
+            }
 
             // Update the dimmer alpha
             applyScrim(percent);
@@ -444,15 +483,21 @@ public class SliderPanel extends FrameLayout {
         @Override
         public void onViewDragStateChanged(int state) {
             super.onViewDragStateChanged(state);
-            if(mListener != null) mListener.onStateChanged(state);
-            switch (state){
+            if (mListener != null) {
+                mListener.onStateChanged(state);
+            }
+            switch (state) {
                 case ViewDragHelper.STATE_IDLE:
-                    if(mDecorView.getLeft() == 0){
+                    if (mDecorView.getLeft() == 0) {
                         // State Open
-                        if(mListener != null) mListener.onOpened();
-                    }else{
+                        if (mListener != null) {
+                            mListener.onOpened();
+                        }
+                    } else {
                         // State Closed
-                        if(mListener != null) mListener.onClosed();
+                        if (mListener != null) {
+                            mListener.onClosed();
+                        }
                     }
                     break;
                 case ViewDragHelper.STATE_DRAGGING:
@@ -493,14 +538,14 @@ public class SliderPanel extends FrameLayout {
             int topThreshold = (int) (getHeight() * mConfig.getDistanceThreshold());
             boolean isSideSwiping = Math.abs(xvel) > mConfig.getVelocityThreshold();
 
-            if(yvel > 0){
-                if(Math.abs(yvel) > mConfig.getVelocityThreshold() && !isSideSwiping){
+            if (yvel > 0) {
+                if (Math.abs(yvel) > mConfig.getVelocityThreshold() && !isSideSwiping) {
                     settleTop = mScreenHeight;
-                }else if(top > topThreshold){
+                } else if (top > topThreshold) {
                     settleTop = mScreenHeight;
                 }
-            }else if(yvel == 0){
-                if(top > topThreshold){
+            } else if (yvel == 0) {
+                if (top > topThreshold) {
                     settleTop = mScreenHeight;
                 }
             }
@@ -512,9 +557,11 @@ public class SliderPanel extends FrameLayout {
         @Override
         public void onViewPositionChanged(View changedView, int left, int top, int dx, int dy) {
             super.onViewPositionChanged(changedView, left, top, dx, dy);
-            float percent = 1f - ((float)Math.abs(top) / (float)mScreenHeight);
+            float percent = 1f - ((float) Math.abs(top) / (float) mScreenHeight);
 
-            if(mListener != null) mListener.onSlideChange(percent);
+            if (mListener != null) {
+                mListener.onSlideChange(percent);
+            }
 
             // Update the dimmer alpha
             applyScrim(percent);
@@ -523,15 +570,21 @@ public class SliderPanel extends FrameLayout {
         @Override
         public void onViewDragStateChanged(int state) {
             super.onViewDragStateChanged(state);
-            if(mListener != null) mListener.onStateChanged(state);
-            switch (state){
+            if (mListener != null) {
+                mListener.onStateChanged(state);
+            }
+            switch (state) {
                 case ViewDragHelper.STATE_IDLE:
-                    if(mDecorView.getTop() == 0){
+                    if (mDecorView.getTop() == 0) {
                         // State Open
-                        if(mListener != null) mListener.onOpened();
-                    }else{
+                        if (mListener != null) {
+                            mListener.onOpened();
+                        }
+                    } else {
                         // State Closed
-                        if(mListener != null) mListener.onClosed();
+                        if (mListener != null) {
+                            mListener.onClosed();
+                        }
                     }
                     break;
                 case ViewDragHelper.STATE_DRAGGING:
@@ -572,14 +625,14 @@ public class SliderPanel extends FrameLayout {
             int topThreshold = (int) (getHeight() * mConfig.getDistanceThreshold());
             boolean isSideSwiping = Math.abs(xvel) > mConfig.getVelocityThreshold();
 
-            if(yvel < 0){
-                if(Math.abs(yvel) > mConfig.getVelocityThreshold() && !isSideSwiping){
+            if (yvel < 0) {
+                if (Math.abs(yvel) > mConfig.getVelocityThreshold() && !isSideSwiping) {
                     settleTop = -mScreenHeight;
-                }else if(top < -topThreshold){
+                } else if (top < -topThreshold) {
                     settleTop = -mScreenHeight;
                 }
-            }else if(yvel == 0){
-                if(top < -topThreshold){
+            } else if (yvel == 0) {
+                if (top < -topThreshold) {
                     settleTop = -mScreenHeight;
                 }
             }
@@ -591,9 +644,11 @@ public class SliderPanel extends FrameLayout {
         @Override
         public void onViewPositionChanged(View changedView, int left, int top, int dx, int dy) {
             super.onViewPositionChanged(changedView, left, top, dx, dy);
-            float percent = 1f - ((float)Math.abs(top) / (float)mScreenHeight);
+            float percent = 1f - ((float) Math.abs(top) / (float) mScreenHeight);
 
-            if(mListener != null) mListener.onSlideChange(percent);
+            if (mListener != null) {
+                mListener.onSlideChange(percent);
+            }
 
             // Update the dimmer alpha
             applyScrim(percent);
@@ -602,15 +657,21 @@ public class SliderPanel extends FrameLayout {
         @Override
         public void onViewDragStateChanged(int state) {
             super.onViewDragStateChanged(state);
-            if(mListener != null) mListener.onStateChanged(state);
-            switch (state){
+            if (mListener != null) {
+                mListener.onStateChanged(state);
+            }
+            switch (state) {
                 case ViewDragHelper.STATE_IDLE:
-                    if(mDecorView.getTop() == 0){
+                    if (mDecorView.getTop() == 0) {
                         // State Open
-                        if(mListener != null) mListener.onOpened();
-                    }else{
+                        if (mListener != null) {
+                            mListener.onOpened();
+                        }
+                    } else {
                         // State Closed
-                        if(mListener != null) mListener.onClosed();
+                        if (mListener != null) {
+                            mListener.onClosed();
+                        }
                     }
                     break;
                 case ViewDragHelper.STATE_DRAGGING:
@@ -651,28 +712,28 @@ public class SliderPanel extends FrameLayout {
             int topThreshold = (int) (getHeight() * mConfig.getDistanceThreshold());
             boolean isSideSwiping = Math.abs(xvel) > mConfig.getVelocityThreshold();
 
-            if(yvel > 0){
+            if (yvel > 0) {
 
                 // Being slinged down
-                if(Math.abs(yvel) > mConfig.getVelocityThreshold() && !isSideSwiping){
+                if (Math.abs(yvel) > mConfig.getVelocityThreshold() && !isSideSwiping) {
                     settleTop = mScreenHeight;
-                }else if(top > topThreshold){
+                } else if (top > topThreshold) {
                     settleTop = mScreenHeight;
                 }
 
-            }else if(yvel < 0){
+            } else if (yvel < 0) {
                 // Being slinged up
-                if(Math.abs(yvel) > mConfig.getVelocityThreshold() && !isSideSwiping){
+                if (Math.abs(yvel) > mConfig.getVelocityThreshold() && !isSideSwiping) {
                     settleTop = -mScreenHeight;
-                }else if(top < -topThreshold){
+                } else if (top < -topThreshold) {
                     settleTop = -mScreenHeight;
                 }
 
-            }else{
+            } else {
 
-                if(top > topThreshold){
+                if (top > topThreshold) {
                     settleTop = mScreenHeight;
-                }else if(top < -topThreshold){
+                } else if (top < -topThreshold) {
                     settleTop = -mScreenHeight;
                 }
 
@@ -685,9 +746,11 @@ public class SliderPanel extends FrameLayout {
         @Override
         public void onViewPositionChanged(View changedView, int left, int top, int dx, int dy) {
             super.onViewPositionChanged(changedView, left, top, dx, dy);
-            float percent = 1f - ((float)Math.abs(top) / (float)mScreenHeight);
+            float percent = 1f - ((float) Math.abs(top) / (float) mScreenHeight);
 
-            if(mListener != null) mListener.onSlideChange(percent);
+            if (mListener != null) {
+                mListener.onSlideChange(percent);
+            }
 
             // Update the dimmer alpha
             applyScrim(percent);
@@ -696,15 +759,21 @@ public class SliderPanel extends FrameLayout {
         @Override
         public void onViewDragStateChanged(int state) {
             super.onViewDragStateChanged(state);
-            if(mListener != null) mListener.onStateChanged(state);
-            switch (state){
+            if (mListener != null) {
+                mListener.onStateChanged(state);
+            }
+            switch (state) {
                 case ViewDragHelper.STATE_IDLE:
-                    if(mDecorView.getTop() == 0){
+                    if (mDecorView.getTop() == 0) {
                         // State Open
-                        if(mListener != null) mListener.onOpened();
-                    }else{
+                        if (mListener != null) {
+                            mListener.onOpened();
+                        }
+                    } else {
                         // State Closed
-                        if(mListener != null) mListener.onClosed();
+                        if (mListener != null) {
+                            mListener.onClosed();
+                        }
                     }
                     break;
                 case ViewDragHelper.STATE_DRAGGING:
@@ -746,26 +815,26 @@ public class SliderPanel extends FrameLayout {
             int leftThreshold = (int) (getWidth() * mConfig.getDistanceThreshold());
             boolean isVerticalSwiping = Math.abs(yvel) > mConfig.getVelocityThreshold();
 
-            if(xvel > 0){
+            if (xvel > 0) {
 
-                if(Math.abs(xvel) > mConfig.getVelocityThreshold() && !isVerticalSwiping){
+                if (Math.abs(xvel) > mConfig.getVelocityThreshold() && !isVerticalSwiping) {
                     settleLeft = mScreenWidth;
-                }else if(left > leftThreshold){
+                } else if (left > leftThreshold) {
                     settleLeft = mScreenWidth;
                 }
 
-            }else if(xvel < 0){
+            } else if (xvel < 0) {
 
-                if(Math.abs(xvel) > mConfig.getVelocityThreshold() && !isVerticalSwiping){
+                if (Math.abs(xvel) > mConfig.getVelocityThreshold() && !isVerticalSwiping) {
                     settleLeft = -mScreenWidth;
-                }else if(left < -leftThreshold){
+                } else if (left < -leftThreshold) {
                     settleLeft = -mScreenWidth;
                 }
 
-            }else{
-                if(left > leftThreshold){
+            } else {
+                if (left > leftThreshold) {
                     settleLeft = mScreenWidth;
-                }else if(left < -leftThreshold){
+                } else if (left < -leftThreshold) {
                     settleLeft = -mScreenWidth;
                 }
             }
@@ -777,9 +846,11 @@ public class SliderPanel extends FrameLayout {
         @Override
         public void onViewPositionChanged(View changedView, int left, int top, int dx, int dy) {
             super.onViewPositionChanged(changedView, left, top, dx, dy);
-            float percent = 1f - ((float)Math.abs(left) / (float)mScreenWidth);
+            float percent = 1f - ((float) Math.abs(left) / (float) mScreenWidth);
 
-            if(mListener != null) mListener.onSlideChange(percent);
+            if (mListener != null) {
+                mListener.onSlideChange(percent);
+            }
 
             // Update the dimmer alpha
             applyScrim(percent);
@@ -788,15 +859,21 @@ public class SliderPanel extends FrameLayout {
         @Override
         public void onViewDragStateChanged(int state) {
             super.onViewDragStateChanged(state);
-            if(mListener != null) mListener.onStateChanged(state);
-            switch (state){
+            if (mListener != null) {
+                mListener.onStateChanged(state);
+            }
+            switch (state) {
                 case ViewDragHelper.STATE_IDLE:
-                    if(mDecorView.getLeft() == 0){
+                    if (mDecorView.getLeft() == 0) {
                         // State Open
-                        if(mListener != null) mListener.onOpened();
-                    }else{
+                        if (mListener != null) {
+                            mListener.onOpened();
+                        }
+                    } else {
                         // State Closed
-                        if(mListener != null) mListener.onClosed();
+                        if (mListener != null) {
+                            mListener.onClosed();
+                        }
                     }
                     break;
                 case ViewDragHelper.STATE_DRAGGING:
@@ -817,12 +894,12 @@ public class SliderPanel extends FrameLayout {
 
     /**
      * Apply the scrim to the dim view
-	 *
+     *
      * @param percent dimming percentage
      */
-    public void applyScrim(float percent){
+    public void applyScrim(float percent) {
         float alpha = (percent * (mConfig.getScrimStartAlpha() - mConfig.getScrimEndAlpha())) + mConfig.getScrimEndAlpha();
-        mDimView.setAlpha(alpha);
+        //        mDimView.setAlpha(alpha);
     }
 
     /***********************************************************************************************
@@ -834,12 +911,12 @@ public class SliderPanel extends FrameLayout {
     /**
      * Clamp Integer values to a given range
      *
-     * @param value     the value to clamp
-     * @param min       the minimum value
-     * @param max       the maximum value
-     * @return          the clamped value
+     * @param value the value to clamp
+     * @param min   the minimum value
+     * @param max   the maximum value
+     * @return the clamped value
      */
-    public static int clamp(int value, int min, int max){
+    public static int clamp(int value, int min, int max) {
         return Math.max(min, Math.min(max, value));
     }
 
@@ -847,11 +924,19 @@ public class SliderPanel extends FrameLayout {
      * The panel sliding interface that gets called
      * whenever the panel is closed or opened
      */
-    public interface OnPanelSlideListener{
+    public interface OnPanelSlideListener {
         void onStateChanged(int state);
+
         void onClosed();
+
         void onOpened();
+
         void onSlideChange(float percent);
     }
 
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        mCacheView = null;
+    }
 }

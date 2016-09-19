@@ -57,25 +57,25 @@
             android:name=".module.news.ui.NewsDetailActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.SlidrTheme">
+            android:theme="@style/BaseAppTheme.AppTheme">
         </activity>
         <activity
             android:name=".module.news.ui.NewsChannelActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_news_channel_manage"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.SlidrTheme">
+            android:theme="@style/BaseAppTheme.AppTheme">
         </activity>
         <activity
             android:name=".module.photo.ui.PhotoDetailActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.SlidrTheme">
+            android:theme="@style/BaseAppTheme.AppTheme">
         </activity>
         <activity
             android:name=".module.video.ui.VideoPlayActivity"
             android:configChanges="orientation|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation"
-            android:theme="@style/BaseAppTheme.SlidrTheme">
+            android:theme="@style/BaseAppTheme.AppTheme">
         </activity>
     </application>
 

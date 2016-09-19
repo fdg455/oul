@@ -16,8 +16,8 @@ import com.oushangfeng.ounews.widget.slidr.widget.SliderPanel;
  * This attacher class is used to attach the sliding mechanism to any {@link Activity}
  * that lets the user slide (or swipe) the activity away as a form of back or up action. The action
  * causes {@link Activity#finish()} to be called.
- * <p>
- * <p>
+ * <p/>
+ * <p/>
  * Created by r0adkll on 8/18/14.
  */
 public class Slidr {
@@ -82,9 +82,68 @@ public class Slidr {
                 // Interpolate the statusbar color
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP &&
                         statusBarColor1 != -1 && statusBarColor2 != -1) {
-                    int newColor = (int) mEvaluator
-                            .evaluate(percent, statusBarColor1, statusBarColor2);
+                    int newColor = (int) mEvaluator.evaluate(percent, statusBarColor1, statusBarColor2);
                     activity.getWindow().setStatusBarColor(newColor);
+                }
+            }
+        });
+
+        // Return the lock interface
+        return initInterface(panel);
+    }
+
+    public static SlidrInterface attach(final Activity activity, final View cacheView, final SlidrConfig config) {
+        // Setup the slider panel and attach it to the decor
+        final SliderPanel panel = initSliderPanel(activity, cacheView, config);
+
+        // Set the panel slide listener for when it becomes closed or opened
+        panel.setOnPanelSlideListener(new SliderPanel.OnPanelSlideListener() {
+
+            private final ArgbEvaluator mEvaluator = new ArgbEvaluator();
+
+            @Override
+            public void onStateChanged(int state) {
+                if (config.getListener() != null) {
+                    config.getListener().onSlideStateChanged(state);
+                }
+            }
+
+            @Override
+            public void onClosed() {
+                if (config.getListener() != null) {
+                    config.getListener().onSlideClosed();
+                }
+                /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    activity.finishAfterTransition();
+                } else {
+                    activity.finish();
+                    activity.overridePendingTransition(0, 0);
+                }*/
+                activity.finish();
+                activity.overridePendingTransition(0, 0);
+            }
+
+            @Override
+            public void onOpened() {
+                if (config.getListener() != null) {
+                    config.getListener().onSlideOpened();
+                }
+            }
+
+            @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void onSlideChange(float percent) {
+                // Interpolate the statusbar color
+                // TODO: Add support for KitKat
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && config.areStatusBarColorsValid()) {
+
+                    int newColor = (int) mEvaluator.evaluate(percent, config.getPrimaryColor(), config.getSecondaryColor());
+
+                    activity.getWindow().setStatusBarColor(newColor);
+                }
+
+                if (config.getListener() != null) {
+                    config.getListener().onSlideChange(percent);
                 }
             }
         });
@@ -145,11 +204,9 @@ public class Slidr {
             public void onSlideChange(float percent) {
                 // Interpolate the statusbar color
                 // TODO: Add support for KitKat
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && config
-                        .areStatusBarColorsValid()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && config.areStatusBarColorsValid()) {
 
-                    int newColor = (int) mEvaluator.evaluate(percent, config.getPrimaryColor(),
-                            config.getSecondaryColor());
+                    int newColor = (int) mEvaluator.evaluate(percent, config.getPrimaryColor(), config.getSecondaryColor());
 
                     activity.getWindow().setStatusBarColor(newColor);
                 }
@@ -172,6 +229,21 @@ public class Slidr {
 
         // Setup the slider panel and attach it to the decor
         SliderPanel panel = new SliderPanel(activity, oldScreen, config);
+        panel.setId(R.id.slidable_panel);
+        oldScreen.setId(R.id.slidable_content);
+        panel.addView(oldScreen);
+        decorView.addView(panel, 0);
+        return panel;
+    }
+
+    private static SliderPanel initSliderPanel(final Activity activity, final View cacheView, final SlidrConfig config) {
+        // Hijack the decorview
+        ViewGroup decorView = (ViewGroup) activity.getWindow().getDecorView();
+        View oldScreen = decorView.getChildAt(0);
+        decorView.removeViewAt(0);
+
+        // Setup the slider panel and attach it to the decor
+        SliderPanel panel = new SliderPanel(activity, oldScreen, cacheView, config);
         panel.setId(R.id.slidable_panel);
         oldScreen.setId(R.id.slidable_content);
         panel.addView(oldScreen);

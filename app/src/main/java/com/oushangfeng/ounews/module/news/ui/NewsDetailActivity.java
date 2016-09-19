@@ -12,7 +12,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -31,14 +30,11 @@ import com.oushangfeng.ounews.module.news.view.INewsDetailView;
 import com.oushangfeng.ounews.module.photo.ui.PhotoDetailActivity;
 import com.oushangfeng.ounews.module.video.ui.VideoPlayActivity;
 import com.oushangfeng.ounews.utils.MeasureUtil;
-import com.oushangfeng.ounews.utils.RxBus;
 import com.oushangfeng.ounews.utils.ViewUtil;
 import com.oushangfeng.ounews.widget.ThreePointLoadingView;
 
 import java.util.ArrayList;
 
-import rx.Observable;
-import rx.functions.Action1;
 import zhou.widget.RichText;
 
 /**
@@ -62,12 +58,8 @@ public class NewsDetailActivity extends BaseActivity<INewsDetailPresenter> imple
 
     private FloatingActionButton mFab;
 
-    private View mBg;
-
     private String mNewsListSrc;
     private SinaPhotoDetail mSinaPhotoDetail;
-
-    private Observable<Boolean> mBgObservable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,14 +110,6 @@ public class NewsDetailActivity extends BaseActivity<INewsDetailPresenter> imple
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mBgObservable != null) {
-            RxBus.get().unregister("Bg", mBgObservable);
-        }
-    }
-
-    @Override
     public void initNewsDetail(NeteastNewsDetail data) {
 
         if (data.video != null && data.video.size() > 0) {
@@ -138,26 +122,6 @@ public class NewsDetailActivity extends BaseActivity<INewsDetailPresenter> imple
             } else if (!TextUtils.isEmpty(mp4Url)) {
                 mFab.setImageResource(R.drawable.ic_play_normal);
                 mFab.setTag(mp4Url);
-            }
-
-            if (mBgObservable == null) {
-                mBgObservable = RxBus.get().register("Bg", Boolean.class);
-                mBgObservable.subscribe(new Action1<Boolean>() {
-                    @Override
-                    public void call(Boolean aBoolean) {
-
-                        if (mBg == null) {
-                            ViewStub viewStub = (ViewStub) findViewById(R.id.view_stub);
-                            mBg = viewStub.inflate();
-                        }
-
-                        if (aBoolean) {
-                            mBg.setVisibility(View.INVISIBLE);
-                        } else {
-                            mBg.setVisibility(View.VISIBLE);
-                        }
-                    }
-                });
             }
 
         }

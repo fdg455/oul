@@ -2,8 +2,6 @@ package com.oushangfeng.ounews.module.video.ui;
 
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.view.View;
-import android.view.ViewStub;
 
 import com.oushangfeng.ounews.R;
 import com.oushangfeng.ounews.annotation.ActivityFragmentInject;
@@ -14,15 +12,11 @@ import com.oushangfeng.ounews.http.Api;
 import com.oushangfeng.ounews.module.video.presenter.IVideoPresenter;
 import com.oushangfeng.ounews.module.video.presenter.IVideoPresenterImpl;
 import com.oushangfeng.ounews.module.video.view.IVideoView;
-import com.oushangfeng.ounews.utils.RxBus;
 import com.oushangfeng.ounews.utils.ViewUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import rx.Observable;
-import rx.functions.Action1;
 
 /**
  * ClassName: VideoActivity<p>
@@ -40,40 +34,9 @@ import rx.functions.Action1;
         menuDefaultCheckedItem = R.id.action_video)
 public class VideoActivity extends BaseActivity<IVideoPresenter> implements IVideoView {
 
-    private View mBg;
-    private Observable<Boolean> mBgObservable;
-
     @Override
     protected void initView() {
-
         mPresenter = new IVideoPresenterImpl(this);
-
-        // mBg = findViewById(R.id.bg);
-
-        mBgObservable = RxBus.get().register("Bg", Boolean.class);
-        mBgObservable.subscribe(new Action1<Boolean>() {
-            @Override
-            public void call(Boolean aBoolean) {
-
-                if (mBg==null){
-                    ViewStub viewStub = (ViewStub) findViewById(R.id.view_stub);
-                    mBg = viewStub.inflate();
-                }
-
-                if (aBoolean) {
-                    mBg.setVisibility(View.INVISIBLE);
-                } else {
-                    mBg.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        RxBus.get().unregister("Bg", mBgObservable);
     }
 
     @Override

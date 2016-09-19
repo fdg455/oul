@@ -12,7 +12,6 @@ import com.oushangfeng.ounews.base.BaseActivity;
 import com.oushangfeng.ounews.module.video.presenter.IVideoPlayPresenter;
 import com.oushangfeng.ounews.module.video.presenter.IVideoPlayPresenterImpl;
 import com.oushangfeng.ounews.module.video.view.IVideoPlayView;
-import com.oushangfeng.ounews.utils.RxBus;
 import com.oushangfeng.ounews.utils.ViewUtil;
 import com.oushangfeng.ounews.utils.ijkplayer.IjkController;
 import com.oushangfeng.ounews.utils.ijkplayer.widget.media.IjkVideoView;
@@ -59,15 +58,7 @@ public class VideoPlayActivity extends BaseActivity<IVideoPlayPresenter> impleme
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        RxBus.get().post("Bg", true);
-    }
-
-    @Override
     public void playVideo(String path, String name) {
-
-        RxBus.get().post("Bg", false);
 
         try {
             IjkMediaPlayer.loadLibrariesOnce(null);
@@ -84,12 +75,6 @@ public class VideoPlayActivity extends BaseActivity<IVideoPlayPresenter> impleme
 
                     mIjkVideoView.start();
                     mIjkController.show();
-                    mIjkVideoView.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            RxBus.get().post("Bg", true);
-                        }
-                    }, 1000);
                 }
             });
 
@@ -104,7 +89,6 @@ public class VideoPlayActivity extends BaseActivity<IVideoPlayPresenter> impleme
 
         } catch (UnsatisfiedLinkError e) {
             e.printStackTrace();
-            RxBus.get().post("Bg", true);
             finish();
             Toast.makeText(VideoPlayActivity.this,
                     "你的CPU是" + Build.CPU_ABI + ",当前播放器使用的编译版本" + BuildConfig.FLAVOR + "不匹配，需要参考app/build.gradle的productFlavors，在Build Variants选择适合的CPU的版本Run App或者打包哦！",

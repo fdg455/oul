@@ -2,6 +2,7 @@ package com.oushangfeng.ounews.utils;
 
 import android.app.Activity;
 import android.support.v4.content.ContextCompat;
+import android.view.View;
 
 import com.oushangfeng.ounews.R;
 import com.oushangfeng.ounews.widget.slidr.Slidr;
@@ -61,6 +62,21 @@ public class SlidrUtil {
                 .edgeSize(1f).sensitivity(1f).build();
 
         return Slidr.attach(activity, config);
+    }
+
+    public static SlidrInterface initSlidrDefaultConfig(Activity activity, View cacheView, boolean enableEdge) {
+
+        SlidrPosition position = SlidrPosition.LEFT;
+        SlidrConfig config = new SlidrConfig.Builder()
+                .primaryColor(ContextCompat.getColor(activity, R.color.primary))
+                .secondaryColor(ContextCompat.getColor(activity, R.color.primary_dark))
+                .position(position).velocityThreshold(100f)// 速度阀值
+                .distanceThreshold(0.3f)//划出多少退出
+                //.touchSize(100f)//该库没用到此参数
+                .edge(enableEdge)//从边划出
+                .edgeSize(1f).sensitivity(1f).build();
+
+        return Slidr.attach(activity, cacheView,config);
     }
 
 

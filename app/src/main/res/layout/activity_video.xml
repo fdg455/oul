@@ -31,12 +31,6 @@
 
         <include layout="@layout/content_video"/>
 
-        <ViewStub
-            android:id="@+id/view_stub"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout="@layout/include_bg"/>
-
     </android.support.design.widget.CoordinatorLayout>
 
     <include layout="@layout/include_navigation_view"/>
