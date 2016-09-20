@@ -2,8 +2,10 @@ package com.oushangfeng.ounews.widget.slidr.widget;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.util.Log;
+import android.graphics.Color;
 import android.view.View;
+
+import com.socks.library.KLog;
 
 /**
  * Created by Oubowu on 2016/9/20 0020 11:19.
@@ -23,10 +25,10 @@ public class FakeView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
+        canvas.drawColor(Color.RED);
         if (mCacheView != null) {
             mCacheView.draw(canvas);
-            Log.e("TAG","FakeView-28行-onDraw(): ");
+            KLog.e("绘制前一个Activity的图");
         }
     }
 

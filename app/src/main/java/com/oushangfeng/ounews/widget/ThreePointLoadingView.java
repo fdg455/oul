@@ -75,6 +75,7 @@ public class ThreePointLoadingView extends View {
     private int mBBallAlpha = (int) (255 * 0.7);
     // C圆的起始透明度
     private int mCBallAlpha = (int) (255 * 0.4);
+    private boolean mAttachedToWindow;
 
 
     public ThreePointLoadingView(Context context, AttributeSet attrs) {
@@ -178,11 +179,19 @@ public class ThreePointLoadingView extends View {
     }
 
     @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        // Log.e("TAG", "ThreePointLoadingView-183行-onAttachedToWindow(): ");
+        mAttachedToWindow = true;
+    }
+
+    @Override
     protected void onDetachedFromWindow() {
         stopLoading(true);
         mAnimator = null;
-        Log.e("TAG", "ThreePointLoadingView-189行-onDetachedFromWindow(): ");
+        // Log.e("TAG", "ThreePointLoadingView-189行-onDetachedFromWindow(): ");
         super.onDetachedFromWindow();
+        mAttachedToWindow = false;
     }
 
     private int count = 0;
@@ -192,7 +201,10 @@ public class ThreePointLoadingView extends View {
         post(new Runnable() {
             @Override
             public void run() {
-                startLoading();
+                if (mAttachedToWindow) {
+                    // post的话会有延时，这里防止内存泄漏
+                    startLoading();
+                }
             }
         });
     }

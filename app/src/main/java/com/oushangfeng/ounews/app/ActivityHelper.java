@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
 
 import java.util.Stack;
 
@@ -57,7 +56,7 @@ public class ActivityHelper implements Application.ActivityLifecycleCallbacks {
     }
 
 
-    public View getLastActivityContentView() {
+    public View getLastActivityDecorView() {
         if (mActivityStack == null) {
             return null;
         }
@@ -65,7 +64,7 @@ public class ActivityHelper implements Application.ActivityLifecycleCallbacks {
         if (size < 2) {
             return null;
         }
-        return ((ViewGroup)mActivityStack.elementAt(size - 2).getWindow().getDecorView()).getChildAt(0);
+        return mActivityStack.elementAt(size - 2).getWindow().getDecorView();
     }
 
     public void addActivity(Class clz) {

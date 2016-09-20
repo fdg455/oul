@@ -33,4 +33,10 @@ public class IPhotoDetailPresenterImpl extends BasePresenterImpl<IPhotoDetailVie
     public void requestSuccess(SinaPhotoDetail data) {
         mView.initViewPager(data);
     }
+
+    @Override
+    public void requestError(String msg) {
+        super.requestError(msg);
+        mView.toast(msg);
+    }
 }

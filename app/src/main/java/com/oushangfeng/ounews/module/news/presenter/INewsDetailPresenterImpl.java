@@ -27,4 +27,10 @@ public class INewsDetailPresenterImpl extends BasePresenterImpl<INewsDetailView,
     public void requestSuccess(NeteastNewsDetail data) {
         mView.initNewsDetail(data);
     }
+
+    @Override
+    public void requestError(String msg) {
+        super.requestError(msg);
+        mView.toast(msg);
+    }
 }

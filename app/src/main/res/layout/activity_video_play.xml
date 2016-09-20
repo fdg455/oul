@@ -5,9 +5,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@color/background_color_night"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:background="@color/material_blue_grey_700"
     tools:context=".module.video.ui.VideoPlayActivity">
 
     <com.oushangfeng.ounews.utils.ijkplayer.widget.media.IjkVideoView
@@ -19,8 +19,8 @@
         android:id="@+id/tpl_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/material_blue_grey_700"
         android:visibility="invisible"
+        android:background="@color/background_color_night"
         app:pointColor="?attr/pointColor"/>
 
 </RelativeLayout>

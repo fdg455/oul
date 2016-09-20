@@ -44,9 +44,7 @@ public class SliderPanel extends FrameLayout {
     private FakeView mFakeView;
     private LinearGradientView mLinearGradientView;
 
-    private boolean mPlanA = false;
-
-    private ShadowView mDimView;
+    //    private ShadowView mDimView;
 
     private View mDecorView;
     private View mCacheView;
@@ -150,24 +148,21 @@ public class SliderPanel extends FrameLayout {
         //        mDimView.setBackgroundColor(mConfig.getScrimColor());
         //        mDimView.setAlpha(mConfig.getScrimStartAlpha());
 
-        if (mPlanA) {
+        //            mDimView = new ShadowView(getContext(), mCacheView);
+        //
+        //            mDimView.setVisibility(INVISIBLE);
+        //
+        //            // Add the dimmer view to the layout
+        //            addView(mDimView);
 
-            mDimView = new ShadowView(getContext(), mCacheView);
+        mFakeView = new FakeView(getContext());
+        mFakeView.setVisibility(INVISIBLE);
+        addView(mFakeView);
 
-            mDimView.setVisibility(INVISIBLE);
-
-            // Add the dimmer view to the layout
-            addView(mDimView);
-        } else {
-            mFakeView = new FakeView(getContext());
-            mFakeView.setVisibility(INVISIBLE);
-            addView(mFakeView);
-
-            mLinearGradientView = new LinearGradientView(getContext());
-            mLinearGradientView.setVisibility(INVISIBLE);
-            LayoutParams flp = new LayoutParams(mScreenWidth / 30, ViewGroup.LayoutParams.MATCH_PARENT);
-            addView(mLinearGradientView, flp);
-        }
+        mLinearGradientView = new LinearGradientView(getContext());
+        mLinearGradientView.setVisibility(INVISIBLE);
+        LayoutParams flp = new LayoutParams(mScreenWidth / 28, ViewGroup.LayoutParams.MATCH_PARENT);
+        addView(mLinearGradientView, flp);
 
 
 
@@ -382,34 +377,29 @@ public class SliderPanel extends FrameLayout {
                 mListener.onSlideChange(percent);
             }
 
-            if (mPlanA){
 
-                if (mDimView.getVisibility() == INVISIBLE) {
-                    mDimView.setVisibility(VISIBLE);
-                }
+            //                if (mDimView.getVisibility() == INVISIBLE) {
+            //                    mDimView.setVisibility(VISIBLE);
+            //                }
+            //
+            //                ViewCompat.setX(mDimView, -mDimView.getWidth() / 2 + mDimView.getWidth() / 2 * (1 - percent));
+            //
+            //                float endX = mDimView.getX() + mDimView.getWidth();
+            //                float startX = mDecorView.getX();
+            //
+            //                mDimView.setShadowOffset(endX - startX, percent);
 
-                ViewCompat.setX(mDimView, -mDimView.getWidth() / 2 + mDimView.getWidth() / 2 * (1 - percent));
 
-                float endX = mDimView.getX() + mDimView.getWidth();
-                float startX = mDecorView.getX();
-
-                mDimView.setShadowOffset(endX - startX, percent);
-
-            }else {
-
-                if (mFakeView.getVisibility() == INVISIBLE) {
-                    mFakeView.setVisibility(VISIBLE);
-                    mFakeView.drawCacheView(mCacheView);
-                    mLinearGradientView.setVisibility(VISIBLE);
-                }
-
-                mFakeView.setX(-mFakeView.getWidth() / 2 + mFakeView.getWidth() / 2 * (1 - percent));
-
-                // mFakeView.invalidate();
-
-                mLinearGradientView.setX(mDecorView.getX() - mLinearGradientView.getWidth());
-                mLinearGradientView.redraw(percent);
+            if (mFakeView.getVisibility() == INVISIBLE) {
+                mFakeView.setVisibility(VISIBLE);
+                mFakeView.drawCacheView(mCacheView);
+                mLinearGradientView.setVisibility(VISIBLE);
             }
+
+            mFakeView.setX(-mFakeView.getWidth() / 2 + mFakeView.getWidth() / 2 * (1 - percent));
+
+            mLinearGradientView.setX(mDecorView.getX() - mLinearGradientView.getWidth());
+            mLinearGradientView.redraw(percent);
 
             // Update the dimmer alpha
             applyScrim(percent);
@@ -432,10 +422,10 @@ public class SliderPanel extends FrameLayout {
                         // State Closed
                         if (mListener != null) {
                             mListener.onClosed();
-                            if (!mPlanA){
+                            /*if (!mPlanA){
                                 // 防止闪屏
                                 mFakeView.invalidate();
-                            }
+                            }*/
                         }
                     }
                     break;

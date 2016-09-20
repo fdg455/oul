@@ -1,5 +1,6 @@
 package com.oushangfeng.ounews.module.video.ui;
 
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.view.MenuItem;
@@ -45,6 +46,9 @@ public class VideoPlayActivity extends BaseActivity<IVideoPlayPresenter> impleme
         //this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
         ViewUtil.setFullScreen(this);
 
+        // 布局设置了另外一个背景颜色，这里把根布局设置背景为空减少过度绘制
+        getWindow().setBackgroundDrawable(null);
+
         String videoUrl = getIntent().getStringExtra("videoUrl");
         String name = getIntent().getStringExtra("videoName");
 
@@ -89,6 +93,7 @@ public class VideoPlayActivity extends BaseActivity<IVideoPlayPresenter> impleme
 
         } catch (UnsatisfiedLinkError e) {
             e.printStackTrace();
+            hideProgress();
             finish();
             Toast.makeText(VideoPlayActivity.this,
                     "你的CPU是" + Build.CPU_ABI + ",当前播放器使用的编译版本" + BuildConfig.FLAVOR + "不匹配，需要参考app/build.gradle的productFlavors，在Build Variants选择适合的CPU的版本Run App或者打包哦！",
@@ -179,4 +184,14 @@ public class VideoPlayActivity extends BaseActivity<IVideoPlayPresenter> impleme
         }
     }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        final boolean portrait = newConfig.orientation == Configuration.ORIENTATION_PORTRAIT;
+        if (portrait) {
+            mSlidrInterface.unlock();
+        } else {
+            mSlidrInterface.lock();
+        }
+    }
 }

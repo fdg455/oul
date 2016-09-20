@@ -1,7 +1,8 @@
 package com.oushangfeng.ounews.base;
 
+import android.support.annotation.CallSuper;
+
 import com.oushangfeng.ounews.callback.RequestCallback;
-import com.socks.library.KLog;
 
 import rx.Subscription;
 
@@ -40,9 +41,9 @@ public class BasePresenterImpl<T extends BaseView, V> implements BasePresenter, 
         mView.showProgress();
     }
 
+    @CallSuper
     @Override
     public void requestError(String msg) {
-        KLog.e(msg);
         mView.hideProgress();
     }
 

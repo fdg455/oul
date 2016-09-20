@@ -156,7 +156,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
 
         if (mEnableSlidr && !SpUtil.readBoolean("disableSlide")) {
             // 默认开启侧滑，默认是整个页码侧滑
-            mSlidrInterface = SlidrUtil.initSlidrDefaultConfig(this, App.get().getActivityHelper().getLastActivityContentView(), SpUtil.readBoolean("enableSlideEdge"));
+            mSlidrInterface = SlidrUtil.initSlidrDefaultConfig(this, App.get().getActivityHelper().getLastActivityDecorView(), SpUtil.readBoolean("enableSlideEdge"));
         }
 
         if (mHasNavigationView) {
