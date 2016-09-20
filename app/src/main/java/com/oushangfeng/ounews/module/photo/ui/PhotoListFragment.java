@@ -143,7 +143,7 @@ public class PhotoListFragment extends BaseFragment<IPhotoListPresenter> impleme
             public void bindData(BaseRecyclerViewHolder holder, final int position, final SinaPhotoList.DataEntity.PhotoListEntity item) {
 
                 Glide.with(getActivity()).load(item.kpic).asBitmap().placeholder(R.drawable.ic_loading).error(R.drawable.ic_fail).format(DecodeFormat.PREFER_ARGB_8888)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL).into(holder.getImageView(R.id.iv_photo_summary));
+                        .diskCacheStrategy(DiskCacheStrategy.RESULT).into(holder.getImageView(R.id.iv_photo_summary));
 
                 holder.getTextView(R.id.tv_photo_summary).setText(item.title);
             }

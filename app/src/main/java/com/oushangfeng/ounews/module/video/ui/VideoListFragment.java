@@ -161,7 +161,7 @@ public class VideoListFragment extends BaseFragment<IVideoListPresenter> impleme
                 imageView.setLayoutParams(params);
 
                 Glide.with(getActivity()).load(item.cover).asBitmap().placeholder(R.drawable.ic_loading).error(R.drawable.ic_fail).format(DecodeFormat.PREFER_ARGB_8888)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL).into(imageView);
+                        .diskCacheStrategy(DiskCacheStrategy.RESULT).into(imageView);
 
                 holder.getTextView(R.id.tv_video_summary).setText(Html.fromHtml(item.title));
             }
