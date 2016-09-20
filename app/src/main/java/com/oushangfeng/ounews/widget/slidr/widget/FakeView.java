@@ -2,7 +2,6 @@ package com.oushangfeng.ounews.widget.slidr.widget;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.view.View;
 
 import com.socks.library.KLog;
@@ -25,7 +24,6 @@ public class FakeView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        canvas.drawColor(Color.RED);
         if (mCacheView != null) {
             mCacheView.draw(canvas);
             KLog.e("绘制前一个Activity的图");
