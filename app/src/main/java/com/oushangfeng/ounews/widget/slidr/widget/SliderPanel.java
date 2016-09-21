@@ -954,4 +954,9 @@ public class SliderPanel extends FrameLayout {
         void onSlideChange(float percent);
     }
 
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        mCacheView = null;
+    }
 }
