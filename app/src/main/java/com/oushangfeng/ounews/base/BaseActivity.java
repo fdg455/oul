@@ -495,6 +495,16 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
     }
 
     @Override
+    public void onBackPressed() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            super.onBackPressed();
+        } else {
+            finish();
+            overridePendingTransition(0, R.anim.anim_slide_out);
+        }
+    }
+
+    @Override
     public void onClick(View v) {
 
     }

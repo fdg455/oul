@@ -72,6 +72,8 @@ public class NewsDetailActivity extends BaseActivity<INewsDetailPresenter> imple
             ViewUtil.showStatusBar(this);
         }
 
+        getWindow().setBackgroundDrawable(null);
+
         super.onCreate(savedInstanceState);
     }
 
@@ -200,13 +202,13 @@ public class NewsDetailActivity extends BaseActivity<INewsDetailPresenter> imple
 
     }
 
-    @Override
+    /*@Override
     public void onBackPressed() {
         super.onBackPressed();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             finishAfterTransition();
         }
-    }
+    }*/
 
     @Override
     public void showProgress() {

@@ -66,7 +66,7 @@
         android:layout_below="@+id/tv_photo_detail_title"
         android:layout_centerHorizontal="true"
         android:gravity="center"
-        android:singleLine="true"
+        android:maxLines="1"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@color/material_white"
         tools:text="@string/photo_page"/>

@@ -11,6 +11,7 @@ import com.oushangfeng.ounews.R;
 import com.oushangfeng.ounews.widget.slidr.model.SlidrConfig;
 import com.oushangfeng.ounews.widget.slidr.model.SlidrInterface;
 import com.oushangfeng.ounews.widget.slidr.widget.SliderPanel;
+import com.socks.library.KLog;
 
 /**
  * This attacher class is used to attach the sliding mechanism to any {@link Activity}
@@ -199,14 +200,9 @@ public class Slidr {
                 if (config.getListener() != null) {
                     config.getListener().onSlideClosed();
                 }
-                //                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                //                    activity.finishAfterTransition();
-                //                } else {
-                //                    activity.finish();
-                //                    activity.overridePendingTransition(0, 0);
-                //                }
+                KLog.e("滑动之后结束Activity");
                 activity.finish();
-                activity.overridePendingTransition(R.anim.anim_none, R.anim.anim_none);
+                activity.overridePendingTransition(0, 0);
             }
 
             @Override

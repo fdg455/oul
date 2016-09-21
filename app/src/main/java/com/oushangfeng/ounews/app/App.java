@@ -36,15 +36,19 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        SkinManager.getInstance().init(this);
+
         // 如果检测到某个 activity 有内存泄露，LeakCanary 就是自动地显示一个通知
         mRefWatcher = LeakCanary.install(this);
+
+        SkinManager.getInstance().init(this);
+
         setupDatabase();
         sApplicationContext = this;
         KLog.init(BuildConfig.DEBUG);
 
         mActivityHelper = new ActivityHelper();
         registerActivityLifecycleCallbacks(mActivityHelper);
+
 
     }
 

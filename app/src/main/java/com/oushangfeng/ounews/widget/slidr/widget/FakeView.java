@@ -27,7 +27,14 @@ public class FakeView extends View {
         if (mCacheView != null) {
             mCacheView.draw(canvas);
             KLog.e("绘制前一个Activity的图");
+            mCacheView = null;
         }
     }
 
+    /*@Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        KLog.e("onDetachedFromWindow");
+        mCacheView = null;
+    }*/
 }

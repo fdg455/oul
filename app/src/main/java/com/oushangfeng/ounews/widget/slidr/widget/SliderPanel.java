@@ -421,11 +421,15 @@ public class SliderPanel extends FrameLayout {
                     } else {
                         // State Closed
                         if (mListener != null) {
-                            mListener.onClosed();
-                            /*if (!mPlanA){
-                                // 防止闪屏
-                                mFakeView.invalidate();
-                            }*/
+                            removeView(mCacheView);
+                            removeView(mLinearGradientView);
+                            mDecorView.setVisibility(INVISIBLE);
+                            post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mListener.onClosed();
+                                }
+                            });
                         }
                     }
                     break;
@@ -952,11 +956,5 @@ public class SliderPanel extends FrameLayout {
         void onOpened();
 
         void onSlideChange(float percent);
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        mCacheView = null;
     }
 }

@@ -65,6 +65,8 @@ public class PhotoDetailActivity extends BaseActivity<IPhotoDetailPresenter> imp
     @Override
     protected void initView() {
 
+        getWindow().setBackgroundDrawable(null);
+
         mLoadingView = (ThreePointLoadingView) findViewById(R.id.tpl_view);
         mLoadingView.setOnClickListener(this);
 
