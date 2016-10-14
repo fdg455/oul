@@ -127,6 +127,11 @@ public class VideoListFragment extends BaseFragment<IVideoListPresenter> impleme
                 break;
             case DataLoadType.TYPE_LOAD_MORE_SUCCESS:
                 mAdapter.loadMoreSuccess();
+                if (data == null || data.size() == 0) {
+                    mAdapter.enableLoadMore(null);
+                    toast("全部加载完毕");
+                    return;
+                }
                 mAdapter.addMoreData(data);
                 break;
             case DataLoadType.TYPE_LOAD_MORE_FAIL:
@@ -139,7 +144,7 @@ public class VideoListFragment extends BaseFragment<IVideoListPresenter> impleme
 
         final StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
 
-        mAdapter = new BaseRecyclerAdapter<NeteastVideoSummary>(getActivity(), data, true, layoutManager) {
+        mAdapter = new BaseRecyclerAdapter<NeteastVideoSummary>(getActivity(), data, layoutManager) {
 
             Random mRandom = new Random();
 

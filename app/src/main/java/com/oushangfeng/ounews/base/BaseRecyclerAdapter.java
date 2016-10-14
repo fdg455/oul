@@ -8,8 +8,6 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 
 import com.oushangfeng.ounews.R;
 import com.oushangfeng.ounews.callback.OnEmptyClickListener;
@@ -37,7 +35,6 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
 
     protected List<T> mData;
     protected Context mContext;
-    protected boolean mUseAnimation;
     protected LayoutInflater mInflater;
     protected OnItemClickListener mClickListener;
     protected boolean mShowLoadMoreView;
@@ -52,19 +49,14 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
 
     private OnLoadMoreListener mOnLoadMoreListener;
 
-    private boolean mEnableLoadMore;
+    private Boolean mEnableLoadMore;
 
     public BaseRecyclerAdapter(Context context, List<T> data) {
-        this(context, data, true);
+        this(context, data, null);
     }
 
-    public BaseRecyclerAdapter(Context context, List<T> data, boolean useAnimation) {
-        this(context, data, useAnimation, null);
-    }
-
-    public BaseRecyclerAdapter(Context context, List<T> data, boolean useAnimation, RecyclerView.LayoutManager layoutManager) {
+    public BaseRecyclerAdapter(Context context, List<T> data, RecyclerView.LayoutManager layoutManager) {
         mContext = context;
-        mUseAnimation = useAnimation;
         mLayoutManager = layoutManager;
         mData = data == null ? new ArrayList<T>() : data;
         mInflater = LayoutInflater.from(context);
@@ -133,12 +125,9 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
             holder.setText(R.id.tv_error, mExtraMsg);
         } else {
             bindData(holder, position, mData.get(position));
-            if (mUseAnimation) {
-                setAnimation(holder.itemView, position);
-            }
         }
 
-        if (!mShowEmptyView && mOnLoadMoreListener != null && mEnableLoadMore && !mShowLoadMoreView && position == getItemCount() - 1 && getItemCount() >= mMoreItemCount) {
+        if (!mShowEmptyView && mOnLoadMoreListener != null && (mEnableLoadMore != null && mEnableLoadMore) && !mShowLoadMoreView && position == getItemCount() - 1 && getItemCount() >= mMoreItemCount) {
             mShowLoadMoreView = true;
             holder.itemView.postDelayed(new Runnable() {
                 @Override
@@ -177,20 +166,9 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
         }
     }
 
-    protected void setAnimation(View viewToAnimate, int position) {
-        if (position > mLastPosition) {
-            Animation animation = AnimationUtils.loadAnimation(viewToAnimate.getContext(), R.anim.item_bottom_in);
-            viewToAnimate.startAnimation(animation);
-            mLastPosition = position;
-        }
-    }
-
     @Override
     public void onViewDetachedFromWindow(BaseRecyclerViewHolder holder) {
         super.onViewDetachedFromWindow(holder);
-        if (mUseAnimation && holder.itemView.getAnimation() != null && holder.itemView.getAnimation().hasStarted()) {
-            holder.itemView.clearAnimation();
-        }
     }
 
     public void add(int pos, T item) {
@@ -225,11 +203,11 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
             return TYPE_EMPTY;
         }
 
-        if (mOnLoadMoreListener != null && mEnableLoadMore && mShowLoadMoreView && getItemCount() - 1 == position) {
+        if (mOnLoadMoreListener != null && (mEnableLoadMore != null && mEnableLoadMore) && mShowLoadMoreView && getItemCount() - 1 == position) {
             return TYPE_MORE;
         }
 
-        if (mOnLoadMoreListener != null && !mShowLoadMoreView && !mEnableLoadMore && getItemCount() - 1 == position) {
+        if (mOnLoadMoreListener != null && !mShowLoadMoreView && (mEnableLoadMore != null && !mEnableLoadMore) && getItemCount() - 1 == position) {
             return TYPE_MORE_FAIL;
         }
 
@@ -238,7 +216,7 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
 
     @Override
     public int getItemCount() {
-        int i = mOnLoadMoreListener == null ? 0 : (mEnableLoadMore && mShowLoadMoreView) || (!mShowLoadMoreView && !mEnableLoadMore) ? 1 : 0;
+        int i = mOnLoadMoreListener == null || mEnableLoadMore == null ? 0 : (mEnableLoadMore && mShowLoadMoreView) || (!mShowLoadMoreView && !mEnableLoadMore) ? 1 : 0;
         return mShowEmptyView ? 1 : mData != null ? mData.size() + i : 0;
     }
 
@@ -282,7 +260,12 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
         notifyItemChanged(getItemCount() - 1);
     }
 
-    public void enableLoadMore(boolean enableLoadMore) {
+    /**
+     * 设置是否开启底部加载
+     *
+     * @param enableLoadMore true为开启；false为关闭；null为已经全部加载完毕的关闭
+     */
+    public void enableLoadMore(Boolean enableLoadMore) {
         mEnableLoadMore = enableLoadMore;
     }
 

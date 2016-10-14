@@ -133,6 +133,11 @@ public class NewsListFragment extends BaseFragment<INewsListPresenter> implement
                 break;
             case DataLoadType.TYPE_LOAD_MORE_SUCCESS:
                 mAdapter.loadMoreSuccess();
+                if (data == null || data.size() == 0) {
+                    mAdapter.enableLoadMore(null);
+                    toast("全部加载完毕");
+                    return;
+                }
                 mAdapter.addMoreData(data);
                 break;
             case DataLoadType.TYPE_LOAD_MORE_FAIL:

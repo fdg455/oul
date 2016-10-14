@@ -26,6 +26,7 @@ import com.socks.library.KLog;
  * Package: com.ftinc.mariner.pilotpass.widgets
  * Created by drew.heavner on 8/14/14.
  */
+@Deprecated
 public class SliderPanel extends FrameLayout {
 
     /***********************************************************************************************

@@ -69,7 +69,7 @@ public class RetrofitManager {
         public Response intercept(Chain chain) throws IOException {
             Request request = chain.request();
 
-            KLog.e("请求网址: " + request.url());
+            // KLog.e("请求网址: " + request.url());
 
             if (!NetUtil.isConnected(App.getContext())) {
                 request = request.newBuilder().cacheControl(CacheControl.FORCE_CACHE).build();
@@ -92,8 +92,15 @@ public class RetrofitManager {
         @Override
         public Response intercept(Chain chain) throws IOException {
 
-            final Request request = chain.request();
+            Request request = chain.request();
+
+            Request.Builder requestBuilder = request.newBuilder();
+            requestBuilder.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36");
+            request = requestBuilder.build();
+
             final Response response = chain.proceed(request);
+
+            KLog.e("请求网址: \n" + request.url() + " \n " + "请求头部信息：\n" + request.headers());
 
             final ResponseBody responseBody = response.body();
             final long contentLength = responseBody.contentLength();

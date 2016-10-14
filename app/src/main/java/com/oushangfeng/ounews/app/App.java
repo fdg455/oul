@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.oubowu.slideback.ActivityHelper;
 import com.oushangfeng.ounews.BuildConfig;
 import com.oushangfeng.ounews.common.Constant;
 import com.oushangfeng.ounews.greendao.DaoMaster;
@@ -46,14 +47,15 @@ public class App extends Application {
         sApplicationContext = this;
         KLog.init(BuildConfig.DEBUG);
 
+
         mActivityHelper = new ActivityHelper();
         registerActivityLifecycleCallbacks(mActivityHelper);
 
 
     }
 
-    public ActivityHelper getActivityHelper() {
-        return mActivityHelper;
+    public static ActivityHelper getActivityHelper() {
+        return ((App)sApplicationContext).mActivityHelper;
     }
 
     @Override
@@ -100,10 +102,6 @@ public class App extends Application {
     // 获取ApplicationContext
     public static Context getContext() {
         return sApplicationContext;
-    }
-
-    public static App get() {
-        return (App) getContext();
     }
 
 }

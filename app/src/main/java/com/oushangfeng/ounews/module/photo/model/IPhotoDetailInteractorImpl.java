@@ -20,28 +20,6 @@ public class IPhotoDetailInteractorImpl implements IPhotoDetailInteractor<SinaPh
     @Override
     public Subscription requestPhotoDetail(final RequestCallback<SinaPhotoDetail> callback, String id) {
         return RetrofitManager.getInstance(HostType.SINA_NEWS_PHOTO).getSinaPhotoDetailObservable(id)
-                .subscribe(new BaseSubscriber<SinaPhotoDetail>(callback));
-                /*.doOnSubscribe(new Action0() {
-                    @Override
-                    public void call() {
-                        callback.beforeRequest();
-                    }
-                }).subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<SinaPhotoDetail>() {
-                    @Override
-                    public void onCompleted() {
-                        callback.requestComplete();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        callback.requestError(e.getLocalizedMessage());
-                    }
-
-                    @Override
-                    public void onNext(SinaPhotoDetail sinaPhotoDetail) {
-                        callback.requestSuccess(sinaPhotoDetail);
-                    }
-                });*/
+                .subscribe(new BaseSubscriber<>(callback));
     }
 }

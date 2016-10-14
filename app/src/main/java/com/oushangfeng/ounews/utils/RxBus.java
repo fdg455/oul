@@ -2,8 +2,6 @@ package com.oushangfeng.ounews.utils;
 
 import android.support.annotation.NonNull;
 
-import com.socks.library.KLog;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -62,7 +60,7 @@ public class RxBus {
         Subject<T, T> subject;
         // PublishSubject只会把在订阅发生的时间点之后来自原始Observable的数据发射给观察者
         subjectList.add(subject = PublishSubject.create());
-        KLog.e("{register}subjectMapper: " + mSubjectMapper);
+//        KLog.e("{register}subjectMapper: " + mSubjectMapper);
         return subject;
     }
 
@@ -81,7 +79,7 @@ public class RxBus {
                 mSubjectMapper.remove(tag);
             }
         }
-        KLog.e("{unregister}subjectMapper: " + mSubjectMapper);
+//        KLog.e("{unregister}subjectMapper: " + mSubjectMapper);
     }
 
     /**

@@ -189,9 +189,11 @@ public class VideoPlayActivity extends BaseActivity<IVideoPlayPresenter> impleme
         super.onConfigurationChanged(newConfig);
         final boolean portrait = newConfig.orientation == Configuration.ORIENTATION_PORTRAIT;
         if (portrait) {
-            mSlidrInterface.unlock();
+//            mSlidrInterface.unlock();
+            mSlideBackLayout.lock(false);
         } else {
-            mSlidrInterface.lock();
+//            mSlidrInterface.lock();
+            mSlideBackLayout.lock(true);
         }
     }
 }

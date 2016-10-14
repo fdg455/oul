@@ -2,6 +2,7 @@ package com.oushangfeng.ounews.base;
 
 import android.support.annotation.CallSuper;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.oushangfeng.ounews.app.App;
 import com.oushangfeng.ounews.callback.RequestCallback;
 import com.oushangfeng.ounews.utils.NetUtil;
@@ -67,6 +68,8 @@ public class BaseSubscriber<T> extends Subscriber<T> {
                 errorMsg = "不知名主机";
             } else if (e instanceof SocketTimeoutException) {
                 errorMsg = "网络连接超时！";
+            }else if (e instanceof JsonMappingException){
+                errorMsg = "未知异常！";
             }
             KLog.e(e.toString());
             mRequestCallback.requestError(errorMsg);

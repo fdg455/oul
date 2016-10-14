@@ -21,6 +21,7 @@ import com.socks.library.KLog;
  * <p/>
  * Created by r0adkll on 8/18/14.
  */
+@Deprecated
 public class Slidr {
 
     //    /**

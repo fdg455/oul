@@ -30,8 +30,8 @@ public class NewsChannelAdapter extends BaseRecyclerAdapter<NewsChannelTable>
 
     private OnItemMoveListener mItemMoveListener;
 
-    public NewsChannelAdapter(Context context, List<NewsChannelTable> data, boolean useAnimation) {
-        super(context, data, useAnimation);
+    public NewsChannelAdapter(Context context, List<NewsChannelTable> data) {
+        super(context, data);
     }
 
     @Override

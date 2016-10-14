@@ -25,6 +25,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
+import com.oubowu.slideback.SlideBackHelper;
+import com.oubowu.slideback.SlideConfig;
+import com.oubowu.slideback.widget.SlideBackLayout;
 import com.oushangfeng.ounews.BuildConfig;
 import com.oushangfeng.ounews.R;
 import com.oushangfeng.ounews.annotation.ActivityFragmentInject;
@@ -37,11 +40,9 @@ import com.oushangfeng.ounews.module.video.ui.VideoActivity;
 import com.oushangfeng.ounews.utils.GlideCircleTransform;
 import com.oushangfeng.ounews.utils.MeasureUtil;
 import com.oushangfeng.ounews.utils.RxBus;
-import com.oushangfeng.ounews.utils.SlidrUtil;
 import com.oushangfeng.ounews.utils.SpUtil;
 import com.oushangfeng.ounews.utils.ThemeUtil;
 import com.oushangfeng.ounews.utils.ViewUtil;
-import com.oushangfeng.ounews.widget.slidr.model.SlidrInterface;
 import com.socks.library.KLog;
 import com.zhy.changeskin.SkinManager;
 
@@ -111,7 +112,8 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
     /**
      * 控制滑动与否的接口
      */
-    protected SlidrInterface mSlidrInterface;
+    //    protected SlidrInterface mSlidrInterface;
+    protected SlideBackLayout mSlideBackLayout;
 
     /**
      * 结束Activity的可观测对象
@@ -156,7 +158,16 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
 
         if (mEnableSlidr && !SpUtil.readBoolean("disableSlide")) {
             // 默认开启侧滑，默认是整个页码侧滑
-            mSlidrInterface = SlidrUtil.initSlidrDefaultConfig(this, App.get().getActivityHelper().getLastActivityDecorView(), SpUtil.readBoolean("enableSlideEdge"));
+            mSlideBackLayout = SlideBackHelper.attach(this, App.getActivityHelper(), true, new SlideConfig.Builder()
+                    // 是否侧滑
+                    .edgeOnly(SpUtil.readBoolean("enableSlideEdge"))
+                    // 是否禁止侧滑
+                    .lock(false)
+                    // 侧滑的响应阈值，0~1，对应屏幕宽度*percent
+                    .edgePercent(0.1f)
+                    // 关闭页面的阈值，0~1，对应屏幕宽度*percent
+                    .slideOutPercent(0.35f).create(), null);
+
         }
 
         if (mHasNavigationView) {
@@ -434,7 +445,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
 
     public void showActivityReorderToFront(Activity aty, Class<?> cls, boolean backPress) {
 
-        App.get().getActivityHelper().addActivity(cls);
+        App.getActivityHelper().addActivity(cls);
 
         AppManager.getAppManager().orderNavActivity(cls.getName(), backPress);
 

@@ -120,6 +120,11 @@ public class PhotoListFragment extends BaseFragment<IPhotoListPresenter> impleme
                 break;
             case DataLoadType.TYPE_LOAD_MORE_SUCCESS:
                 mAdapter.loadMoreSuccess();
+                if (data == null || data.size() == 0) {
+                    mAdapter.enableLoadMore(null);
+                    toast("全部加载完毕");
+                    return;
+                }
                 mAdapter.addMoreData(data);
                 break;
             case DataLoadType.TYPE_LOAD_MORE_FAIL:
@@ -132,7 +137,7 @@ public class PhotoListFragment extends BaseFragment<IPhotoListPresenter> impleme
 
         final GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2, GridLayoutManager.VERTICAL, false);
 
-        mAdapter = new BaseRecyclerAdapter<SinaPhotoList.DataEntity.PhotoListEntity>(getActivity(), data, true, layoutManager) {
+        mAdapter = new BaseRecyclerAdapter<SinaPhotoList.DataEntity.PhotoListEntity>(getActivity(), data, layoutManager) {
 
             @Override
             public int getItemLayoutId(int viewType) {

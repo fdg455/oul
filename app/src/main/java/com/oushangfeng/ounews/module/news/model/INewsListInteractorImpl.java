@@ -30,19 +30,8 @@ public class INewsListInteractorImpl implements INewsListInteractor<List<Neteast
     public Subscription requestNewsList(final RequestCallback<List<NeteastNewsSummary>> callback, String type, final String id, int startPage) {
         KLog.e("新闻列表：" + type + ";" + id);
         return RetrofitManager.getInstance(HostType.NETEASE_NEWS_VIDEO)
-                .getNewsListObservable(type, id, startPage)/*.doOnSubscribe(new Action0() {
-                    @Override
-                    public void call() {
-                        // 订阅之前回调回去显示加载动画
-                        callback.beforeRequest();
-                    }
-                }).subscribeOn(AndroidSchedulers.mainThread()) // 订阅之前操作在主线程
-                .doOnError(new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        KLog.e("错误时处理：" + throwable + " --- " + throwable.getLocalizedMessage());
-                    }
-                })*/.flatMap(
+                .getNewsListObservable(type, id, startPage)
+                .flatMap(
                         new Func1<Map<String, List<NeteastNewsSummary>>, Observable<NeteastNewsSummary>>() {
                             // map得到list转换成item
                             @Override
@@ -60,23 +49,6 @@ public class INewsListInteractorImpl implements INewsListInteractor<List<Neteast
                     public Integer call(NeteastNewsSummary neteastNewsSummary, NeteastNewsSummary neteastNewsSummary2) {
                         return neteastNewsSummary2.ptime.compareTo(neteastNewsSummary.ptime);
                     }
-                }).subscribe(new BaseSubscriber<List<NeteastNewsSummary>>(callback));
-                /*.subscribe(new Subscriber<List<NeteastNewsSummary>>() {
-                    @Override
-                    public void onCompleted() {
-                        callback.requestComplete();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        KLog.e(e.getLocalizedMessage() + "\n" + e);
-                        callback.requestError(e.getLocalizedMessage() + "\n" + e);
-                    }
-
-                    @Override
-                    public void onNext(List<NeteastNewsSummary> neteastNewsSummaries) {
-                        callback.requestSuccess(neteastNewsSummaries);
-                    }
-                });*/
+                }).subscribe(new BaseSubscriber<>(callback));
     }
 }

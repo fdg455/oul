@@ -18,6 +18,7 @@ import com.oushangfeng.ounews.widget.slidr.model.SlidrPosition;
  * UpdateAuthor：<p>
  * UpdateDate：<p>
  */
+@Deprecated
 public class SlidrUtil {
 
     /**
@@ -61,6 +62,7 @@ public class SlidrUtil {
         return Slidr.attach(activity, config);
     }*/
 
+    @Deprecated
     public static SlidrInterface initSlidrDefaultConfig(Activity activity, View cacheView, boolean enableEdge) {
 
         SlidrPosition position = SlidrPosition.LEFT;

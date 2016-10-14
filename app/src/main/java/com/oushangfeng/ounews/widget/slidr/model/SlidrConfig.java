@@ -10,6 +10,7 @@ import android.support.annotation.FloatRange;
  *
  * Created by r0adkll on 1/12/15.
  */
+@Deprecated
 public class SlidrConfig {
 
     private int colorPrimary = -1;

@@ -5,6 +5,7 @@ package com.oushangfeng.ounews.widget.slidr.model;
  * Package: com.r0adkll.slidr.model
  * Created by drew.heavner on 2/24/15.
  */
+@Deprecated
 public class SlidrListenerAdapter implements SlidrListener{
     @Override public void onSlideStateChanged(int state) {}
     @Override public void onSlideChange(float percent) {}

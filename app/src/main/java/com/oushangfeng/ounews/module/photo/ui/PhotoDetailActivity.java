@@ -103,12 +103,12 @@ public class PhotoDetailActivity extends BaseActivity<IPhotoDetailPresenter> imp
             @Override
             public void onPageSelected(int position) {
 
-                if (mSlidrInterface != null && !SpUtil.readBoolean("enableSlideEdge")) {
+                if (mSlideBackLayout!= null && !SpUtil.readBoolean("enableSlideEdge")) {
                     // 设置了侧滑返回，并且是整页侧滑的时候，第一页是整页侧滑，其他页边缘侧滑
                     if (position == 0) {
-                        mSlidrInterface.getSlidrConfig().setEdgeOnly(false);
+                        mSlideBackLayout.edgeOnly(false);
                     } else {
-                        mSlidrInterface.getSlidrConfig().setEdgeOnly(true);
+                        mSlideBackLayout.edgeOnly(true);
                     }
                 }
 

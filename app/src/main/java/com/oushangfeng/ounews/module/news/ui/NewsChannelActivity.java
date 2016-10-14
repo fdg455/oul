@@ -73,8 +73,7 @@ public class NewsChannelActivity extends BaseActivity<INewsChannelPresenter>
         recyclerView1.getItemAnimator().setChangeDuration(250);
         recyclerView1.getItemAnimator().setRemoveDuration(250);
 
-        final NewsChannelAdapter mRecyclerAdapter1 = new NewsChannelAdapter(this, selectChannels,
-                false);
+        final NewsChannelAdapter mRecyclerAdapter1 = new NewsChannelAdapter(this, selectChannels);
         recyclerView1.setAdapter(mRecyclerAdapter1);
 
         // 只有我的频道可以拖拽排序
@@ -103,8 +102,7 @@ public class NewsChannelActivity extends BaseActivity<INewsChannelPresenter>
         recyclerView2.getItemAnimator().setChangeDuration(250);
         recyclerView2.getItemAnimator().setRemoveDuration(250);
 
-        final NewsChannelAdapter mRecyclerAdapter2 = new NewsChannelAdapter(this, unSelectChannels,
-                false);
+        final NewsChannelAdapter mRecyclerAdapter2 = new NewsChannelAdapter(this, unSelectChannels);
         recyclerView2.setAdapter(mRecyclerAdapter2);
 
         // 设置两个RecyclerView的点击监听，进行Item相应的增删操作

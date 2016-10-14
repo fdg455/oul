@@ -1,4 +1,4 @@
-package com.oushangfeng.ounews.widget.slidr.widget;
+package com.oubowu.slideback.widget;
 
 
 import android.content.Context;
@@ -8,20 +8,20 @@ import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Shader;
+import android.support.annotation.FloatRange;
 import android.view.View;
 
 /**
  * Created by Oubowu on 2016/9/20 0020 11:22.
  */
-@Deprecated
-public class LinearGradientView extends View {
+public class ShadowView extends View {
 
     private LinearGradient mLinearGradient;
     private Paint mPaint;
     private RectF mRectF;
     private float mAlphaPercent = -1;
 
-    public LinearGradientView(Context context) {
+    public ShadowView(Context context) {
         super(context);
         mPaint = new Paint();
     }
@@ -43,7 +43,7 @@ public class LinearGradientView extends View {
         }
     }
 
-    public void redraw(float alphaPercent) {
+    public void redraw(@FloatRange(from = 0.0,to = 1.0) float alphaPercent) {
         mAlphaPercent = alphaPercent;
         invalidate();
     }

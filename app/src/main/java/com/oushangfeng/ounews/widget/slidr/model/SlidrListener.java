@@ -8,6 +8,7 @@ package com.oushangfeng.ounews.widget.slidr.model;
  * Package: com.r0adkll.slidr.model
  * Created by drew.heavner on 2/24/15.
  */
+@Deprecated
 public interface SlidrListener {
 
     /**
