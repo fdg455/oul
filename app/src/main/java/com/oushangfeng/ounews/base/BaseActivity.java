@@ -24,7 +24,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.bumptech.glide.Glide;
 import com.oubowu.slideback.SlideBackHelper;
 import com.oubowu.slideback.SlideConfig;
 import com.oubowu.slideback.widget.SlideBackLayout;
@@ -38,6 +37,7 @@ import com.oushangfeng.ounews.module.photo.ui.PhotoActivity;
 import com.oushangfeng.ounews.module.settings.ui.SettingsActivity;
 import com.oushangfeng.ounews.module.video.ui.VideoActivity;
 import com.oushangfeng.ounews.utils.GlideCircleTransform;
+import com.oushangfeng.ounews.utils.GlideUtils;
 import com.oushangfeng.ounews.utils.MeasureUtil;
 import com.oushangfeng.ounews.utils.RxBus;
 import com.oushangfeng.ounews.utils.SpUtil;
@@ -328,8 +328,9 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
             public void run() {
                 final ImageView imageView = (ImageView) BaseActivity.this.findViewById(R.id.avatar);
                 if (imageView != null) {
-                    Glide.with(mNavigationView.getContext()).load(R.drawable.ic_header).crossFade().transform(new GlideCircleTransform(mNavigationView.getContext()))
-                            .into(imageView);
+                    GlideUtils.loadDefaultTransformation(R.drawable.ic_header, imageView, null, null, new GlideCircleTransform(mNavigationView.getContext()), null);
+                    //                    Glide.with(mNavigationView.getContext()).load(R.drawable.ic_header).animate(R.anim.image_load).transform(new GlideCircleTransform(mNavigationView.getContext()))
+                    //                            .into(imageView);
                 }
             }
         });

@@ -6,11 +6,11 @@ import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.oushangfeng.ounews.R;
 import com.oushangfeng.ounews.bean.SinaPhotoDetail;
+import com.oushangfeng.ounews.utils.GlideUtils;
 import com.oushangfeng.ounews.utils.MeasureUtil;
 
 import java.util.ArrayList;
@@ -55,12 +55,14 @@ public class PhotoAdapter extends PagerAdapter {
 
         final String kpic = mPics.get(position).kpic;
         if (kpic.contains("gif")) {
-            Glide.with(mContext).load(kpic).asGif().placeholder(R.drawable.ic_loading).error(R.drawable.ic_fail).diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .into(photoView);
+            GlideUtils.loadDefault(kpic, photoView, true, null, DiskCacheStrategy.SOURCE);
+            //            Glide.with(mContext).load(kpic).asGif().placeholder(R.drawable.ic_loading).animate(R.anim.image_load).error(R.drawable.ic_fail).diskCacheStrategy(DiskCacheStrategy.SOURCE)
+            //                    .into(photoView);
             photoView.setZoomable(false);
         } else {
-            Glide.with(mContext).load(kpic).asBitmap().placeholder(R.drawable.ic_loading).error(R.drawable.ic_fail).format(DecodeFormat.PREFER_ARGB_8888)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL).into(photoView);
+            GlideUtils.loadDefault(kpic, photoView, false, DecodeFormat.PREFER_ARGB_8888, DiskCacheStrategy.ALL);
+            //            Glide.with(mContext).load(kpic).asBitmap().animate(R.anim.image_load).placeholder(R.drawable.ic_loading).error(R.drawable.ic_fail)
+            //                    .format(DecodeFormat.PREFER_ARGB_8888).diskCacheStrategy(DiskCacheStrategy.ALL).into(photoView);
             photoView.setZoomable(true);
         }
 

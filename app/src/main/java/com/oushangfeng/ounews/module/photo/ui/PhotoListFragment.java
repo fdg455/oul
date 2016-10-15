@@ -9,15 +9,14 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.oushangfeng.ounews.R;
 import com.oushangfeng.ounews.annotation.ActivityFragmentInject;
 import com.oushangfeng.ounews.base.BaseFragment;
+import com.oushangfeng.ounews.base.BaseRecyclerAdapter;
 import com.oushangfeng.ounews.base.BaseRecyclerViewHolder;
 import com.oushangfeng.ounews.base.BaseSpacesItemDecoration;
-import com.oushangfeng.ounews.base.BaseRecyclerAdapter;
 import com.oushangfeng.ounews.bean.SinaPhotoList;
 import com.oushangfeng.ounews.callback.OnEmptyClickListener;
 import com.oushangfeng.ounews.callback.OnItemClickAdapter;
@@ -27,6 +26,7 @@ import com.oushangfeng.ounews.module.photo.presenter.IPhotoListPresenter;
 import com.oushangfeng.ounews.module.photo.presenter.IPhotoListPresenterImpl;
 import com.oushangfeng.ounews.module.photo.view.IPhotoListView;
 import com.oushangfeng.ounews.utils.ClickUtils;
+import com.oushangfeng.ounews.utils.GlideUtils;
 import com.oushangfeng.ounews.utils.MeasureUtil;
 import com.oushangfeng.ounews.widget.ThreePointLoadingView;
 import com.oushangfeng.ounews.widget.refresh.RefreshLayout;
@@ -147,8 +147,9 @@ public class PhotoListFragment extends BaseFragment<IPhotoListPresenter> impleme
             @Override
             public void bindData(BaseRecyclerViewHolder holder, final int position, final SinaPhotoList.DataEntity.PhotoListEntity item) {
 
-                Glide.with(getActivity()).load(item.kpic).asBitmap().placeholder(R.drawable.ic_loading).error(R.drawable.ic_fail).format(DecodeFormat.PREFER_ARGB_8888)
-                        .diskCacheStrategy(DiskCacheStrategy.RESULT).into(holder.getImageView(R.id.iv_photo_summary));
+                GlideUtils.loadDefault(item.kpic, holder.getImageView(R.id.iv_photo_summary), false, DecodeFormat.PREFER_ARGB_8888, DiskCacheStrategy.RESULT);
+                //                Glide.with(getActivity()).load(item.kpic).asBitmap().animate(R.anim.image_load).placeholder(R.drawable.ic_loading).error(R.drawable.ic_fail).format(DecodeFormat.PREFER_ARGB_8888)
+                //                        .diskCacheStrategy(DiskCacheStrategy.RESULT).into(holder.getImageView(R.id.iv_photo_summary));
 
                 holder.getTextView(R.id.tv_photo_summary).setText(item.title);
             }

@@ -16,7 +16,6 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.oushangfeng.ounews.R;
@@ -29,6 +28,7 @@ import com.oushangfeng.ounews.module.news.presenter.INewsDetailPresenterImpl;
 import com.oushangfeng.ounews.module.news.view.INewsDetailView;
 import com.oushangfeng.ounews.module.photo.ui.PhotoDetailActivity;
 import com.oushangfeng.ounews.module.video.ui.VideoPlayActivity;
+import com.oushangfeng.ounews.utils.GlideUtils;
 import com.oushangfeng.ounews.utils.MeasureUtil;
 import com.oushangfeng.ounews.utils.ViewUtil;
 import com.oushangfeng.ounews.widget.ThreePointLoadingView;
@@ -152,17 +152,20 @@ public class NewsDetailActivity extends BaseActivity<INewsDetailPresenter> imple
                     mNewsImageView.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            Glide.with(mNewsImageView.getContext()).load(data.img.get(0).src).asGif().placeholder(R.drawable.ic_loading).error(R.drawable.ic_fail)
-                                    .diskCacheStrategy(DiskCacheStrategy.SOURCE).override(w, h).into(mNewsImageView);
+                            GlideUtils.loadDefaultOverride(data.img.get(0).src, mNewsImageView, w, h, true, null, DiskCacheStrategy.SOURCE);
+                            //                            Glide.with(mNewsImageView.getContext()).load(data.img.get(0).src).asGif().animate(R.anim.image_load).placeholder(R.drawable.ic_loading).error(R.drawable.ic_fail)
+                            //                                    .diskCacheStrategy(DiskCacheStrategy.SOURCE).override(w, h).into(mNewsImageView);
                         }
                     }, 500);
                 } else {
-                    Glide.with(this).load(data.img.get(0).src).asBitmap().placeholder(R.drawable.ic_loading).format(DecodeFormat.PREFER_ARGB_8888)
-                            .error(R.drawable.ic_fail).diskCacheStrategy(DiskCacheStrategy.ALL).override(w, h).into(mNewsImageView);
+                    GlideUtils.loadDefaultOverride(data.img.get(0).src, mNewsImageView, w, h, false, DecodeFormat.PREFER_ARGB_8888, DiskCacheStrategy.ALL);
+                    //                    Glide.with(this).load(data.img.get(0).src).asBitmap().animate(R.anim.image_load).placeholder(R.drawable.ic_loading)
+                    //                            .format(DecodeFormat.PREFER_ARGB_8888).error(R.drawable.ic_fail).diskCacheStrategy(DiskCacheStrategy.ALL).override(w, h).into(mNewsImageView);
                 }
             } else {
-                Glide.with(this).load(data.img.get(0).src).asBitmap().placeholder(R.drawable.ic_loading).format(DecodeFormat.PREFER_ARGB_8888)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL).error(R.drawable.ic_fail).into(mNewsImageView);
+                GlideUtils.loadDefault(data.img.get(0).src, mNewsImageView, false, DecodeFormat.PREFER_ARGB_8888, DiskCacheStrategy.ALL);
+                //                Glide.with(this).load(data.img.get(0).src).asBitmap().animate(R.anim.image_load).placeholder(R.drawable.ic_loading).format(DecodeFormat.PREFER_ARGB_8888)
+                //                        .diskCacheStrategy(DiskCacheStrategy.ALL).error(R.drawable.ic_fail).into(mNewsImageView);
             }
 
             if (mFab.getTag() == null) {
@@ -188,8 +191,9 @@ public class NewsDetailActivity extends BaseActivity<INewsDetailPresenter> imple
         } else {
             // 图片详情列表没有数据的时候，取图片列表页面传送过来的图片显示
             mNewsImageView.setTag(R.id.img_tag, false);
-            Glide.with(this).load(mNewsListSrc).asBitmap().placeholder(R.drawable.ic_loading).diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .format(DecodeFormat.PREFER_ARGB_8888).error(R.drawable.ic_fail).into(mNewsImageView);
+            GlideUtils.loadDefault(mNewsListSrc, mNewsImageView, false, DecodeFormat.PREFER_ARGB_8888, DiskCacheStrategy.ALL);
+            //            Glide.with(this).load(mNewsListSrc).asBitmap().animate(R.anim.image_load).placeholder(R.drawable.ic_loading).diskCacheStrategy(DiskCacheStrategy.ALL)
+            //                    .format(DecodeFormat.PREFER_ARGB_8888).error(R.drawable.ic_fail).into(mNewsImageView);
         }
 
         mTitleTv.setText(data.title);

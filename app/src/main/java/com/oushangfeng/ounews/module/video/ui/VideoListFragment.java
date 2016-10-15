@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.oushangfeng.ounews.R;
@@ -31,6 +30,7 @@ import com.oushangfeng.ounews.module.video.presenter.IVideoListPresenter;
 import com.oushangfeng.ounews.module.video.presenter.IVideoListPresenterImpl;
 import com.oushangfeng.ounews.module.video.view.IVideoListView;
 import com.oushangfeng.ounews.utils.ClickUtils;
+import com.oushangfeng.ounews.utils.GlideUtils;
 import com.oushangfeng.ounews.utils.MeasureUtil;
 import com.oushangfeng.ounews.widget.ThreePointLoadingView;
 import com.oushangfeng.ounews.widget.refresh.RefreshLayout;
@@ -165,8 +165,9 @@ public class VideoListFragment extends BaseFragment<IVideoListPresenter> impleme
                 params.height = item.picHeight;
                 imageView.setLayoutParams(params);
 
-                Glide.with(getActivity()).load(item.cover).asBitmap().placeholder(R.drawable.ic_loading).error(R.drawable.ic_fail).format(DecodeFormat.PREFER_ARGB_8888)
-                        .diskCacheStrategy(DiskCacheStrategy.RESULT).into(imageView);
+                GlideUtils.loadDefault(item.cover, imageView, false, DecodeFormat.PREFER_ARGB_8888, DiskCacheStrategy.RESULT);
+                //                Glide.with(getActivity()).load(item.cover).asBitmap().animate(R.anim.image_load).placeholder(R.drawable.ic_loading).error(R.drawable.ic_fail).format(DecodeFormat.PREFER_ARGB_8888)
+                //                        .diskCacheStrategy(DiskCacheStrategy.RESULT).into(imageView);
 
                 holder.getTextView(R.id.tv_video_summary).setText(Html.fromHtml(item.title));
             }
