@@ -152,18 +152,18 @@ public class NewsDetailActivity extends BaseActivity<INewsDetailPresenter> imple
                     mNewsImageView.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            GlideUtils.loadDefaultOverride(data.img.get(0).src, mNewsImageView, w, h, true, null, DiskCacheStrategy.SOURCE);
+                            GlideUtils.loadDefaultOverrideNoAnim(data.img.get(0).src, mNewsImageView, w, h, true, null, DiskCacheStrategy.SOURCE);
                             //                            Glide.with(mNewsImageView.getContext()).load(data.img.get(0).src).asGif().animate(R.anim.image_load).placeholder(R.drawable.ic_loading).error(R.drawable.ic_fail)
                             //                                    .diskCacheStrategy(DiskCacheStrategy.SOURCE).override(w, h).into(mNewsImageView);
                         }
                     }, 500);
                 } else {
-                    GlideUtils.loadDefaultOverride(data.img.get(0).src, mNewsImageView, w, h, false, DecodeFormat.PREFER_ARGB_8888, DiskCacheStrategy.ALL);
+                    GlideUtils.loadDefaultOverrideNoAnim(data.img.get(0).src, mNewsImageView, w, h, false, DecodeFormat.PREFER_ARGB_8888, DiskCacheStrategy.ALL);
                     //                    Glide.with(this).load(data.img.get(0).src).asBitmap().animate(R.anim.image_load).placeholder(R.drawable.ic_loading)
                     //                            .format(DecodeFormat.PREFER_ARGB_8888).error(R.drawable.ic_fail).diskCacheStrategy(DiskCacheStrategy.ALL).override(w, h).into(mNewsImageView);
                 }
             } else {
-                GlideUtils.loadDefault(data.img.get(0).src, mNewsImageView, false, DecodeFormat.PREFER_ARGB_8888, DiskCacheStrategy.ALL);
+                GlideUtils.loadDefaultNoAnim(data.img.get(0).src, mNewsImageView, false, DecodeFormat.PREFER_ARGB_8888, DiskCacheStrategy.ALL);
                 //                Glide.with(this).load(data.img.get(0).src).asBitmap().animate(R.anim.image_load).placeholder(R.drawable.ic_loading).format(DecodeFormat.PREFER_ARGB_8888)
                 //                        .diskCacheStrategy(DiskCacheStrategy.ALL).error(R.drawable.ic_fail).into(mNewsImageView);
             }

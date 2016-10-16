@@ -24,7 +24,7 @@ import java.io.File;
 public class GlideUtils {
 
     /**
-     * 加载图片，默认设置了加载图片，出错图片，加载动画，不转换
+     * 加载图片，默认设置了加载图片，出错图片，不转换，没有加载动画
      *
      * @param loadObj           加载对象
      * @param imageView         图片
@@ -34,9 +34,8 @@ public class GlideUtils {
      * @param format            图片质量，只有设置图片为bitmap类型时才有效
      * @param diskcacheStrategy 硬盘缓存策略
      */
-    public static void loadDefaultOverride(Object loadObj, ImageView imageView, int overrideW, int overrideH, Boolean asGif, DecodeFormat format, DiskCacheStrategy diskcacheStrategy) {
-        load(imageView.getContext(), loadObj, imageView, overrideW, overrideH, R.drawable.ic_loading, R.drawable.ic_fail, R.anim.image_load, asGif, format, null,
-                diskcacheStrategy);
+    public static void loadDefaultOverrideNoAnim(Object loadObj, ImageView imageView, int overrideW, int overrideH, Boolean asGif, DecodeFormat format, DiskCacheStrategy diskcacheStrategy) {
+        load(imageView.getContext(), loadObj, imageView, overrideW, overrideH, R.drawable.ic_loading, R.drawable.ic_fail, 0, asGif, format, null, diskcacheStrategy);
     }
 
     /**
@@ -65,6 +64,19 @@ public class GlideUtils {
      */
     public static void loadDefault(Object loadObj, ImageView imageView, Boolean asGif, DecodeFormat format, DiskCacheStrategy diskcacheStrategy) {
         load(imageView.getContext(), loadObj, imageView, 0, 0, R.drawable.ic_loading, R.drawable.ic_fail, R.anim.image_load, asGif, format, null, diskcacheStrategy);
+    }
+
+    /**
+     * 加载图片，默认设置了加载图片，出错图片，不重设宽高，不转换，没有加载动画
+     *
+     * @param loadObj           加载对象
+     * @param imageView         图片
+     * @param asGif             是否指定图片为Gif类型，null不指定，true指定为Gif，false指定为Bitmap
+     * @param format            图片质量，只有设置图片为bitmap类型时才有效
+     * @param diskcacheStrategy 硬盘缓存策略
+     */
+    public static void loadDefaultNoAnim(Object loadObj, ImageView imageView, Boolean asGif, DecodeFormat format, DiskCacheStrategy diskcacheStrategy) {
+        load(imageView.getContext(), loadObj, imageView, 0, 0, R.drawable.ic_loading, R.drawable.ic_fail, 0, asGif, format, null, diskcacheStrategy);
     }
 
     /**
