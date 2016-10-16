@@ -103,8 +103,12 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (holder.getAdapterPosition() != RecyclerView.NO_POSITION) {
-                            mClickListener.onItemClick(v, holder.getAdapterPosition());
+                        if (holder.getLayoutPosition() != RecyclerView.NO_POSITION) {
+                            try {
+                                mClickListener.onItemClick(v, holder.getLayoutPosition());
+                            } catch (IndexOutOfBoundsException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 });

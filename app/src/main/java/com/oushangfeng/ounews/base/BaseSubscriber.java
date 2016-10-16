@@ -65,7 +65,7 @@ public class BaseSubscriber<T> extends Subscriber<T> {
                         break;
                 }
             } else if (e instanceof UnknownHostException) {
-                errorMsg = "不知名主机";
+                errorMsg = "不知名主机！";
             } else if (e instanceof SocketTimeoutException) {
                 errorMsg = "网络连接超时！";
             }else if (e instanceof JsonMappingException){
