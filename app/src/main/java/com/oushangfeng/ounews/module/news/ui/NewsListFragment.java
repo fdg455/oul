@@ -200,20 +200,20 @@ public class NewsListFragment extends BaseFragment<INewsListPresenter> implement
                     // 以下将数据封装成新浪需要的格式，用于点击跳转到图片浏览
                     mSinaPhotoDetail = new SinaPhotoDetail();
                     mSinaPhotoDetail.data = new SinaPhotoDetail.SinaPhotoDetailDataEntity();
-                    mSinaPhotoDetail.data.title = data.get(position).title;
+                    mSinaPhotoDetail.data.title = mAdapter.getData().get(position).title;
                     mSinaPhotoDetail.data.content = "";
                     mSinaPhotoDetail.data.pics = new ArrayList<>();
                     // 天啊，什么格式都有 --__--
-                    if (data.get(position).ads != null) {
-                        for (NeteastNewsSummary.AdsEntity entiity : data.get(position).ads) {
+                    if (mAdapter.getData().get(position).ads != null) {
+                        for (NeteastNewsSummary.AdsEntity entiity : mAdapter.getData().get(position).ads) {
                             SinaPhotoDetail.SinaPhotoDetailPicsEntity sinaPicsEntity = new SinaPhotoDetail.SinaPhotoDetailPicsEntity();
                             sinaPicsEntity.pic = entiity.imgsrc;
                             sinaPicsEntity.alt = entiity.title;
                             sinaPicsEntity.kpic = entiity.imgsrc;
                             mSinaPhotoDetail.data.pics.add(sinaPicsEntity);
                         }
-                    } else if (data.get(position).imgextra != null) {
-                        for (NeteastNewsSummary.ImgextraEntity entiity : data.get(position).imgextra) {
+                    } else if (mAdapter.getData().get(position).imgextra != null) {
+                        for (NeteastNewsSummary.ImgextraEntity entiity : mAdapter.getData().get(position).imgextra) {
                             SinaPhotoDetail.SinaPhotoDetailPicsEntity sinaPicsEntity = new SinaPhotoDetail.SinaPhotoDetailPicsEntity();
                             sinaPicsEntity.pic = entiity.imgsrc;
                             sinaPicsEntity.kpic = entiity.imgsrc;
