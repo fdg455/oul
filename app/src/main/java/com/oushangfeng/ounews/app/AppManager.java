@@ -105,7 +105,7 @@ public class AppManager {
             mNavActivityOrder.put(0, className);
         }
 
-        printOrder();
+        // printOrder();
     }
 
     private void printOrder() {

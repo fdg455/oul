@@ -328,7 +328,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
             public void run() {
                 final ImageView imageView = (ImageView) BaseActivity.this.findViewById(R.id.avatar);
                 if (imageView != null) {
-                    GlideUtils.loadDefaultTransformation(R.drawable.ic_header, imageView, null, null, new GlideCircleTransform(mNavigationView.getContext()), null);
+                    GlideUtils.loadDefaultTransformation(R.drawable.ic_header, imageView, false, null, new GlideCircleTransform(imageView.getContext()), null);
                     //                    Glide.with(mNavigationView.getContext()).load(R.drawable.ic_header).animate(R.anim.image_load).transform(new GlideCircleTransform(mNavigationView.getContext()))
                     //                            .into(imageView);
                 }

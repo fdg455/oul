@@ -1,7 +1,6 @@
 package com.oushangfeng.ounews.http.manager;
 
 
-import android.support.annotation.NonNull;
 import android.util.SparseArray;
 
 import com.oushangfeng.ounews.app.App;
@@ -27,7 +26,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
-import okhttp3.CacheControl;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -51,13 +49,10 @@ import rx.Observable;
  */
 public class RetrofitManager {
 
-    //设缓存有效期为两天
+    // 设缓存有效期为两天
     private static final long CACHE_STALE_SEC = 60 * 60 * 24 * 2;
-    //查询缓存的Cache-Control设置，为if-only-cache时只查询缓存而不会请求服务器，max-stale可以配合设置缓存失效时间
-    private static final String CACHE_CONTROL_CACHE = "only-if-cached, max-stale=" + CACHE_STALE_SEC;
-    //查询网络的Cache-Control设置，头部Cache-Control设为max-age=0
-    //(假如请求了服务器并在a时刻返回响应结果，则在max-age规定的秒数内，浏览器将不会发送对应的请求到服务器，数据由缓存直接返回)时则不会使用缓存而请求服务器
-    private static final String CACHE_CONTROL_NETWORK = "max-age=0";
+    // 30秒内直接读缓存
+    private static final long CACHE_AGE_SEC = 0;
 
     private static volatile OkHttpClient sOkHttpClient;
     // 管理不同HostType的单例
@@ -69,21 +64,21 @@ public class RetrofitManager {
         public Response intercept(Chain chain) throws IOException {
             Request request = chain.request();
 
-            // KLog.e("请求网址: " + request.url());
-
-            if (!NetUtil.isConnected(App.getContext())) {
-                request = request.newBuilder().cacheControl(CacheControl.FORCE_CACHE).build();
-                KLog.e("没有网络");
-            }
-            Response originalResponse = chain.proceed(request);
-
+            // 在这里统一配置请求头缓存策略以及响应头缓存策略
             if (NetUtil.isConnected(App.getContext())) {
-                //有网的时候读接口上的@Headers里的配置，你可以在这里进行统一的设置
-                String cacheControl = request.cacheControl().toString();
-                return originalResponse.newBuilder().header("Cache-Control", cacheControl).removeHeader("Pragma").build();
+                // 在有网的情况下CACHE_AGE_SEC秒内读缓存，大于CACHE_AGE_SEC秒后会重新请求数据
+                request = request.newBuilder().removeHeader("Pragma").removeHeader("Cache-Control").header("Cache-Control", "public, max-age=" + CACHE_AGE_SEC).build();
+                Response response = chain.proceed(request);
+                return response.newBuilder().removeHeader("Pragma").removeHeader("Cache-Control").header("Cache-Control", "public, max-age=" + CACHE_AGE_SEC).build();
             } else {
-                return originalResponse.newBuilder().header("Cache-Control", "public, only-if-cached," + CACHE_STALE_SEC).removeHeader("Pragma").build();
+                // 无网情况下CACHE_STALE_SEC秒内读取缓存，大于CACHE_STALE_SEC秒缓存无效报504
+                request = request.newBuilder().removeHeader("Pragma").removeHeader("Cache-Control")
+                        .header("Cache-Control", "public, only-if-cached, max-stale=" + CACHE_STALE_SEC).build();
+                Response response = chain.proceed(request);
+                return response.newBuilder().removeHeader("Pragma").removeHeader("Cache-Control")
+                        .header("Cache-Control", "public, only-if-cached, max-stale=" + CACHE_STALE_SEC).build();
             }
+
         }
     };
 
@@ -100,7 +95,7 @@ public class RetrofitManager {
 
             final Response response = chain.proceed(request);
 
-            KLog.e("请求网址: \n" + request.url() + " \n " + "请求头部信息：\n" + request.headers());
+            KLog.e("请求网址: \n" + request.url() + " \n " + "请求头部信息：\n" + request.headers() + "响应头部信息：\n" + response.headers());
 
             final ResponseBody responseBody = response.body();
             final long contentLength = responseBody.contentLength();
@@ -169,23 +164,13 @@ public class RetrofitManager {
                     Cache cache = new Cache(new File(App.getContext().getCacheDir(), "HttpCache"), 1024 * 1024 * 100);
 
                     sOkHttpClient = new OkHttpClient.Builder().cache(cache).addNetworkInterceptor(mRewriteCacheControlInterceptor)
-                            // .addInterceptor(mRewriteCacheControlInterceptor)
-                            .addInterceptor(mLoggingInterceptor).retryOnConnectionFailure(true).connectTimeout(30, TimeUnit.SECONDS).build();
+                            .addInterceptor(mRewriteCacheControlInterceptor).addInterceptor(mLoggingInterceptor).retryOnConnectionFailure(true)
+                            .connectTimeout(30, TimeUnit.SECONDS).build();
 
                 }
             }
         }
         return sOkHttpClient;
-    }
-
-    /**
-     * 根据网络状况获取缓存的策略
-     *
-     * @return
-     */
-    @NonNull
-    private String getCacheControl() {
-        return NetUtil.isConnected(App.getContext()) ? CACHE_CONTROL_NETWORK : CACHE_CONTROL_CACHE;
     }
 
     /**
@@ -201,7 +186,7 @@ public class RetrofitManager {
      * @return 被观察对象
      */
     public Observable<Map<String, List<NeteastNewsSummary>>> getNewsListObservable(String type, String id, int startPage) {
-        return mNewsService.getNewsList(getCacheControl(), type, id, startPage).compose(new BaseSchedulerTransformer<Map<String, List<NeteastNewsSummary>>>());
+        return mNewsService.getNewsList(type, id, startPage).compose(new BaseSchedulerTransformer<Map<String, List<NeteastNewsSummary>>>());
     }
 
     /**
@@ -211,7 +196,7 @@ public class RetrofitManager {
      * @return 被观察对象
      */
     public Observable<Map<String, NeteastNewsDetail>> getNewsDetailObservable(String postId) {
-        return mNewsService.getNewsDetail(getCacheControl(), postId).compose(new BaseSchedulerTransformer<Map<String, NeteastNewsDetail>>());
+        return mNewsService.getNewsDetail(postId).compose(new BaseSchedulerTransformer<Map<String, NeteastNewsDetail>>());
     }
 
     /**
@@ -222,9 +207,8 @@ public class RetrofitManager {
      */
     public Observable<SinaPhotoList> getSinaPhotoListObservable(String photoTypeId, int page) {
         KLog.e("新浪图片新闻列表: " + photoTypeId + ";" + page);
-        return mNewsService
-                .getSinaPhotoList(getCacheControl(), photoTypeId, "4ad30dabe134695c3b7c3a65977d7e72", "b207", "6042095012", "12050_0001", "12050_0001", "867064013906290",
-                        "802909da86d9f5fc", page).compose(new BaseSchedulerTransformer<SinaPhotoList>());
+        return mNewsService.getSinaPhotoList(photoTypeId, "4ad30dabe134695c3b7c3a65977d7e72", "b207", "6042095012", "12050_0001", "12050_0001", "867064013906290",
+                "802909da86d9f5fc", page).compose(new BaseSchedulerTransformer<SinaPhotoList>());
     }
 
     /**
@@ -234,9 +218,8 @@ public class RetrofitManager {
      * @return 被观察者
      */
     public Observable<SinaPhotoDetail> getSinaPhotoDetailObservable(String id) {
-        return mNewsService
-                .getSinaPhotoDetail(getCacheControl(), Api.SINA_PHOTO_DETAIL_ID, "b207", "6042095012", "12050_0001", "12050_0001", "867064013906290", "802909da86d9f5fc",
-                        id).compose(new BaseSchedulerTransformer<SinaPhotoDetail>());
+        return mNewsService.getSinaPhotoDetail(Api.SINA_PHOTO_DETAIL_ID, "b207", "6042095012", "12050_0001", "12050_0001", "867064013906290", "802909da86d9f5fc", id)
+                .compose(new BaseSchedulerTransformer<SinaPhotoDetail>());
     }
 
     /**
@@ -248,7 +231,7 @@ public class RetrofitManager {
      */
     public Observable<Map<String, List<NeteastVideoSummary>>> getVideoListObservable(String id, int startPage) {
         KLog.e("网易视频列表: " + id + ";" + startPage);
-        return mNewsService.getVideoList(getCacheControl(), id, startPage).compose(new BaseSchedulerTransformer<Map<String, List<NeteastVideoSummary>>>());
+        return mNewsService.getVideoList(id, startPage).compose(new BaseSchedulerTransformer<Map<String, List<NeteastVideoSummary>>>());
     }
 
     /**
@@ -258,7 +241,7 @@ public class RetrofitManager {
      * @return 被观察者
      */
     public Observable<WeatherInfo> getWeatherInfoObservable(String city) {
-        return mNewsService.getWeatherInfo(getCacheControl(), city).compose(new BaseSchedulerTransformer<WeatherInfo>());
+        return mNewsService.getWeatherInfo(city).compose(new BaseSchedulerTransformer<WeatherInfo>());
     }
 
 }

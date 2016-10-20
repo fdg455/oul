@@ -2,6 +2,7 @@ package com.oushangfeng.ounews.utils;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.bumptech.glide.BitmapRequestBuilder;
@@ -14,6 +15,9 @@ import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+import com.oushangfeng.ounews.BuildConfig;
 import com.oushangfeng.ounews.R;
 
 import java.io.File;
@@ -197,6 +201,20 @@ public class GlideUtils {
             }
         }
         if (requestBuilder != null) {
+            if (BuildConfig.DEBUG) {
+                requestBuilder.listener(new RequestListener() {
+                    @Override
+                    public boolean onException(Exception e, Object model, Target target, boolean isFirstResource) {
+                        Log.e("TAG", "GlideUtils-205行-onException(): " + e);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Object resource, Object model, Target target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        return false;
+                    }
+                });
+            }
             requestBuilder.into(imageView);
         } else {
             request.into(imageView);
