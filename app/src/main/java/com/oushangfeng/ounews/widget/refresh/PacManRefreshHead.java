@@ -62,6 +62,7 @@ public class PacManRefreshHead extends RefreshHead {
      * 被吃掉的豆豆的位置
      */
     private int[] mEatBeanPos;
+    private boolean mAttachedToWindow;
 
     public PacManRefreshHead(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -98,7 +99,7 @@ public class PacManRefreshHead extends RefreshHead {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         // 算出宽度
-        mWidth = measureSize(widthMeasureSpec, mScreenSize.x );
+        mWidth = measureSize(widthMeasureSpec, mScreenSize.x);
         mPaint.setStrokeWidth(mWidth * 1.0f / 200);
 
         mPacManRadius = (int) (mWidth * 1.0f / 50);
@@ -107,13 +108,13 @@ public class PacManRefreshHead extends RefreshHead {
 
         mBeanRadius = mPacManRadius / 3;
 
-        mHeight = measureSize(heightMeasureSpec, mPacManRadius * 4 );
+        mHeight = measureSize(heightMeasureSpec, mPacManRadius * 4);
 
         if (mPacManRadius * 4 + getPaddingTop() + getPaddingBottom() < 0) {
             mHeight = 0;
         }
 
-        setMeasuredDimension(mWidth+ getPaddingLeft() + getPaddingRight(), mHeight+ getPaddingTop() + getPaddingBottom());
+        setMeasuredDimension(mWidth + getPaddingLeft() + getPaddingRight(), mHeight + getPaddingTop() + getPaddingBottom());
 
     }
 
@@ -183,10 +184,14 @@ public class PacManRefreshHead extends RefreshHead {
 
     @Override
     public void performLoading() {
-
         post(new Runnable() {
             @Override
             public void run() {
+
+                if (!mAttachedToWindow) {
+                    return;
+                }
+
                 if (mLoadAnimatorSet != null && mLoadAnimatorSet.isRunning()) {
                     // KLog.e("动画还在运行，不操作");
                     return;
@@ -270,12 +275,14 @@ public class PacManRefreshHead extends RefreshHead {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
+        mAttachedToWindow = true;
         performLoading();
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+        mAttachedToWindow = false;
         stopAnimator(true);
     }
 

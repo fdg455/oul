@@ -8,7 +8,6 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import com.oushangfeng.ounews.R;
@@ -193,8 +192,6 @@ public class ThreePointLoadingView extends View {
         super.onDetachedFromWindow();
         mAttachedToWindow = false;
     }
-
-    private int count = 0;
 
     public void play() {
         setVisibility(VISIBLE);

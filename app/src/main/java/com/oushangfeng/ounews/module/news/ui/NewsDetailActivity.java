@@ -32,7 +32,6 @@ import com.oushangfeng.ounews.utils.GlideUtils;
 import com.oushangfeng.ounews.utils.MeasureUtil;
 import com.oushangfeng.ounews.utils.ViewUtil;
 import com.oushangfeng.ounews.widget.ThreePointLoadingView;
-import com.socks.library.KLog;
 
 import java.util.ArrayList;
 
@@ -141,12 +140,12 @@ public class NewsDetailActivity extends BaseActivity<INewsDetailPresenter> imple
             // 图片高清显示，按屏幕宽度为准缩放
             if (pixel != null && pixel.length == 2) {
 
-                KLog.e(pixel[0] + ";" + pixel[1]);
+                // KLog.e(pixel[0] + ";" + pixel[1]);
 
                 final int w = MeasureUtil.getScreenSize(this).x;
                 final int h = Integer.parseInt(pixel[1]) * w / Integer.parseInt(pixel[0]);
 
-                KLog.e(w + ";" + h);
+                // KLog.e(w + ";" + h);
 
                 if (data.img.get(0).src.contains(".gif")) {
                     mNewsImageView.postDelayed(new Runnable() {
