@@ -3,6 +3,7 @@ package com.oubowu.slideback;
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
+import android.util.Log;
 
 import java.util.Stack;
 
@@ -52,11 +53,9 @@ public class ActivityHelper implements Application.ActivityLifecycleCallbacks {
     @Override
     public void onActivityDestroyed(Activity activity) {
 
-        if (mActivityDestroyListener != null) {
-            mActivityDestroyListener.onDestroy(activity);
-        }
-
+        // Log.e("TAG", "ActivityHelper-销毁: " + activity);
         mActivityStack.remove(activity);
+
     }
 
     public Activity getPreActivity() {
@@ -79,16 +78,25 @@ public class ActivityHelper implements Application.ActivityLifecycleCallbacks {
         }
     }
 
-    void setOnActivityDestroyListener(OnActivityDestroyListener listener) {
-        mActivityDestroyListener = listener;
+    public void printAllActivity() {
+        if (mActivityStack == null) {
+            return;
+        }
+        for (int i = 0; i < mActivityStack.size(); i++) {
+            Log.e("TAG", "位置" + i + ": " + mActivityStack.get(i));
+        }
     }
 
-    private OnActivityDestroyListener mActivityDestroyListener;
-
-    interface OnActivityDestroyListener {
-        void onDestroy(Activity activity);
+    /**
+     * 强制删掉activity，用于用户快速滑动页面的时候，因为页面还没来得及destroy导致的问题
+     *
+     * @param activity 删掉的activity
+     */
+    void postRemoveActivity(Activity activity) {
+        if (mActivityStack != null) {
+            mActivityStack.remove(activity);
+        }
     }
-
 
     public void addActivity(Class clz) {
         if (mActivityStack == null) {

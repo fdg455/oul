@@ -158,15 +158,18 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
 
         if (mEnableSlidr && !SpUtil.readBoolean("disableSlide")) {
             // 默认开启侧滑，默认是整个页码侧滑
-            mSlideBackLayout = SlideBackHelper.attach(this, App.getActivityHelper(), true, new SlideConfig.Builder()
+            mSlideBackLayout = SlideBackHelper.attach(this, App.getActivityHelper(), new SlideConfig.Builder()
                     // 是否侧滑
                     .edgeOnly(SpUtil.readBoolean("enableSlideEdge"))
+                    // 是否会屏幕旋转
+                    .rotateScreen(false)
                     // 是否禁止侧滑
                     .lock(false)
                     // 侧滑的响应阈值，0~1，对应屏幕宽度*percent
                     .edgePercent(0.1f)
                     // 关闭页面的阈值，0~1，对应屏幕宽度*percent
                     .slideOutPercent(0.35f).create(), null);
+
 
         }
 
