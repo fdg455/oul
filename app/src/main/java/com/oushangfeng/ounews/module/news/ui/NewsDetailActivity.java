@@ -233,7 +233,7 @@ public class NewsDetailActivity extends BaseActivity<INewsDetailPresenter> imple
                 ActivityOptionsCompat options = ActivityOptionsCompat.makeScaleUpAnimation(v, v.getWidth() / 2, v.getHeight() / 2, 0, 0);
                 ActivityCompat.startActivity(this, intent, options.toBundle());
             } else {
-                if (!(boolean) mNewsImageView.getTag(R.id.img_tag) || mSinaPhotoDetail == null) {
+                if (mNewsImageView.getTag(R.id.img_tag) != null && !(boolean) mNewsImageView.getTag(R.id.img_tag) || mSinaPhotoDetail == null) {
                     toast("没有图片供浏览哎o(╥﹏╥)o");
                 } else {
                     Intent intent = new Intent(this, PhotoDetailActivity.class);
